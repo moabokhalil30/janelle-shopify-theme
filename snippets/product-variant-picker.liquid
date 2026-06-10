@@ -9,8 +9,19 @@
   {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
 {% endcomment %}
 {%- unless product.has_only_default_variant -%}
+  {%- liquid
+    assign product_title_downcase = product.title | downcase
+    assign template_suffix_downcase = product.template_suffix | downcase
+    assign is_lip_kit_picker = false
+    if product_title_downcase contains 'lip kit' or template_suffix_downcase contains 'lip-kit'
+      assign is_lip_kit_picker = true
+    endif
+  -%}
   <variant-selects
     id="variant-selects-{{ section.id }}"
+    {% if is_lip_kit_picker %}
+      class="variant-selects--lip-kit"
+    {% endif %}
     data-section="{{ section.id }}"
     {{ block.shopify_attributes }}
   >
@@ -55,7 +66,12 @@
       {%- else -%}
         <div class="product-form__input product-form__input--dropdown">
           <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
-            {{ option.name }}
+            {%- if is_lip_kit_picker -%}
+              <span class="variant-option-step">Step {{ option.position }}</span>
+              <span>{{ option.name }}</span>
+            {%- else -%}
+              {{ option.name }}
+            {%- endif -%}
           </label>
           <div class="select">
             {%- if picker_type == 'swatch_dropdown' -%}

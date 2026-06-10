@@ -150,3 +150,86 @@ variant-selects {
   }
 }
 /* End custom styles for Swatch display type */
+
+/* Janelle lip kit: premium stepped selector for high-variant kit products. */
+.variant-selects--lip-kit {
+  display: grid;
+  gap: 1rem;
+  max-width: 44rem;
+  margin: 2.4rem 0;
+}
+
+.variant-selects--lip-kit .product-form__input--dropdown {
+  --janelle-kit-line: rgba(var(--color-foreground), 0.12);
+  --janelle-kit-soft: rgba(var(--color-foreground), 0.035);
+  margin: 0;
+  padding: 1.2rem;
+  border: 0.1rem solid var(--janelle-kit-line);
+  border-radius: 0.8rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.58)),
+    var(--janelle-kit-soft);
+}
+
+.variant-selects--lip-kit .form__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin: 0 0 0.8rem;
+  padding: 0;
+  color: rgb(var(--color-foreground));
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.variant-selects--lip-kit .variant-option-step {
+  flex: 0 0 auto;
+  color: rgba(var(--color-foreground), 0.62);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+}
+
+.variant-selects--lip-kit .select {
+  width: 100%;
+  max-width: none;
+}
+
+.variant-selects--lip-kit .select__select {
+  min-height: 4.8rem;
+  width: 100%;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.16);
+  border-radius: 0.6rem;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  box-shadow: 0 0.6rem 1.6rem rgba(var(--color-foreground), 0.045);
+}
+
+.variant-selects--lip-kit .select__select:hover {
+  border-color: rgba(var(--color-foreground), 0.34);
+}
+
+.variant-selects--lip-kit .select__select:focus-visible {
+  outline: 0;
+  border-color: rgb(var(--color-foreground));
+  box-shadow: 0 0 0 0.3rem rgba(var(--color-foreground), 0.12);
+}
+
+.variant-selects--lip-kit .select .svg-wrapper {
+  right: 1.6rem;
+}
+
+@media screen and (max-width: 749px) {
+  .variant-selects--lip-kit {
+    max-width: none;
+  }
+
+  .variant-selects--lip-kit .product-form__input--dropdown {
+    padding: 1rem;
+  }
+}

@@ -5,26 +5,45 @@
 
 {%- assign tb = 'tb-' | append: section.id -%}
 {% style %}
-  .{{ tb }}{background:{{ section.settings.bg_color }};border-top:1px solid {{ section.settings.divider_color }};border-bottom:1px solid {{ section.settings.divider_color }};padding:{{ section.settings.padding_y }}px 1.5rem;}
-  .{{ tb }}__inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:{{ section.settings.alignment }};gap:{{ section.settings.gap }}px;max-width:{{ section.settings.max_width }}px;margin:0 auto;}
+  .{{ tb }}{background:{{ section.settings.bg_color }};border-top:1px solid {{ section.settings.divider_color }};border-bottom:1px solid {{ section.settings.divider_color }};padding:{{ section.settings.padding_y }}px 0;overflow:hidden;}
+  .{{ tb }}__viewport{max-width:{{ section.settings.max_width }}px;margin:0 auto;overflow:hidden;}
+  .{{ tb }}__track{display:flex;width:max-content;will-change:transform;}
+  .{{ tb }}__group{display:flex;align-items:center;justify-content:{{ section.settings.alignment }};gap:{{ section.settings.gap }}px;padding:0 calc({{ section.settings.gap }}px / 2);min-width:100%;}
   .{{ tb }}__item{display:inline-flex;align-items:center;gap:.6rem;font-size:{{ section.settings.font_size }}px;color:{{ section.settings.text_color }};white-space:nowrap;}
   .{{ tb }}__ic{font-size:1.4em;line-height:1;}
+  .{{ tb }}--marquee .{{ tb }}__track{animation:{{ tb }}-marquee {{ section.settings.marquee_speed }}s linear infinite;}
+  .{{ tb }}--marquee:hover .{{ tb }}__track{animation-play-state:paused;}
+  @keyframes {{ tb }}-marquee{
+    from{transform:translate3d(0,0,0);}
+    to{transform:translate3d(-50%,0,0);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .{{ tb }}--marquee .{{ tb }}__track{animation:none;}
+    .{{ tb }}__track{width:auto;justify-content:center;}
+    .{{ tb }}__group--duplicate{display:none;}
+    .{{ tb }}__group{flex-wrap:wrap;}
+  }
   @media (max-width:749px){
-    .{{ tb }}__inner{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-    .{{ tb }}__inner::-webkit-scrollbar{display:none;}
+    .{{ tb }}__viewport{max-width:none;}
   }
 {% endstyle %}
 
-<div class="{{ tb }}" {{ section.shopify_attributes }}>
-  <div class="{{ tb }}__inner">
-    {%- for block in section.blocks -%}
-      {%- if block.settings.label != blank -%}
-        <span class="{{ tb }}__item" {{ block.shopify_attributes }}>
-          {%- if block.settings.icon != blank -%}<span class="{{ tb }}__ic">{{ block.settings.icon }}</span>{%- endif -%}
-          {{ block.settings.label }}
-        </span>
-      {%- endif -%}
-    {%- endfor -%}
+<div class="{{ tb }}{% if section.settings.enable_marquee %} {{ tb }}--marquee{% endif %}" {{ section.shopify_attributes }}>
+  <div class="{{ tb }}__viewport">
+    <div class="{{ tb }}__track">
+      {%- for group_index in (1..2) -%}
+        <div class="{{ tb }}__group{% if group_index == 2 %} {{ tb }}__group--duplicate{% endif %}" {% if group_index == 2 %}aria-hidden="true"{% endif %}>
+          {%- for block in section.blocks -%}
+            {%- if block.settings.label != blank -%}
+              <span class="{{ tb }}__item" {% if group_index == 1 %}{{ block.shopify_attributes }}{% endif %}>
+                {%- if block.settings.icon != blank -%}<span class="{{ tb }}__ic">{{ block.settings.icon }}</span>{%- endif -%}
+                {{ block.settings.label }}
+              </span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
   </div>
 </div>
 
@@ -40,6 +59,8 @@
     { "type": "range", "id": "padding_y", "label": "Vertical padding", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 10 },
     { "type": "range", "id": "max_width", "label": "Max width", "min": 600, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
     { "type": "range", "id": "font_size", "label": "Font size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 13 },
+    { "type": "checkbox", "id": "enable_marquee", "label": "Enable sliding marquee", "default": true },
+    { "type": "range", "id": "marquee_speed", "label": "Marquee speed", "min": 12, "max": 60, "step": 2, "unit": "s", "default": 26 },
     { "type": "header", "content": "Colors" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" },
