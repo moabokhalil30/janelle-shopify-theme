@@ -66,16 +66,44 @@
         </legend>
 
         {%- if source_product != blank and source_product.variants.size > 0 -%}
-          <div class="janelle-bundle-picker__options">
+          <div class="janelle-bundle-picker__rail">
+            <button
+              class="janelle-bundle-picker__scroll janelle-bundle-picker__scroll--prev"
+              type="button"
+              data-scroll-row
+              data-direction="-1"
+              aria-label="Previous shades"
+            >
+              ‹
+            </button>
+            <div class="janelle-bundle-picker__options" data-options-row>
             {%- for variant in source_product.variants -%}
                 {%- liquid
-                  assign variant_image = variant.featured_image
-                  if variant_image == blank
-                    assign variant_image = source_product.featured_image
-                  endif
                   assign variant_title = variant.title
                   if variant_title == 'Default Title'
                     assign variant_title = source_product.title
+                  endif
+
+                  assign variant_image = variant.featured_media.preview_image
+                  if variant_image == blank
+                    assign variant_image = variant.featured_image
+                  endif
+
+                  if variant_image == blank
+                    assign variant_key = variant_title | downcase | strip
+                    for media in source_product.media
+                      assign media_alt = media.alt | downcase | strip
+                      if media.media_type == 'image' and media_alt != blank
+                        if media_alt == variant_key or media_alt contains variant_key or variant_key contains media_alt
+                          assign variant_image = media.preview_image
+                          break
+                        endif
+                      endif
+                    endfor
+                  endif
+
+                  if variant_image == blank
+                    assign variant_image = source_product.featured_image
                   endif
                 -%}
               <button
@@ -104,6 +132,16 @@
                 <span class="janelle-bundle-picker__name">{{ variant_title }}</span>
               </button>
             {%- endfor -%}
+            </div>
+            <button
+              class="janelle-bundle-picker__scroll janelle-bundle-picker__scroll--next"
+              type="button"
+              data-scroll-row
+              data-direction="1"
+              aria-label="Next shades"
+            >
+              ›
+            </button>
           </div>
         {%- else -%}
           <p class="janelle-bundle-picker__missing">Source product missing: {{ slot_label }}</p>
@@ -270,14 +308,43 @@
     text-transform: uppercase;
   }
 
+  .janelle-bundle-picker__rail {
+    display: grid;
+    grid-template-columns: 3.2rem minmax(0, 1fr) 3.2rem;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.9rem;
+  }
+
   .janelle-bundle-picker__options {
     display: flex;
     gap: 0.8rem;
-    margin-top: 0.9rem;
     overflow-x: auto;
     padding: 0.2rem 0.2rem 0.8rem;
     scroll-snap-type: x proximity;
     scrollbar-color: var(--jb-accent) transparent;
+    scroll-behavior: smooth;
+  }
+
+  .janelle-bundle-picker__scroll {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border: 0.1rem solid var(--jb-line);
+    border-radius: 999px;
+    background: var(--jb-surface);
+    color: var(--jb-accent);
+    cursor: pointer;
+    font-size: 2.2rem;
+    line-height: 1;
+    transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease;
+  }
+
+  .janelle-bundle-picker__scroll:hover {
+    border-color: rgba(185, 100, 138, 0.5);
+    box-shadow: 0 0.4rem 1.2rem rgba(60, 38, 51, 0.08);
   }
 
   .janelle-bundle-picker__option {
@@ -399,6 +466,17 @@
     }
 
     root.addEventListener('click', (event) => {
+      const scrollButton = event.target.closest('[data-scroll-row]');
+      if (scrollButton) {
+        const rail = scrollButton.closest('.janelle-bundle-picker__rail');
+        const row = rail?.querySelector('[data-options-row]');
+        if (row) {
+          const direction = Number(scrollButton.dataset.direction || 1);
+          row.scrollBy({ left: direction * row.clientWidth * 0.82, behavior: 'smooth' });
+        }
+        return;
+      }
+
       const option = event.target.closest('[data-bundle-option]');
       if (!option || option.disabled) return;
 
