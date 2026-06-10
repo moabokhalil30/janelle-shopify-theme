@@ -11,7 +11,47 @@
   "sections": {
     "main": {
       "type": "main-product-builder",
-      "settings": {}
+      "blocks": {
+        "squeeze_gloss": {
+          "type": "slot",
+          "settings": {
+            "label": "Squeeze gloss",
+            "source_product": "lip-gloss-squeeze-tube"
+          }
+        },
+        "brush_gloss": {
+          "type": "slot",
+          "settings": {
+            "label": "Brush gloss",
+            "source_product": "lip-gloss-brush-tube"
+          }
+        },
+        "lip_liner": {
+          "type": "slot",
+          "settings": {
+            "label": "Lip liner",
+            "source_product": "lip-liner-07-chocolate"
+          }
+        }
+      },
+      "block_order": [
+        "squeeze_gloss",
+        "brush_gloss",
+        "lip_liner"
+      ],
+      "settings": {
+        "eyebrow": "Build your set",
+        "subtitle": "<p>Pick each shade from the real Janelle products. Your selections appear in the kit preview before adding to cart.</p>",
+        "price_label": "Selected total",
+        "empty_slot_text": "Not selected",
+        "button_label": "Add selected set to cart",
+        "incomplete_text": "Choose all shades to continue ([count]/[total])",
+        "complete_text": "Your set is ready.",
+        "adding_text": "Adding your set...",
+        "error_text": "Could not add your set. Please try again.",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": ["main"]

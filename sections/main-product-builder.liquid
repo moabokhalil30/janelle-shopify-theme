@@ -1,197 +1,678 @@
-{% comment %}
-Fenty-like builder for a REAL product page:
-- Shows fixed price from THIS product (the builder product)
-- Lets shopper pick exactly 3 variants from the SOURCE product (metafield)
-- Adds those 3 real variants to cart (so inventory is shared)
-{% endcomment %}
+{%- liquid
+  assign bb = 'bundle-builder-' | append: section.id
+  assign hero_image_class = bb | append: '__hero-image'
+  assign fallback_image = product.featured_image
+-%}
 
-{%- assign builder_product = product -%}
-{%- assign source_product = builder_product.metafields.bundle.source_product.value -%}
-{%- if source_product == blank -%}
-{%- assign source_product = all_products['lip-gloss-squeeze-tube'] -%}
-{%- comment -%} CHANGE to your real handle as a fallback {%- endcomment -%}
-
-{%- endif -%}
-
-{%- assign PICK_COUNT = 3 -%}
-{%- assign ALLOW_DUPES = true -%}
-
-<section class="page-width">
-  <div class="grid grid--1-col grid--2-col-tablet gap-6">
-    <!-- Left: big gallery -->
-    <div>
-      {%- assign first_image = source_product.featured_image -%}
-      <div id="builder-main" class="mb-3">
-        {{ first_image
-          | image_url: width: 1200
-          | image_tag: alt: source_product.title, class: 'w-full h-auto rounded-lg', widths: '400,700,900,1200' }}
+<section class="{{ bb }} color-{{ section.settings.color_scheme }} gradient" data-bundle-builder>
+  <div class="{{ bb }}__inner page-width">
+    <div class="{{ bb }}__gallery" aria-live="polite">
+      <div class="{{ bb }}__hero">
+        {%- if fallback_image -%}
+          {{
+            fallback_image
+            | image_url: width: 1200
+            | image_tag:
+              loading: 'eager',
+              widths: '420, 720, 960, 1200',
+              sizes: '(min-width: 990px) 50vw, 100vw',
+              class: hero_image_class,
+              alt: product.title
+          }}
+        {%- endif -%}
       </div>
 
-      <div id="builder-thumbs" class="grid grid-cols-5 md:grid-cols-8 gap-2">
-        {%- for m in source_product.media -%}
-          {%- if m.media_type == 'image' -%}
-            <button class="thumb border rounded-md overflow-hidden" type="button"
-              data-full="{{ m | image_url: width: 1200 }}"
-              >
-              {{ m | image_url: width: 200
-                | image_tag: alt: source_product.title, class: 'w-full h-auto' }}
-            </button>
-          {%- endif -%}
+      <div class="{{ bb }}__selected">
+        {%- for block in section.blocks -%}
+          {%- assign source_product = block.settings.source_product -%}
+          {%- assign slot_label = block.settings.label | default: source_product.title | default: 'Choose shade' -%}
+          <div class="{{ bb }}__slot" data-slot-preview="{{ block.id }}" {{ block.shopify_attributes }}>
+            <div class="{{ bb }}__slot-media">
+              {%- if source_product.featured_image -%}
+                {{
+                  source_product.featured_image
+                  | image_url: width: 220
+                  | image_tag: loading: 'lazy', widths: '120, 180, 220', alt: slot_label
+                }}
+              {%- elsif fallback_image -%}
+                {{
+                  fallback_image
+                  | image_url: width: 220
+                  | image_tag: loading: 'lazy', widths: '120, 180, 220', alt: slot_label
+                }}
+              {%- endif -%}
+            </div>
+            <div class="{{ bb }}__slot-copy">
+              <span class="{{ bb }}__slot-label">{{ slot_label }}</span>
+              <strong data-slot-title>{{ section.settings.empty_slot_text }}</strong>
+            </div>
+          </div>
         {%- endfor -%}
       </div>
     </div>
 
-    <!-- Right: builder -->
-    <div>
-      <h1 class="h2">{{ builder_product.title }}</h1>
-      <div class="flex items-center gap-4 mt-2">
-        <p class="price h3 m-0">{{ builder_product.price | money }}</p>
-        <span class="text-sm opacity-75" id="sel-label">(0/{{ PICK_COUNT }} selected)</span>
-      </div>
-      <p class="opacity-75 mt-1">Pick {{ PICK_COUNT }} shades from our collection.</p>
+    <div class="{{ bb }}__panel">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="{{ bb }}__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h1 class="{{ bb }}__title">{{ product.title }}</h1>
+      {%- if section.settings.subtitle != blank -%}
+        <div class="{{ bb }}__subtitle rte">{{ section.settings.subtitle }}</div>
+      {%- endif -%}
 
-      <!-- Shade strip -->
-      <div class="mt-4">
-        <div class="flex flex-wrap gap-2" id="shade-strip">
-          {%- assign fallback_img = source_product.featured_image -%}
-          {%- for v in source_product.variants -%}
-            {%- if v.available -%}
-              {%- assign img = v.featured_image | default: fallback_img -%}
-              <button class="shade btn-swatch" type="button"
-                data-variant-id="{{ v.id }}" data-title="{{ v.title | escape }}">
-                {{ img | image_url: width: 64
-                   | image_tag: alt: v.title, class: 'w-10 h-10 rounded object-cover' }}
-              </button>
+      <div class="{{ bb }}__price-row">
+        <span>{{ section.settings.price_label }}</span>
+        <strong data-bundle-total>{{ 0 | money }}</strong>
+      </div>
+
+      <div class="{{ bb }}__steps">
+        {%- for block in section.blocks -%}
+          {%- assign source_product = block.settings.source_product -%}
+          {%- assign slot_label = block.settings.label | default: source_product.title | default: 'Choose shade' -%}
+          <fieldset
+            class="{{ bb }}__step"
+            data-slot="{{ block.id }}"
+            data-slot-label="{{ slot_label | escape }}"
+            data-required="true"
+            {{ block.shopify_attributes }}
+          >
+            <legend>
+              <span>Step {{ forloop.index }}</span>
+              {{ slot_label }}
+            </legend>
+
+            {%- if source_product != blank and source_product.variants.size > 0 -%}
+              <div class="{{ bb }}__options" role="list">
+                {%- for variant in source_product.variants -%}
+                  {%- liquid
+                    assign variant_media = variant.featured_media.preview_image
+                    if variant_media == blank
+                      assign variant_media = variant.featured_image
+                    endif
+                    if variant_media == blank
+                      assign variant_media = source_product.featured_image
+                    endif
+                  -%}
+                  <button
+                    class="{{ bb }}__option"
+                    type="button"
+                    data-slot-option
+                    data-slot-id="{{ block.id }}"
+                    data-variant-id="{{ variant.id }}"
+                    data-variant-title="{{ variant.title | escape }}"
+                    data-product-title="{{ source_product.title | escape }}"
+                    data-price="{{ variant.price }}"
+                    data-image="{% if variant_media %}{{ variant_media | image_url: width: 720 }}{% endif %}"
+                    aria-pressed="false"
+                    {% unless variant.available %}disabled{% endunless %}
+                  >
+                    <span class="{{ bb }}__option-image">
+                      {%- if variant_media -%}
+                        {{
+                          variant_media
+                          | image_url: width: 180
+                          | image_tag: loading: 'lazy', widths: '90, 140, 180', alt: variant.title
+                        }}
+                      {%- endif -%}
+                    </span>
+                    <span class="{{ bb }}__option-title">{{ variant.title }}</span>
+                    {%- unless variant.available -%}
+                      <span class="{{ bb }}__option-status">Sold out</span>
+                    {%- endunless -%}
+                  </button>
+                {%- endfor -%}
+              </div>
+            {%- else -%}
+              <p class="{{ bb }}__empty">Choose a source product for this slot in the theme editor.</p>
             {%- endif -%}
-          {%- endfor -%}
-        </div>
-        <div class="text-sm mt-2 opacity-75" id="shade-name"></div>
+          </fieldset>
+        {%- endfor -%}
       </div>
 
-      <!-- Your set slots -->
-      <div class="mt-6">
-        <div class="flex items-center justify-between">
-          <h3 class="h4 m-0">Your set</h3>
-          <div class="text-sm opacity-75"><span id="sel-count">0</span>/{{ PICK_COUNT }} selected</div>
-        </div>
-
-        <div id="slots" class="grid grid-cols-3 gap-3 mt-2">
-          {% for i in (1..PICK_COUNT) %}
-          <div class="slot border-2 border-dashed rounded-lg p-3 text-center" data-index="{{ forloop.index0 }}">
-            <div class="slot-img mb-2"></div>
-            <div class="slot-title text-sm opacity-75">Empty</div>
-            <button class="slot-remove hidden text-xs underline mt-1" type="button">Remove</button>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <button id="add-set" class="button button--primary w-full" disabled>
-          Add Set — {{ builder_product.price | money }}
-        </button>
-      </div>
+      <button class="{{ bb }}__add button button--primary" type="button" disabled data-add-bundle>
+        {{ section.settings.button_label }}
+      </button>
+      <p class="{{ bb }}__status" role="status" data-builder-status>
+        {{ section.settings.incomplete_text }}
+      </p>
     </div>
   </div>
 </section>
 
 <style>
-  .btn-swatch{border:1px solid #e5e5e5;border-radius:8px;padding:2px;cursor:pointer;background:#fff}
-  .btn-swatch:hover{outline:2px solid #000}
-  .slot .slot-img img{width:64px;height:64px;object-fit:cover;border-radius:8px;margin:0 auto}
-  .button[disabled]{opacity:.5;cursor:not-allowed}
+  .{{ bb }} {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  .{{ bb }}__inner {
+    display: grid;
+    gap: 3rem;
+  }
+
+  .{{ bb }}__gallery {
+    min-width: 0;
+  }
+
+  .{{ bb }}__hero {
+    overflow: hidden;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.08);
+    border-radius: 0.8rem;
+    background: rgba(var(--color-foreground), 0.035);
+    aspect-ratio: 1 / 1;
+  }
+
+  .{{ bb }}__hero-image,
+  .{{ bb }}__hero img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .{{ bb }}__selected {
+    display: grid;
+    grid-template-columns: repeat({{ section.blocks.size | at_least: 1 }}, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+
+  .{{ bb }}__slot {
+    display: grid;
+    gap: 0.8rem;
+    align-content: start;
+    padding: 0.8rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+    border-radius: 0.8rem;
+    background: rgb(var(--color-background));
+  }
+
+  .{{ bb }}__slot.is-selected {
+    border-color: rgba(var(--color-foreground), 0.34);
+    box-shadow: 0 0.8rem 2rem rgba(var(--color-foreground), 0.06);
+  }
+
+  .{{ bb }}__slot-media {
+    overflow: hidden;
+    border-radius: 0.6rem;
+    background: rgba(var(--color-foreground), 0.035);
+    aspect-ratio: 1 / 1;
+  }
+
+  .{{ bb }}__slot-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .{{ bb }}__slot-copy {
+    min-width: 0;
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .{{ bb }}__slot-label {
+    display: block;
+    color: rgba(var(--color-foreground), 0.62);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+  }
+
+  .{{ bb }}__slot-copy strong {
+    display: block;
+    margin-top: 0.3rem;
+    overflow-wrap: anywhere;
+  }
+
+  .{{ bb }}__panel {
+    min-width: 0;
+  }
+
+  .{{ bb }}__eyebrow {
+    margin: 0 0 0.8rem;
+    color: rgba(var(--color-foreground), 0.68);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.12rem;
+    text-transform: uppercase;
+  }
+
+  .{{ bb }}__title {
+    margin: 0;
+    font-size: clamp(3rem, 4.5vw, 5rem);
+    line-height: 1;
+  }
+
+  .{{ bb }}__subtitle {
+    margin-top: 1.4rem;
+    color: rgba(var(--color-foreground), 0.76);
+  }
+
+  .{{ bb }}__price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    margin: 2rem 0;
+    padding: 1.2rem 0;
+    border-top: 0.1rem solid rgba(var(--color-foreground), 0.1);
+    border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  }
+
+  .{{ bb }}__price-row span {
+    color: rgba(var(--color-foreground), 0.7);
+    font-size: 1.3rem;
+  }
+
+  .{{ bb }}__price-row strong {
+    font-size: 1.8rem;
+  }
+
+  .{{ bb }}__steps {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .{{ bb }}__step {
+    min-width: 0;
+    margin: 0;
+    padding: 1.2rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+    border-radius: 0.8rem;
+  }
+
+  .{{ bb }}__step legend {
+    display: flex;
+    gap: 0.8rem;
+    padding: 0 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .{{ bb }}__step legend span {
+    color: rgba(var(--color-foreground), 0.56);
+    font-size: 1rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+  }
+
+  .{{ bb }}__options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.8rem, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+    max-height: 34rem;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+  }
+
+  .{{ bb }}__option {
+    display: grid;
+    gap: 0.7rem;
+    min-width: 0;
+    padding: 0.7rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+    border-radius: 0.7rem;
+    background: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    cursor: pointer;
+    text-align: left;
+    transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease, transform var(--duration-short) ease;
+  }
+
+  .{{ bb }}__option:hover {
+    border-color: rgba(var(--color-foreground), 0.34);
+    transform: translateY(-0.1rem);
+  }
+
+  .{{ bb }}__option[aria-pressed='true'] {
+    border-color: rgb(var(--color-foreground));
+    box-shadow: 0 0 0 0.2rem rgb(var(--color-foreground));
+  }
+
+  .{{ bb }}__option:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .{{ bb }}__option-image {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    background: rgba(var(--color-foreground), 0.035);
+    aspect-ratio: 1 / 1;
+  }
+
+  .{{ bb }}__option-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .{{ bb }}__option-title {
+    min-height: 2.8em;
+    font-size: 1.2rem;
+    font-weight: 650;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .{{ bb }}__option-status {
+    color: rgba(var(--color-foreground), 0.62);
+    font-size: 1.1rem;
+  }
+
+  .{{ bb }}__add {
+    width: 100%;
+    margin-top: 1.8rem;
+  }
+
+  .{{ bb }}__add[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .{{ bb }}__status {
+    min-height: 1.4em;
+    margin: 1rem 0 0;
+    color: rgba(var(--color-foreground), 0.68);
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .{{ bb }}__empty {
+    margin: 1rem 0 0;
+    color: rgba(var(--color-foreground), 0.68);
+    font-size: 1.3rem;
+  }
+
+  @media screen and (min-width: 990px) {
+    .{{ bb }}__inner {
+      grid-template-columns: minmax(0, 1.05fr) minmax(34rem, 0.95fr);
+      align-items: start;
+      gap: 5rem;
+    }
+
+    .{{ bb }}__gallery {
+      position: sticky;
+      top: 3rem;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .{{ bb }} {
+      padding: {{ section.settings.padding_top | divided_by: 2 }}px 0 {{ section.settings.padding_bottom | divided_by: 2 }}px;
+    }
+
+    .{{ bb }}__selected {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .{{ bb }}__options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-height: none;
+    }
+  }
 </style>
 
 <script>
-(() => {
-  // gallery
-  const main = document.querySelector('#builder-main img');
-  document.getElementById('builder-thumbs')?.addEventListener('click', e => {
-    const b = e.target.closest('button.thumb'); if (!b || !main) return;
-    main.src = b.dataset.full; if (b.dataset.srcset) main.srcset = b.dataset.srcset;
-  });
+  (() => {
+    const root = document.querySelector('.{{ bb }}[data-bundle-builder]');
+    if (!root || root.dataset.initialized === 'true') return;
+    root.dataset.initialized = 'true';
 
-  const PICK_COUNT = {{ PICK_COUNT }};
-  const ALLOW_DUPES = {{ ALLOW_DUPES | json }};
-  const strip = document.getElementById('shade-strip');
-  const label = document.getElementById('sel-label');
-  const shadeName = document.getElementById('shade-name');
-  const slots = [...document.querySelectorAll('#slots .slot')];
-  const addBtn = document.getElementById('add-set');
-  const selCount = document.getElementById('sel-count');
-  const chosen = []; // {id,title,img}
+    const selected = new Map();
+    const addButton = root.querySelector('[data-add-bundle]');
+    const status = root.querySelector('[data-builder-status]');
+    const total = root.querySelector('[data-bundle-total]');
+    const hero = root.querySelector('.{{ bb }}__hero img');
+    const slotCount = root.querySelectorAll('[data-slot]').length;
+    const currencyFormat = {{ shop.money_format | json }};
+    const bundleName = {{ product.title | json }};
+    const incompleteText = {{ section.settings.incomplete_text | json }};
+    const completeText = {{ section.settings.complete_text | json }};
+    const addingText = {{ section.settings.adding_text | json }};
+    const errorText = {{ section.settings.error_text | json }};
 
-  function refresh(){
-    selCount.textContent = String(chosen.length);
-    label.textContent = `(${chosen.length}/${PICK_COUNT} selected)`;
-    addBtn.disabled = (chosen.length !== PICK_COUNT);
+    function formatMoney(cents) {
+      if (window.Shopify && typeof window.Shopify.formatMoney === 'function') {
+        return window.Shopify.formatMoney(cents, currencyFormat);
+      }
 
-    slots.forEach((slot,i)=>{
-      const item = chosen[i];
-      const imgWrap = slot.querySelector('.slot-img');
-      const titleEl = slot.querySelector('.slot-title');
-      const rm = slot.querySelector('.slot-remove');
-      if(item){
-        imgWrap.innerHTML = `<img src="${item.img}" alt="${item.title}">`;
-        titleEl.textContent = item.title;
-        rm.classList.remove('hidden');
-      }else{
-        imgWrap.innerHTML = '';
-        titleEl.textContent = 'Empty';
-        rm.classList.add('hidden');
+      return (cents / 100).toLocaleString(undefined, {
+        style: 'currency',
+        currency: {{ cart.currency.iso_code | json }}
+      });
+    }
+
+    function renderSlot(selection) {
+      const slot = root.querySelector(`[data-slot-preview="${selection.slotId}"]`);
+      if (!slot) return;
+
+      const imageWrap = slot.querySelector('.{{ bb }}__slot-media');
+      const title = slot.querySelector('[data-slot-title]');
+      slot.classList.add('is-selected');
+      title.textContent = selection.variantTitle;
+
+      if (selection.image) {
+        imageWrap.innerHTML = `<img src="${selection.image}" alt="${selection.productTitle} ${selection.variantTitle}" loading="lazy">`;
+      }
+    }
+
+    function refresh() {
+      const selectedItems = [...selected.values()];
+      const isComplete = selectedItems.length === slotCount && slotCount > 0;
+      const cents = selectedItems.reduce((sum, item) => sum + item.price, 0);
+
+      total.textContent = formatMoney(cents);
+      addButton.disabled = !isComplete;
+      status.textContent = isComplete ? completeText : incompleteText.replace('[count]', selectedItems.length).replace('[total]', slotCount);
+
+      const lastWithImage = [...selectedItems].reverse().find((item) => item.image);
+      if (lastWithImage && hero) {
+        hero.src = lastWithImage.image;
+        hero.removeAttribute('srcset');
+        hero.alt = `${lastWithImage.productTitle} ${lastWithImage.variantTitle}`;
+      }
+    }
+
+    root.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-slot-option]');
+      if (!button || button.disabled) return;
+
+      const slotId = button.dataset.slotId;
+      root.querySelectorAll(`[data-slot-option][data-slot-id="${slotId}"]`).forEach((option) => {
+        option.setAttribute('aria-pressed', 'false');
+      });
+      button.setAttribute('aria-pressed', 'true');
+
+      const selection = {
+        slotId,
+        variantId: Number(button.dataset.variantId),
+        variantTitle: button.dataset.variantTitle,
+        productTitle: button.dataset.productTitle,
+        price: Number(button.dataset.price || 0),
+        image: button.dataset.image
+      };
+
+      selected.set(slotId, selection);
+      renderSlot(selection);
+      refresh();
+    });
+
+    addButton.addEventListener('click', async () => {
+      if (selected.size !== slotCount) return;
+
+      const bundleId = `BB-${Date.now()}`;
+      const items = [...selected.values()].map((item) => ({
+        id: item.variantId,
+        quantity: 1,
+        properties: {
+          Bundle: bundleName,
+          BundleID: bundleId,
+          Selection: `${item.productTitle} - ${item.variantTitle}`
+        }
+      }));
+
+      addButton.disabled = true;
+      status.textContent = addingText;
+
+      try {
+        const response = await fetch(`${routes.cart_add_url}.js`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          },
+          body: JSON.stringify({ items })
+        });
+
+        if (!response.ok) throw new Error('Cart add failed');
+
+        window.location.href = routes.cart_url;
+      } catch (error) {
+        addButton.disabled = false;
+        status.textContent = errorText;
       }
     });
-  }
 
-  // remove from a slot
-  document.getElementById('slots').addEventListener('click', e=>{
-    const rm = e.target.closest('.slot-remove'); if(!rm) return;
-    const slot = e.target.closest('.slot');
-    const idx = Number(slot.dataset.index);
-    chosen.splice(idx,1);
     refresh();
-  });
-
-  // pick from shade strip
-  strip.addEventListener('click', e=>{
-    const btn = e.target.closest('.shade'); if(!btn) return;
-    const id = btn.dataset.variantId;
-    const title = btn.dataset.title;
-    const imgEl = btn.querySelector('img'); const img = imgEl ? imgEl.src : '';
-
-    if(!ALLOW_DUPES && chosen.find(x => x.id === id)){
-      shadeName.textContent = `${title} is already selected`;
-      return;
-    }
-    if(chosen.length >= PICK_COUNT) return;
-
-    chosen.push({ id, title, img });
-    shadeName.textContent = title;
-    refresh();
-  });
-
-  // add to cart
-  addBtn.addEventListener('click', async ()=>{
-    if(chosen.length !== PICK_COUNT) return;
-    const bundleId = `SET-${Date.now()}`;
-    const items = chosen.map(x => ({
-      id: x.id, quantity: 1,
-      properties: { Bundle: '{{ builder_product.title | escape }}', BundleID: bundleId }
-    }));
-
-    try{
-      const res = await fetch('/cart/add.js', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body: JSON.stringify({ items })
-      });
-      if(!res.ok) throw new Error();
-      window.location = '/cart';
-    }catch(e){
-      alert('Could not add your set. Please try again.');
-    }
-  });
-
-  refresh();
-})();
+  })();
 </script>
+
+{% schema %}
+{
+  "name": "Bundle builder product",
+  "tag": "section",
+  "class": "section-bundle-builder-product",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Build your set"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>Pick each shade from the real Janelle products. Your selections appear in the kit preview before adding to cart.</p>"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price label",
+      "default": "Selected total"
+    },
+    {
+      "type": "text",
+      "id": "empty_slot_text",
+      "label": "Empty slot text",
+      "default": "Not selected"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Add selected set to cart"
+    },
+    {
+      "type": "text",
+      "id": "incomplete_text",
+      "label": "Incomplete status",
+      "default": "Choose all shades to continue ([count]/[total])"
+    },
+    {
+      "type": "text",
+      "id": "complete_text",
+      "label": "Complete status",
+      "default": "Your set is ready."
+    },
+    {
+      "type": "text",
+      "id": "adding_text",
+      "label": "Adding status",
+      "default": "Adding your set..."
+    },
+    {
+      "type": "text",
+      "id": "error_text",
+      "label": "Error status",
+      "default": "Could not add your set. Please try again."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slot",
+      "name": "Product slot",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Slot label",
+          "default": "Choose shade"
+        },
+        {
+          "type": "product",
+          "id": "source_product",
+          "label": "Source product"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Bundle builder product",
+      "blocks": [
+        {
+          "type": "slot",
+          "settings": {
+            "label": "Squeeze gloss"
+          }
+        },
+        {
+          "type": "slot",
+          "settings": {
+            "label": "Brush gloss"
+          }
+        },
+        {
+          "type": "slot",
+          "settings": {
+            "label": "Lip liner"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
