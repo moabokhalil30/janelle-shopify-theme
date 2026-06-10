@@ -80,6 +80,21 @@
           "type": "price",
           "settings": {}
         },
+        "kit_contents_X7PaE4": {
+          "type": "kit_contents",
+          "settings": {
+            "heading": "What's in the kit",
+            "title_1": "Gloss",
+            "role_1": "shine + colour",
+            "title_2": "Liner",
+            "role_2": "define + fill",
+            "title_3": "Mini",
+            "role_3": "on-the-go",
+            "text_color": "#121212",
+            "accent_color": "#b9648a",
+            "placeholder_color": "#f3e4ec"
+          }
+        },
         "featured_review": {
           "type": "featured_review",
           "settings": {
@@ -226,6 +241,7 @@
         "product_rating",
         "title",
         "price",
+        "kit_contents_X7PaE4",
         "featured_review",
         "benefits",
         "social",
