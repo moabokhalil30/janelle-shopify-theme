@@ -24,7 +24,17 @@
 
       <div class="{{ bb }}__selected">
         {%- for block in section.blocks -%}
-          {%- assign source_product = block.settings.source_product -%}
+          {%- liquid
+            assign picked_product = block.settings.source_product
+            assign source_handle = block.settings.source_handle
+            if source_handle == blank
+              assign source_handle = picked_product.handle | default: picked_product
+            endif
+            assign source_product = picked_product
+            if source_product.variants.size == blank and source_handle != blank
+              assign source_product = all_products[source_handle]
+            endif
+          -%}
           {%- assign slot_label = block.settings.label | default: source_product.title | default: 'Choose shade' -%}
           <div class="{{ bb }}__slot" data-slot-preview="{{ block.id }}" {{ block.shopify_attributes }}>
             <div class="{{ bb }}__slot-media">
@@ -67,7 +77,17 @@
 
       <div class="{{ bb }}__steps">
         {%- for block in section.blocks -%}
-          {%- assign source_product = block.settings.source_product -%}
+          {%- liquid
+            assign picked_product = block.settings.source_product
+            assign source_handle = block.settings.source_handle
+            if source_handle == blank
+              assign source_handle = picked_product.handle | default: picked_product
+            endif
+            assign source_product = picked_product
+            if source_product.variants.size == blank and source_handle != blank
+              assign source_product = all_products[source_handle]
+            endif
+          -%}
           {%- assign slot_label = block.settings.label | default: source_product.title | default: 'Choose shade' -%}
           <fieldset
             class="{{ bb }}__step"
@@ -123,7 +143,10 @@
                 {%- endfor -%}
               </div>
             {%- else -%}
-              <p class="{{ bb }}__empty">Choose a source product for this slot in the theme editor.</p>
+              <p class="{{ bb }}__empty">
+                Source product not found for {{ slot_label }}.
+                {%- if source_handle != blank -%} Check the handle: {{ source_handle }}.{%- endif -%}
+              </p>
             {%- endif -%}
           </fieldset>
         {%- endfor -%}
@@ -639,6 +662,12 @@
           "id": "label",
           "label": "Slot label",
           "default": "Choose shade"
+        },
+        {
+          "type": "text",
+          "id": "source_handle",
+          "label": "Fallback product handle",
+          "info": "Used if the product picker does not resolve in preview. Example: lip-gloss-squeeze-tube"
         },
         {
           "type": "product",

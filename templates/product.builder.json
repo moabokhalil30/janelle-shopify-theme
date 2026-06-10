@@ -16,6 +16,7 @@
           "type": "slot",
           "settings": {
             "label": "Squeeze gloss",
+            "source_handle": "lip-gloss-squeeze-tube",
             "source_product": "lip-gloss-squeeze-tube"
           }
         },
@@ -23,6 +24,7 @@
           "type": "slot",
           "settings": {
             "label": "Brush gloss",
+            "source_handle": "lip-gloss-brush-tube",
             "source_product": "lip-gloss-brush-tube"
           }
         },
@@ -30,6 +32,7 @@
           "type": "slot",
           "settings": {
             "label": "Lip liner",
+            "source_handle": "lip-liner-07-chocolate",
             "source_product": "lip-liner-07-chocolate"
           }
         }
