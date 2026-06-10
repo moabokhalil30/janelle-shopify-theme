@@ -1024,6 +1024,17 @@
         { "type": "text", "id": "complete_text", "label": "Complete status", "default": "Your kit is ready." },
         { "type": "text", "id": "adding_text", "label": "Adding status", "default": "Adding your kit..." },
         { "type": "text", "id": "error_text", "label": "Error status", "default": "Could not add your kit. Please try again." },
+        {
+          "type": "select",
+          "id": "cart_mode",
+          "label": "Cart pricing mode",
+          "default": "bundle_product",
+          "options": [
+            { "value": "bundle_product", "label": "Fixed bundle product price" },
+            { "value": "component_variants", "label": "Component variant prices" }
+          ],
+          "info": "Fixed bundle product price adds this product to cart with shade selections as properties. Component variant prices adds each selected variant as its own cart line."
+        },
         { "type": "header", "content": "Slot 1" },
         { "type": "text", "id": "label_1", "label": "Label", "default": "Squeeze gloss" },
         { "type": "text", "id": "source_handle_1", "label": "Fallback product handle", "info": "Only used if the source product picker is empty or unavailable." },

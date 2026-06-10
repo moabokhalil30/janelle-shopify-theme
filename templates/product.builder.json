@@ -94,7 +94,7 @@
             "icon": "✓",
             "bullet_1": "Choose shades from the real Janelle products",
             "bullet_2": "Selected shades show before adding to cart",
-            "bullet_3": "Inventory comes from the actual component products",
+            "bullet_3": "Bundle price stays fixed while shade choices are saved",
             "bullet_4": "",
             "icon_color": "#b9648a",
             "text_color": "#121212"
@@ -111,6 +111,7 @@
             "complete_text": "Your kit is ready.",
             "adding_text": "Adding your kit...",
             "error_text": "Could not add your kit. Please try again.",
+            "cart_mode": "bundle_product",
             "label_1": "Lip liner 1",
             "source_handle_1": "lip-liner-07-chocolate",
             "source_product_1": "lip-liner-07-chocolate",
@@ -150,7 +151,7 @@
           "settings": {
             "heading": "What's included",
             "icon": "none",
-            "content": "<p>Your selected glosses and liner are added as real products in cart.</p>",
+            "content": "<p>Your selected shades are saved on the Lip Kit order so the bundle keeps its fixed price.</p>",
             "page": ""
           }
         },

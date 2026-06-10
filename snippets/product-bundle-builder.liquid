@@ -28,9 +28,19 @@
   if source_3.variants.size == blank and block.settings.source_handle_3 != blank
     assign source_3 = all_products[block.settings.source_handle_3]
   endif
+
+  assign cart_mode = block.settings.cart_mode | default: 'bundle_product'
+  assign bundle_variant = product.selected_or_first_available_variant
 -%}
 
-<div class="janelle-bundle-picker" id="{{ builder_id }}" data-janelle-bundle-picker {{ block.shopify_attributes }}>
+<div
+  class="janelle-bundle-picker"
+  id="{{ builder_id }}"
+  data-janelle-bundle-picker
+  data-cart-mode="{{ cart_mode }}"
+  data-bundle-variant-id="{{ bundle_variant.id }}"
+  {{ block.shopify_attributes }}
+>
   <div class="janelle-bundle-picker__head">
     <div>
       <p>{{ block.settings.eyebrow }}</p>
@@ -118,11 +128,29 @@
                   endif
 
                   if variant_image == blank
-                    assign variant_key = variant_title | downcase | strip
+                    assign variant_key = variant_title | handleize
                     for media in source_product.media
-                      assign media_alt = media.alt | downcase | strip
+                      assign media_alt = media.alt | handleize
                       if media.media_type == 'image' and media_alt != blank
                         if media_alt == variant_key or media_alt contains variant_key or variant_key contains media_alt
+                          assign variant_image = media.preview_image
+                          break
+                        endif
+                      endif
+                    endfor
+                  endif
+
+                  if variant_image == blank
+                    assign source_image_count = source_product.media | where: 'media_type', 'image' | size
+                    assign target_image_position = forloop.index
+                    if source_image_count > source_product.variants.size
+                      assign target_image_position = target_image_position | plus: 1
+                    endif
+                    assign image_media_position = 0
+                    for media in source_product.media
+                      if media.media_type == 'image'
+                        assign image_media_position = image_media_position | plus: 1
+                        if image_media_position == target_image_position
                           assign variant_image = media.preview_image
                           break
                         endif
@@ -597,6 +625,8 @@
     const incompleteText = {{ block.settings.incomplete_text | json }};
     const addingText = {{ block.settings.adding_text | json }};
     const errorText = {{ block.settings.error_text | json }};
+    const cartMode = root.dataset.cartMode || 'bundle_product';
+    const bundleVariantId = Number(root.dataset.bundleVariantId || 0);
 
     function escapeHtml(value) {
       return String(value || '').replace(/[&<>"']/g, (char) => ({
@@ -766,15 +796,46 @@
       if (selected.size !== requiredCount) return;
 
       const bundleId = `BB-${Date.now()}`;
-      const items = [...selected.values()].map((item) => ({
-        id: item.id,
-        quantity: 1,
-        properties: {
+      const selections = [...selected.entries()]
+        .sort(([slotA], [slotB]) => Number(slotA) - Number(slotB))
+        .map(([, item]) => item);
+      let items;
+
+      if (cartMode === 'component_variants') {
+        items = selections.map((item) => ({
+          id: item.id,
+          quantity: 1,
+          properties: {
+            Bundle: bundleName,
+            BundleID: bundleId,
+            Selection: `${item.productTitle} - ${item.variantTitle}`
+          }
+        }));
+      } else {
+        if (!bundleVariantId) {
+          status.textContent = errorText;
+          return;
+        }
+
+        const properties = {
           Bundle: bundleName,
           BundleID: bundleId,
-          Selection: `${item.productTitle} - ${item.variantTitle}`
-        }
-      }));
+          'Bundle selections': selections.map((item) => `${item.productTitle} - ${item.variantTitle}`).join(' / '),
+          'Component variant IDs': selections.map((item) => item.id).join(', ')
+        };
+
+        selections.forEach((item, index) => {
+          properties[`Shade ${index + 1}`] = `${item.productTitle} - ${item.variantTitle}`;
+        });
+
+        items = [
+          {
+            id: bundleVariantId,
+            quantity: 1,
+            properties
+          }
+        ];
+      }
 
       addButton.disabled = true;
       addButton.classList.add('loading');
