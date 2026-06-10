@@ -1,0 +1,63 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "blocks_kXNaDP": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_625fc49_EXRXw7": {
+          "type": "ai_gen_block_625fc49",
+          "disabled": true,
+          "settings": {
+            "column_1_superheader": "",
+            "column_1_heading": "Welcome to Janelle!                                                                    ___",
+            "column_1_text": "<p>Founded in 2021 by Enjy and Samar, Janelle is a cosmetics brand that specializes in lip gloss. Our mission is to provide high-quality products at affordable prices, making beauty accessible to everyone.<br/></p>",
+            "column_2_image": "shopify://shop_images/IMG_2796-1-scaled-scaled.webp",
+            "column_2_text": "<p>Our founders, Enjy and Samar, believe that everyone deserves to feel beautiful. They created Janelle with the vision of offering top-tier lip gloss that doesn’t break the bank. Our products are meticulously crafted, ensuring exceptional quality that outperforms high-end brands.</p>",
+            "column_3_text": "<p>Experience the difference in every product.</p>",
+            "column_3_image": "shopify://shop_images/IMG_8730_35144ea1-fb3e-4271-a8ff-b5252ec2c76d.webp",
+            "container_width": 1200,
+            "column_gap": 40,
+            "content_gap": 20,
+            "padding_top": 50,
+            "padding_bottom": 50,
+            "background_color": "#f9e0eb",
+            "superheader_color": "#d9538e",
+            "heading_color": "#d9538e",
+            "text_color": "#121212",
+            "superheader_size": 12,
+            "superheader_spacing": 10,
+            "heading_size": 32,
+            "heading_spacing": 20,
+            "text_size": 16,
+            "image_border_radius": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_625fc49_EXRXw7"
+      ],
+      "name": "Three column layout",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "blocks_kXNaDP"
+  ]
+}

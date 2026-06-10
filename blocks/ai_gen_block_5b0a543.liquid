@@ -1,0 +1,931 @@
+{% doc %}
+  @prompt
+     i want 8 dynamic boxes ( whethaer i want to show it or not ) for 8 different categories with title and peices and button for each one as 1 box and text beside it and the other box is under the text and the text is under the box like this with image selector with boarder radius and adjusting spaces between text , make the text and button in the center and there is a sale tag (dynamic ) with the before and after price , i want the background of the section customizable and the font of the section is times new roman , the image section must be stick to it's size " all images are the same size", the button i want border to it 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-category-showcase-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding }}px 20px;
+    font-family: 'Times New Roman', Times, serif;
+  }
+
+  .ai-category-showcase__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-category-showcase__item-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.item_gap }}px;
+    align-items: center;
+    margin-bottom: {{ block.settings.item_spacing }}px;
+  }
+
+  .ai-category-showcase__item-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-category-showcase__item--reverse-{{ ai_gen_id }} {
+    direction: rtl;
+  }
+
+  .ai-category-showcase__item--reverse-{{ ai_gen_id }} > * {
+    direction: ltr;
+  }
+
+  .ai-category-showcase__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-category-showcase__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-category-showcase__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-category-showcase__placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-category-showcase__sale-tag-{{ ai_gen_id }} {
+    position: absolute;
+    top: {{ block.settings.sale_tag_position }}px;
+    right: {{ block.settings.sale_tag_position }}px;
+    background-color: {{ block.settings.sale_tag_bg_color }};
+    color: {{ block.settings.sale_tag_text_color }};
+    padding: 8px 16px;
+    border-radius: {{ block.settings.sale_tag_radius }}px;
+    font-size: {{ block.settings.sale_tag_font_size }}px;
+    font-weight: bold;
+    z-index: 2;
+  }
+
+  .ai-category-showcase__content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: {{ block.settings.content_gap }}px;
+  }
+
+  .ai-category-showcase__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .ai-category-showcase__price-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .ai-category-showcase__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    color: {{ block.settings.price_color }};
+    font-weight: bold;
+  }
+
+  .ai-category-showcase__compare-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.compare_price_font_size }}px;
+    color: {{ block.settings.compare_price_color }};
+    text-decoration: line-through;
+  }
+
+  .ai-category-showcase__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    cursor: pointer;
+  }
+
+  .ai-category-showcase__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-category-showcase__item-{{ ai_gen_id }},
+    .ai-category-showcase__item--reverse-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      direction: ltr;
+    }
+
+    .ai-category-showcase__item--reverse-{{ ai_gen_id }} > * {
+      direction: ltr;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-category-showcase-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-category-showcase__container-{{ ai_gen_id }}">
+    {% for i in (1..8) %}
+      {% liquid
+        assign enabled_key = 'category_' | append: i | append: '_enabled'
+        assign image_key = 'category_' | append: i | append: '_image'
+        assign title_key = 'category_' | append: i | append: '_title'
+        assign price_key = 'category_' | append: i | append: '_price'
+        assign compare_price_key = 'category_' | append: i | append: '_compare_price'
+        assign button_text_key = 'category_' | append: i | append: '_button_text'
+        assign button_link_key = 'category_' | append: i | append: '_button_link'
+        assign show_sale_key = 'category_' | append: i | append: '_show_sale'
+        assign sale_text_key = 'category_' | append: i | append: '_sale_text'
+
+        assign enabled = block.settings[enabled_key]
+        assign image = block.settings[image_key]
+        assign title = block.settings[title_key]
+        assign price = block.settings[price_key]
+        assign compare_price = block.settings[compare_price_key]
+        assign button_text = block.settings[button_text_key]
+        assign button_link = block.settings[button_link_key]
+        assign show_sale = block.settings[show_sale_key]
+        assign sale_text = block.settings[sale_text_key]
+
+        assign is_reverse = i | modulo: 2
+      %}
+
+      {% if enabled %}
+        <div class="ai-category-showcase__item-{{ ai_gen_id }} {% if is_reverse == 0 %}ai-category-showcase__item--reverse-{{ ai_gen_id }}{% endif %}">
+          <div class="ai-category-showcase__image-wrapper-{{ ai_gen_id }}">
+            {% if image %}
+              <img
+                src="{{ image | image_url: width: 800 }}"
+                alt="{{ image.alt | escape }}"
+                class="ai-category-showcase__image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="800"
+                height="800"
+              >
+            {% else %}
+              <div class="ai-category-showcase__placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+
+            {% if show_sale and sale_text != blank %}
+              <div class="ai-category-showcase__sale-tag-{{ ai_gen_id }}">
+                {{ sale_text }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="ai-category-showcase__content-{{ ai_gen_id }}">
+            {% if title != blank %}
+              <h3 class="ai-category-showcase__title-{{ ai_gen_id }}">{{ title }}</h3>
+            {% endif %}
+
+            <div class="ai-category-showcase__price-wrapper-{{ ai_gen_id }}">
+              {% if price != blank %}
+                <span class="ai-category-showcase__price-{{ ai_gen_id }}">{{ price }}</span>
+              {% endif %}
+              {% if compare_price != blank %}
+                <span class="ai-category-showcase__compare-price-{{ ai_gen_id }}">{{ compare_price }}</span>
+              {% endif %}
+            </div>
+
+            {% if button_text != blank %}
+              <a
+                href="{{ button_link }}"
+                class="ai-category-showcase__button-{{ ai_gen_id }}"
+              >
+                {{ button_text }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Category showcase",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Space between items",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Space between image and text",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Space between content elements",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Image style"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Title style"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Price style"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "min": 14,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Price font size",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "compare_price_font_size",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Compare price font size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare price color",
+      "default": "#999999"
+    },
+    {
+      "type": "header",
+      "content": "Sale tag style"
+    },
+    {
+      "type": "range",
+      "id": "sale_tag_position",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Sale tag position",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "sale_tag_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Sale tag font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "sale_tag_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Sale tag border radius",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "sale_tag_bg_color",
+      "label": "Sale tag background",
+      "default": "#ff0000"
+    },
+    {
+      "type": "color",
+      "id": "sale_tag_text_color",
+      "label": "Sale tag text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Button font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 5,
+      "max": 25,
+      "step": 5,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Button border width",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Button hover border color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Category 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_1_enabled",
+      "label": "Show category 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_1_title",
+      "label": "Title",
+      "default": "Category 1"
+    },
+    {
+      "type": "text",
+      "id": "category_1_price",
+      "label": "Price",
+      "default": "EGP 299"
+    },
+    {
+      "type": "text",
+      "id": "category_1_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_1_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_1_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_1_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_1_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_2_enabled",
+      "label": "Show category 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_2_title",
+      "label": "Title",
+      "default": "Category 2"
+    },
+    {
+      "type": "text",
+      "id": "category_2_price",
+      "label": "Price",
+      "default": "EGP 399"
+    },
+    {
+      "type": "text",
+      "id": "category_2_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_2_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_2_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_2_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_2_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_3_enabled",
+      "label": "Show category 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_3_title",
+      "label": "Title",
+      "default": "Category 3"
+    },
+    {
+      "type": "text",
+      "id": "category_3_price",
+      "label": "Price",
+      "default": "EGP 499"
+    },
+    {
+      "type": "text",
+      "id": "category_3_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_3_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_3_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_3_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_3_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_4_enabled",
+      "label": "Show category 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_4_title",
+      "label": "Title",
+      "default": "Category 4"
+    },
+    {
+      "type": "text",
+      "id": "category_4_price",
+      "label": "Price",
+      "default": "EGP 599"
+    },
+    {
+      "type": "text",
+      "id": "category_4_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_4_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_4_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_4_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_4_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_5_enabled",
+      "label": "Show category 5",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_5_title",
+      "label": "Title",
+      "default": "Category 5"
+    },
+    {
+      "type": "text",
+      "id": "category_5_price",
+      "label": "Price",
+      "default": "EGP 699"
+    },
+    {
+      "type": "text",
+      "id": "category_5_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_5_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_5_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_5_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_5_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_6_enabled",
+      "label": "Show category 6",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_6_title",
+      "label": "Title",
+      "default": "Category 6"
+    },
+    {
+      "type": "text",
+      "id": "category_6_price",
+      "label": "Price",
+      "default": "EGP 799"
+    },
+    {
+      "type": "text",
+      "id": "category_6_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_6_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_6_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_6_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_6_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_7_enabled",
+      "label": "Show category 7",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_7_title",
+      "label": "Title",
+      "default": "Category 7"
+    },
+    {
+      "type": "text",
+      "id": "category_7_price",
+      "label": "Price",
+      "default": "EGP 899"
+    },
+    {
+      "type": "text",
+      "id": "category_7_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_7_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_7_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_7_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_7_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    },
+    {
+      "type": "header",
+      "content": "Category 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_8_enabled",
+      "label": "Show category 8",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "category_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "category_8_title",
+      "label": "Title",
+      "default": "Category 8"
+    },
+    {
+      "type": "text",
+      "id": "category_8_price",
+      "label": "Price",
+      "default": "EGP 999"
+    },
+    {
+      "type": "text",
+      "id": "category_8_compare_price",
+      "label": "Compare at price"
+    },
+    {
+      "type": "text",
+      "id": "category_8_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "category_8_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_8_show_sale",
+      "label": "Show sale tag",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "category_8_sale_text",
+      "label": "Sale tag text",
+      "default": "SALE"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category showcase"
+    }
+  ]
+}
+{% endschema %}

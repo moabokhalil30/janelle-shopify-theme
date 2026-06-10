@@ -1,0 +1,70 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "blocks_JbDVMp": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_7863291_dWcDyd": {
+          "type": "ai_gen_block_7863291",
+          "settings": {
+            "image": "shopify://shop_images/faq.png",
+            "image_width": 30,
+            "image_border_radius": 28,
+            "menu_padding": 20,
+            "heading_size": 18,
+            "text_size": 14,
+            "heading_color": "#121212",
+            "heading_hover_color": "#d585a6",
+            "text_color": "#121212",
+            "border_color": "#e0e0e0",
+            "menu_1_enabled": true,
+            "menu_1_heading": "How to use?",
+            "menu_1_content": "<p>-Apply alone or over your favorite lipstick for a glossy fuller lips<br/>-Apply and build in swipes to get more pigmented</p>",
+            "menu_2_enabled": true,
+            "menu_2_heading": "Exchange and return policy:",
+            "menu_2_content": "<p>Refund and exchange are not available unless you received a wrong order</p>",
+            "menu_3_enabled": false,
+            "menu_3_heading": "Product care",
+            "menu_3_content": "<p>Machine wash cold with like colors. Tumble dry low. Do not bleach or iron.</p>",
+            "menu_4_enabled": false,
+            "menu_4_heading": "Size guide",
+            "menu_4_content": "<p>Please refer to our size chart for accurate measurements. If between sizes, we recommend sizing up.</p>",
+            "menu_5_enabled": false,
+            "menu_5_heading": "Contact us",
+            "menu_5_content": "<p>Have questions? Reach out to our customer service team at support@example.com.</p>"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_7863291_dWcDyd"
+      ],
+      "name": "Image collapsible menus",
+      "settings": {}
+    },
+    "17660431659a35632a": {
+      "type": "_blocks",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "blocks_JbDVMp",
+    "17660431659a35632a"
+  ]
+}

@@ -1,0 +1,87 @@
+{% assign bundle_product = all_products['lip-gloss-brush-tube'] %}
+<section class="pick3-bundle page-width">
+  <h2 class="h3">Build Your 3-Piece Bundle</h2>
+  <p class="text-sm opacity-75 mb-4">Choose any 3 shades you love.</p>
+
+  <div id="pick3-grid"
+       class="grid grid-cols-2 md:grid-cols-3 gap-4"
+       data-limit="3">
+    {% for v in bundle_product.variants %}
+      {% if v.available %}
+      <button class="pick3-item"
+              type="button"
+              data-variant-id="{{ v.id }}"
+              data-price="{{ v.price | divided_by: 100.0 }}"
+              aria-pressed="false">
+        <span class="block font-medium">{{ v.title }}</span>
+        {% if v.featured_image %}
+          <{{ v.featured_image | image_url: width: 400 | image_tag: alt: v.title, class: 'rounded-lg w-full h-auto mt-1' }}
+ />
+        {% endif %}
+      </button>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="pick3-footer mt-6 flex items-center gap-4">
+    <span id="pick3-count">Selected: <strong>0</strong>/3</span>
+    <button id="pick3-add"
+            class="button button--primary"
+            disabled>Add 3 to cart</button>
+  </div>
+</section>
+
+<style>
+  .pick3-item{border:1px solid #e5e5e5;border-radius:12px;padding:10px;cursor:pointer;text-align:center}
+  .pick3-item[aria-pressed="true"]{border-color:#000;background:#fafafa}
+  .pick3-footer .button[disabled]{opacity:.5;cursor:not-allowed}
+</style>
+
+<script>
+(() => {
+  const grid = document.getElementById('pick3-grid');
+  if(!grid) return;
+  const limit = parseInt(grid.dataset.limit||'3',10);
+  const items = [...grid.querySelectorAll('.pick3-item')];
+  const addBtn = document.getElementById('pick3-add');
+  const countEl = document.querySelector('#pick3-count strong');
+  const selected = new Set();
+
+  function updateUI(){
+    countEl.textContent = selected.size;
+    addBtn.disabled = selected.size !== limit;
+  }
+
+  items.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id = btn.dataset.variantId;
+      const pressed = btn.getAttribute('aria-pressed')==='true';
+      if(pressed){
+        selected.delete(id);
+        btn.setAttribute('aria-pressed','false');
+      } else {
+        if(selected.size>=limit) return;
+        selected.add(id);
+        btn.setAttribute('aria-pressed','true');
+      }
+      updateUI();
+    });
+  });
+
+  addBtn.addEventListener('click', async ()=>{
+    if(selected.size!==limit) return;
+    const payload={items:[...selected].map(id=>({id,quantity:1,properties:{Bundle:'3-Piece Set'}}))};
+    try{
+      const res=await fetch('/cart/add.js',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error();
+      window.location='/cart';
+    }catch(e){alert('Could not add to cart.');}
+  });
+
+  updateUI();
+})();
+</script>

@@ -1,0 +1,145 @@
+{% doc %}
+  @prompt
+    i want a title with adjustable font colors
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-title-block-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .ai-title-container-{{ ai_gen_id }} {
+    width: {{ block.settings.desktop_width_percent }}%;
+    margin: 0 auto;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-title-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-title-container-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-title-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.font_size }}px * 0.8);
+    }
+  }
+{% endstyle %}
+
+<div class="ai-title-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-title-container-{{ ai_gen_id }}">
+    {% if block.settings.title != blank %}
+      <h2 class="ai-title-heading-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+    {% else %}
+      <h2 class="ai-title-heading-{{ ai_gen_id }}">Add your title here</h2>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title text",
+      "default": "Your title here"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Title"
+    }
+  ]
+}
+{% endschema %}

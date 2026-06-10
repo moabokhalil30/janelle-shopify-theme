@@ -1,0 +1,429 @@
+{% doc %}
+  @prompt
+    Create an image collapsible menus block with 50px left and right margins. The block should display images with collapsible menu sections that can expand and collapse when clicked., I WANT AN IMAGE ON THE RIGHT AND THE MENUES ON THE LEFT (ONLY 2 MENUES)
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-image-collapsible-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    margin-left: 50px;
+    margin-right: 50px;
+    max-width: calc(100% - 100px);
+  }
+
+  .ai-image-collapsible__wrapper-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.gap }}px;
+    align-items: flex-start;
+  }
+
+  .ai-image-collapsible__menus-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-image-collapsible__image-section-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-image-collapsible__main-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.main_image_border_radius }}px;
+  }
+
+  .ai-image-collapsible__main-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ block.settings.main_image_border_radius }}px;
+    position: relative;
+  }
+
+  .ai-image-collapsible__main-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-image-collapsible__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-image-collapsible__item-{{ ai_gen_id }} {
+    border-bottom: {{ block.settings.border_thickness }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-image-collapsible__item-{{ ai_gen_id }}:first-child {
+    border-top: {{ block.settings.border_thickness }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-image-collapsible__header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: {{ block.settings.header_padding }}px 0;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .ai-image-collapsible__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .ai-image-collapsible__icon-{{ ai_gen_id }} {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    color: {{ block.settings.icon_color }};
+  }
+
+  .ai-image-collapsible__icon-{{ ai_gen_id }}.active {
+    transform: rotate(180deg);
+  }
+
+  .ai-image-collapsible__content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .ai-image-collapsible__content-{{ ai_gen_id }}.active {
+    max-height: 2000px;
+  }
+
+  .ai-image-collapsible__inner-{{ ai_gen_id }} {
+    padding-bottom: {{ block.settings.content_padding }}px;
+  }
+
+  .ai-image-collapsible__text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-image-collapsible-{{ ai_gen_id }} {
+      margin-left: 20px;
+      margin-right: 20px;
+      max-width: calc(100% - 40px);
+    }
+
+    .ai-image-collapsible__wrapper-{{ ai_gen_id }} {
+      flex-direction: column-reverse;
+    }
+
+    .ai-image-collapsible__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.9);
+    }
+
+    .ai-image-collapsible__text-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.text_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<image-collapsible-{{ ai_gen_id }} class="ai-image-collapsible-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-image-collapsible__wrapper-{{ ai_gen_id }}">
+    <div class="ai-image-collapsible__menus-{{ ai_gen_id }}">
+      {% for i in (1..2) %}
+        {% liquid
+          assign menu_enabled_key = 'menu_' | append: i | append: '_enabled'
+          assign menu_title_key = 'menu_' | append: i | append: '_title'
+          assign menu_text_key = 'menu_' | append: i | append: '_text'
+
+          assign menu_enabled = block.settings[menu_enabled_key]
+          assign menu_title = block.settings[menu_title_key]
+          assign menu_text = block.settings[menu_text_key]
+        %}
+
+        {% if menu_enabled %}
+          <div class="ai-image-collapsible__item-{{ ai_gen_id }}" data-menu-id="{{ i }}">
+            <button
+              class="ai-image-collapsible__header-{{ ai_gen_id }}"
+              aria-expanded="false"
+              aria-controls="ai-image-collapsible-content-{{ ai_gen_id }}-{{ i }}"
+            >
+              <h3 class="ai-image-collapsible__title-{{ ai_gen_id }}">{{ menu_title }}</h3>
+              <svg
+                class="ai-image-collapsible__icon-{{ ai_gen_id }}"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <div
+              class="ai-image-collapsible__content-{{ ai_gen_id }}"
+              id="ai-image-collapsible-content-{{ ai_gen_id }}-{{ i }}"
+            >
+              <div class="ai-image-collapsible__inner-{{ ai_gen_id }}">
+                {% if menu_text != blank %}
+                  <div class="ai-image-collapsible__text-{{ ai_gen_id }}">
+                    {{ menu_text }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="ai-image-collapsible__image-section-{{ ai_gen_id }}">
+      {% if block.settings.main_image %}
+        <img
+          src="{{ block.settings.main_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.main_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.main_image.width }}"
+          height="{{ block.settings.main_image.height }}"
+          class="ai-image-collapsible__main-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-image-collapsible__main-image-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-image-collapsible__empty-state-{{ ai_gen_id }}">
+            Add an image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</image-collapsible-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ImageCollapsible{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.items = this.querySelectorAll('.ai-image-collapsible__item-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.items.forEach((item) => {
+          const header = item.querySelector('.ai-image-collapsible__header-{{ ai_gen_id }}');
+          const content = item.querySelector('.ai-image-collapsible__content-{{ ai_gen_id }}');
+          const icon = header.querySelector('.ai-image-collapsible__icon-{{ ai_gen_id }}');
+
+          header.addEventListener('click', () => {
+            const isActive = content.classList.contains('active');
+
+            if (isActive) {
+              content.classList.remove('active');
+              icon.classList.remove('active');
+              header.setAttribute('aria-expanded', 'false');
+            } else {
+              content.classList.add('active');
+              icon.classList.add('active');
+              header.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('image-collapsible-{{ ai_gen_id }}', ImageCollapsible{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Image collapsible menus",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "main_image_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Menu 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_1_enabled",
+      "label": "Enable menu 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_1_title",
+      "label": "Title",
+      "default": "Menu Item 1"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_1_text",
+      "label": "Description",
+      "default": "<p>Add details about this menu item here.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Menu 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_2_enabled",
+      "label": "Enable menu 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_2_title",
+      "label": "Title",
+      "default": "Menu Item 2"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_2_text",
+      "label": "Description",
+      "default": "<p>Add details about this menu item here.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Gap between menus and image",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "header_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Header padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Content padding",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image collapsible menus"
+    }
+  ]
+}
+{% endschema %}

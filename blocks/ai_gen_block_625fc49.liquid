@@ -1,0 +1,385 @@
+{% doc %}
+  @prompt
+    i want a 3 coloums template the first colomn is text only with a super header and the second is picture and underneath it text, the third coloumn text and underneath it picture
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-three-column-{{ ai_gen_id }} {
+    padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-three-column__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-three-column__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.column_gap }}px;
+  }
+
+  .ai-three-column__column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.content_gap }}px;
+  }
+
+  .ai-three-column__superheader-{{ ai_gen_id }} {
+    font-size: {{ block.settings.superheader_size }}px;
+    color: {{ block.settings.superheader_color }};
+    margin: 0 0 {{ block.settings.superheader_spacing }}px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ai-three-column__heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    line-height: 1.2;
+  }
+
+  .ai-three-column__text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .ai-three-column__image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-three-column__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-three-column__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-three-column__image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-three-column__grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.column_gap | times: 1.5 }}px;
+    }
+
+    .ai-three-column__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-three-column__superheader-{{ ai_gen_id }} {
+      font-size: {{ block.settings.superheader_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-three-column-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-three-column__container-{{ ai_gen_id }}">
+    <div class="ai-three-column__grid-{{ ai_gen_id }}">
+      
+      <div class="ai-three-column__column-{{ ai_gen_id }}">
+        {% if block.settings.column_1_superheader != blank %}
+          <div class="ai-three-column__superheader-{{ ai_gen_id }}">
+            {{ block.settings.column_1_superheader }}
+          </div>
+        {% endif %}
+        {% if block.settings.column_1_heading != blank %}
+          <h2 class="ai-three-column__heading-{{ ai_gen_id }}">
+            {{ block.settings.column_1_heading }}
+          </h2>
+        {% endif %}
+        {% if block.settings.column_1_text != blank %}
+          <div class="ai-three-column__text-{{ ai_gen_id }}">
+            {{ block.settings.column_1_text }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-three-column__column-{{ ai_gen_id }}">
+        <div class="ai-three-column__image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.column_2_image %}
+            <img
+              src="{{ block.settings.column_2_image | image_url: width: 800 }}"
+              alt="{{ block.settings.column_2_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.column_2_image.width }}"
+              height="{{ block.settings.column_2_image.height }}"
+              class="ai-three-column__image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-three-column__image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+        {% if block.settings.column_2_text != blank %}
+          <div class="ai-three-column__text-{{ ai_gen_id }}">
+            {{ block.settings.column_2_text }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-three-column__column-{{ ai_gen_id }}">
+        {% if block.settings.column_3_text != blank %}
+          <div class="ai-three-column__text-{{ ai_gen_id }}">
+            {{ block.settings.column_3_text }}
+          </div>
+        {% endif %}
+        <div class="ai-three-column__image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.column_3_image %}
+            <img
+              src="{{ block.settings.column_3_image | image_url: width: 800 }}"
+              alt="{{ block.settings.column_3_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.column_3_image.width }}"
+              height="{{ block.settings.column_3_image.height }}"
+              class="ai-three-column__image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-three-column__image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Three column layout",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Column 1 - Text only"
+    },
+    {
+      "type": "text",
+      "id": "column_1_superheader",
+      "label": "Superheader",
+      "default": "Our Story"
+    },
+    {
+      "type": "text",
+      "id": "column_1_heading",
+      "label": "Heading",
+      "default": "Welcome to Our Brand"
+    },
+    {
+      "type": "richtext",
+      "id": "column_1_text",
+      "label": "Text",
+      "default": "<p>We are dedicated to bringing you the finest products with exceptional quality and service.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Column 2 - Image and text"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "richtext",
+      "id": "column_2_text",
+      "label": "Text",
+      "default": "<p>Crafted with care and attention to detail.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Column 3 - Text and image"
+    },
+    {
+      "type": "richtext",
+      "id": "column_3_text",
+      "label": "Text",
+      "default": "<p>Experience the difference in every product.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Column gap",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Content gap",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "superheader_color",
+      "label": "Superheader",
+      "default": "#fcc0d9"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "superheader_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Superheader size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "superheader_spacing",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Superheader spacing",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Heading spacing",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Image style"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Three column layout"
+    }
+  ]
+}
+{% endschema %}

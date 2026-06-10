@@ -1,0 +1,471 @@
+{% doc %}
+  @prompt
+    Create an image collapsible menus block with 50px left and right margins and resizable image controls. The block should display an image alongside collapsible menu sections that expand and collapse when clicked. Include settings to adjust the image width or size so merchants can resize the image as needed. the collapsable menus are on the left and the image on the right
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collapsible-menus-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  .ai-collapsible-menus-container-{{ ai_gen_id }} {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .ai-collapsible-menus-left-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-collapsible-menus-right-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.image_width }}%;
+  }
+
+  .ai-collapsible-menu-item-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-collapsible-menu-item-{{ ai_gen_id }}:first-child {
+    border-top: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-collapsible-menu-button-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: {{ block.settings.menu_padding }}px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .ai-collapsible-menu-button-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.heading_hover_color }};
+  }
+
+  .ai-collapsible-menu-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-collapsible-menu-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+  }
+
+  .ai-collapsible-menu-button-{{ ai_gen_id }}[aria-expanded="true"] .ai-collapsible-menu-icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-collapsible-menu-content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .ai-collapsible-menu-content-{{ ai_gen_id }}.active {
+    max-height: 1000px;
+  }
+
+  .ai-collapsible-menu-text-{{ ai_gen_id }} {
+    padding-bottom: {{ block.settings.menu_padding }}px;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.6;
+  }
+
+  .ai-collapsible-menus-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    position: sticky;
+    top: 20px;
+  }
+
+  .ai-collapsible-menus-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-collapsible-menus-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    position: relative;
+  }
+
+  .ai-collapsible-menus-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-collapsible-menus-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collapsible-menus-{{ ai_gen_id }} {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .ai-collapsible-menus-container-{{ ai_gen_id }} {
+      flex-direction: column-reverse;
+      gap: 30px;
+    }
+
+    .ai-collapsible-menus-right-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-collapsible-menus-image-wrapper-{{ ai_gen_id }} {
+      position: static;
+    }
+  }
+{% endstyle %}
+
+<collapsible-menus-{{ ai_gen_id }}
+  class="ai-collapsible-menus-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-collapsible-menus-container-{{ ai_gen_id }}">
+    <div class="ai-collapsible-menus-left-{{ ai_gen_id }}">
+      {% for i in (1..5) %}
+        {% liquid
+          assign menu_enabled_key = 'menu_' | append: i | append: '_enabled'
+          assign menu_heading_key = 'menu_' | append: i | append: '_heading'
+          assign menu_content_key = 'menu_' | append: i | append: '_content'
+
+          assign menu_enabled = block.settings[menu_enabled_key]
+          assign menu_heading = block.settings[menu_heading_key]
+          assign menu_content = block.settings[menu_content_key]
+        %}
+
+        {% if menu_enabled %}
+          <div class="ai-collapsible-menu-item-{{ ai_gen_id }}">
+            <button
+              class="ai-collapsible-menu-button-{{ ai_gen_id }}"
+              aria-expanded="false"
+              data-menu-id="{{ i }}"
+            >
+              <span>{{ menu_heading }}</span>
+              <span class="ai-collapsible-menu-icon-{{ ai_gen_id }}">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="ai-collapsible-menu-content-{{ ai_gen_id }}">
+              <div class="ai-collapsible-menu-text-{{ ai_gen_id }}">
+                {{ menu_content }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="ai-collapsible-menus-right-{{ ai_gen_id }}">
+      <div class="ai-collapsible-menus-image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.image %}
+          <img
+            src="{{ block.settings.image | image_url: width: 1000 }}"
+            alt="{{ block.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.image.width }}"
+            height="{{ block.settings.image.height }}"
+            class="ai-collapsible-menus-image-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-collapsible-menus-image-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-collapsible-menus-empty-state-{{ ai_gen_id }}">
+              Next, add an image
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</collapsible-menus-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollapsibleMenus{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.buttons = this.querySelectorAll('.ai-collapsible-menu-button-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.buttons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+            button.setAttribute('aria-expanded', !isExpanded);
+            content.classList.toggle('active');
+          });
+        });
+      }
+    }
+
+    customElements.define('collapsible-menus-{{ ai_gen_id }}', CollapsibleMenus{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Image collapsible menus",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "label": "Image width",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Menu style"
+    },
+    {
+      "type": "range",
+      "id": "menu_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Menu padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_hover_color",
+      "label": "Heading hover color",
+      "default": "#d585a6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "Menu 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_1_enabled",
+      "label": "Enable menu 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_1_heading",
+      "label": "Heading",
+      "default": "Shipping information"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_1_content",
+      "label": "Content",
+      "default": "<p>Free shipping on orders over $50. Standard delivery takes 3-5 business days.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Menu 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_2_enabled",
+      "label": "Enable menu 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_2_heading",
+      "label": "Heading",
+      "default": "Returns and exchanges"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_2_content",
+      "label": "Content",
+      "default": "<p>We accept returns within 30 days of purchase. Items must be unworn and in original condition.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Menu 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_3_enabled",
+      "label": "Enable menu 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_3_heading",
+      "label": "Heading",
+      "default": "Product care"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_3_content",
+      "label": "Content",
+      "default": "<p>Machine wash cold with like colors. Tumble dry low. Do not bleach or iron.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Menu 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_4_enabled",
+      "label": "Enable menu 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_4_heading",
+      "label": "Heading",
+      "default": "Size guide"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_4_content",
+      "label": "Content",
+      "default": "<p>Please refer to our size chart for accurate measurements. If between sizes, we recommend sizing up.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Menu 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_5_enabled",
+      "label": "Enable menu 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_5_heading",
+      "label": "Heading",
+      "default": "Contact us"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_5_content",
+      "label": "Content",
+      "default": "<p>Have questions? Reach out to our customer service team at support@example.com.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image collapsible menus"
+    }
+  ]
+}
+{% endschema %}

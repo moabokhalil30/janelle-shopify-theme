@@ -1,0 +1,472 @@
+{% doc %}
+  @prompt
+    image on the left and 2 collabsble menu on the right
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-image-collapsible-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-image-collapsible-container-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.gap }}px;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .ai-image-collapsible-image-wrapper-{{ ai_gen_id }} {
+    flex: 0 0 {{ block.settings.image_width }}%;
+    max-width: {{ block.settings.image_width }}%;
+  }
+
+  .ai-image-collapsible-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-image-collapsible-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f4f4f4;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-image-collapsible-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-image-collapsible-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-image-collapsible-menus-{{ ai_gen_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.menu_gap }}px;
+  }
+
+  .ai-image-collapsible-menu-item-{{ ai_gen_id }} {
+    border: {{ block.settings.menu_border_width }}px solid {{ block.settings.menu_border_color }};
+    border-radius: {{ block.settings.menu_border_radius }}px;
+    overflow: hidden;
+    background-color: {{ block.settings.menu_background }};
+  }
+
+  .ai-image-collapsible-menu-header-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.menu_padding }}px;
+    background-color: {{ block.settings.menu_header_background }};
+    color: {{ block.settings.menu_header_text_color }};
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: {{ block.settings.menu_header_font_size }}px;
+    font-weight: 600;
+  }
+
+  .ai-image-collapsible-menu-header-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.menu_header_hover_background }};
+  }
+
+  .ai-image-collapsible-menu-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .ai-image-collapsible-menu-icon-{{ ai_gen_id }}.active {
+    transform: rotate(180deg);
+  }
+
+  .ai-image-collapsible-menu-content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: {{ block.settings.menu_content_background }};
+  }
+
+  .ai-image-collapsible-menu-content-{{ ai_gen_id }}.active {
+    max-height: 500px;
+  }
+
+  .ai-image-collapsible-menu-content-inner-{{ ai_gen_id }} {
+    padding: {{ block.settings.menu_padding }}px;
+    color: {{ block.settings.menu_content_text_color }};
+    font-size: {{ block.settings.menu_content_font_size }}px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-image-collapsible-container-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-image-collapsible-image-wrapper-{{ ai_gen_id }} {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+{% endstyle %}
+
+<collapsible-menus-{{ ai_gen_id }}
+  class="ai-image-collapsible-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-image-collapsible-container-{{ ai_gen_id }}">
+    <div class="ai-image-collapsible-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.image %}
+        <img
+          src="{{ block.settings.image | image_url: width: 1000 }}"
+          alt="{{ block.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.image.width }}"
+          height="{{ block.settings.image.height }}"
+          class="ai-image-collapsible-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-image-collapsible-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-image-collapsible-empty-state-{{ ai_gen_id }}">
+            Add an image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-image-collapsible-menus-{{ ai_gen_id }}">
+      <div class="ai-image-collapsible-menu-item-{{ ai_gen_id }}">
+        <button
+          class="ai-image-collapsible-menu-header-{{ ai_gen_id }}"
+          aria-expanded="{% if block.settings.menu_1_open %}true{% else %}false{% endif %}"
+          data-menu-index="1"
+        >
+          <span>{{ block.settings.menu_1_title }}</span>
+          <svg
+            class="ai-image-collapsible-menu-icon-{{ ai_gen_id }} {% if block.settings.menu_1_open %}active{% endif %}"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="ai-image-collapsible-menu-content-{{ ai_gen_id }} {% if block.settings.menu_1_open %}active{% endif %}">
+          <div class="ai-image-collapsible-menu-content-inner-{{ ai_gen_id }}">
+            {{ block.settings.menu_1_content }}
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-image-collapsible-menu-item-{{ ai_gen_id }}">
+        <button
+          class="ai-image-collapsible-menu-header-{{ ai_gen_id }}"
+          aria-expanded="{% if block.settings.menu_2_open %}true{% else %}false{% endif %}"
+          data-menu-index="2"
+        >
+          <span>{{ block.settings.menu_2_title }}</span>
+          <svg
+            class="ai-image-collapsible-menu-icon-{{ ai_gen_id }} {% if block.settings.menu_2_open %}active{% endif %}"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="ai-image-collapsible-menu-content-{{ ai_gen_id }} {% if block.settings.menu_2_open %}active{% endif %}">
+          <div class="ai-image-collapsible-menu-content-inner-{{ ai_gen_id }}">
+            {{ block.settings.menu_2_content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</collapsible-menus-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollapsibleMenus{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.menuHeaders = this.querySelectorAll('.ai-image-collapsible-menu-header-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.menuHeaders.forEach((header) => {
+          header.addEventListener('click', () => {
+            const icon = header.querySelector('.ai-image-collapsible-menu-icon-{{ ai_gen_id }}');
+            const content = header.nextElementSibling;
+            const isActive = content.classList.contains('active');
+
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+            header.setAttribute('aria-expanded', !isActive);
+          });
+        });
+      }
+    }
+
+    customElements.define('collapsible-menus-{{ ai_gen_id }}', CollapsibleMenus{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Image collapsible menus",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "label": "Image width",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between image and menus",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "menu_gap",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between menus",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Menu 1"
+    },
+    {
+      "type": "text",
+      "id": "menu_1_title",
+      "label": "Title",
+      "default": "Menu 1"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_1_content",
+      "label": "Content",
+      "default": "<p>Add your content here. You can include text, links, and formatting.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_1_open",
+      "label": "Open by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Menu 2"
+    },
+    {
+      "type": "text",
+      "id": "menu_2_title",
+      "label": "Title",
+      "default": "Menu 2"
+    },
+    {
+      "type": "richtext",
+      "id": "menu_2_content",
+      "label": "Content",
+      "default": "<p>Add your content here. You can include text, links, and formatting.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_2_open",
+      "label": "Open by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Menu style"
+    },
+    {
+      "type": "range",
+      "id": "menu_padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "menu_border_width",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "menu_border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "menu_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "menu_background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Menu header"
+    },
+    {
+      "type": "range",
+      "id": "menu_header_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "menu_header_background",
+      "label": "Background color",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "menu_header_hover_background",
+      "label": "Hover background color",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "menu_header_text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Menu content"
+    },
+    {
+      "type": "range",
+      "id": "menu_content_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "menu_content_background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "menu_content_text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image collapsible menus"
+    }
+  ]
+}
+{% endschema %}

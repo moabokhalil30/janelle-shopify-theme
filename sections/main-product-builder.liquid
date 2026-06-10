@@ -1,0 +1,197 @@
+{% comment %}
+Fenty-like builder for a REAL product page:
+- Shows fixed price from THIS product (the builder product)
+- Lets shopper pick exactly 3 variants from the SOURCE product (metafield)
+- Adds those 3 real variants to cart (so inventory is shared)
+{% endcomment %}
+
+{%- assign builder_product = product -%}
+{%- assign source_product = builder_product.metafields.bundle.source_product.value -%}
+{%- if source_product == blank -%}
+{%- assign source_product = all_products['lip-gloss-squeeze-tube'] -%}
+{%- comment -%} CHANGE to your real handle as a fallback {%- endcomment -%}
+
+{%- endif -%}
+
+{%- assign PICK_COUNT = 3 -%}
+{%- assign ALLOW_DUPES = true -%}
+
+<section class="page-width">
+  <div class="grid grid--1-col grid--2-col-tablet gap-6">
+    <!-- Left: big gallery -->
+    <div>
+      {%- assign first_image = source_product.featured_image -%}
+      <div id="builder-main" class="mb-3">
+        {{ first_image
+          | image_url: width: 1200
+          | image_tag: alt: source_product.title, class: 'w-full h-auto rounded-lg', widths: '400,700,900,1200' }}
+      </div>
+
+      <div id="builder-thumbs" class="grid grid-cols-5 md:grid-cols-8 gap-2">
+        {%- for m in source_product.media -%}
+          {%- if m.media_type == 'image' -%}
+            <button class="thumb border rounded-md overflow-hidden" type="button"
+              data-full="{{ m | image_url: width: 1200 }}"
+              >
+              {{ m | image_url: width: 200
+                | image_tag: alt: source_product.title, class: 'w-full h-auto' }}
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <!-- Right: builder -->
+    <div>
+      <h1 class="h2">{{ builder_product.title }}</h1>
+      <div class="flex items-center gap-4 mt-2">
+        <p class="price h3 m-0">{{ builder_product.price | money }}</p>
+        <span class="text-sm opacity-75" id="sel-label">(0/{{ PICK_COUNT }} selected)</span>
+      </div>
+      <p class="opacity-75 mt-1">Pick {{ PICK_COUNT }} shades from our collection.</p>
+
+      <!-- Shade strip -->
+      <div class="mt-4">
+        <div class="flex flex-wrap gap-2" id="shade-strip">
+          {%- assign fallback_img = source_product.featured_image -%}
+          {%- for v in source_product.variants -%}
+            {%- if v.available -%}
+              {%- assign img = v.featured_image | default: fallback_img -%}
+              <button class="shade btn-swatch" type="button"
+                data-variant-id="{{ v.id }}" data-title="{{ v.title | escape }}">
+                {{ img | image_url: width: 64
+                   | image_tag: alt: v.title, class: 'w-10 h-10 rounded object-cover' }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div class="text-sm mt-2 opacity-75" id="shade-name"></div>
+      </div>
+
+      <!-- Your set slots -->
+      <div class="mt-6">
+        <div class="flex items-center justify-between">
+          <h3 class="h4 m-0">Your set</h3>
+          <div class="text-sm opacity-75"><span id="sel-count">0</span>/{{ PICK_COUNT }} selected</div>
+        </div>
+
+        <div id="slots" class="grid grid-cols-3 gap-3 mt-2">
+          {% for i in (1..PICK_COUNT) %}
+          <div class="slot border-2 border-dashed rounded-lg p-3 text-center" data-index="{{ forloop.index0 }}">
+            <div class="slot-img mb-2"></div>
+            <div class="slot-title text-sm opacity-75">Empty</div>
+            <button class="slot-remove hidden text-xs underline mt-1" type="button">Remove</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <button id="add-set" class="button button--primary w-full" disabled>
+          Add Set — {{ builder_product.price | money }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .btn-swatch{border:1px solid #e5e5e5;border-radius:8px;padding:2px;cursor:pointer;background:#fff}
+  .btn-swatch:hover{outline:2px solid #000}
+  .slot .slot-img img{width:64px;height:64px;object-fit:cover;border-radius:8px;margin:0 auto}
+  .button[disabled]{opacity:.5;cursor:not-allowed}
+</style>
+
+<script>
+(() => {
+  // gallery
+  const main = document.querySelector('#builder-main img');
+  document.getElementById('builder-thumbs')?.addEventListener('click', e => {
+    const b = e.target.closest('button.thumb'); if (!b || !main) return;
+    main.src = b.dataset.full; if (b.dataset.srcset) main.srcset = b.dataset.srcset;
+  });
+
+  const PICK_COUNT = {{ PICK_COUNT }};
+  const ALLOW_DUPES = {{ ALLOW_DUPES | json }};
+  const strip = document.getElementById('shade-strip');
+  const label = document.getElementById('sel-label');
+  const shadeName = document.getElementById('shade-name');
+  const slots = [...document.querySelectorAll('#slots .slot')];
+  const addBtn = document.getElementById('add-set');
+  const selCount = document.getElementById('sel-count');
+  const chosen = []; // {id,title,img}
+
+  function refresh(){
+    selCount.textContent = String(chosen.length);
+    label.textContent = `(${chosen.length}/${PICK_COUNT} selected)`;
+    addBtn.disabled = (chosen.length !== PICK_COUNT);
+
+    slots.forEach((slot,i)=>{
+      const item = chosen[i];
+      const imgWrap = slot.querySelector('.slot-img');
+      const titleEl = slot.querySelector('.slot-title');
+      const rm = slot.querySelector('.slot-remove');
+      if(item){
+        imgWrap.innerHTML = `<img src="${item.img}" alt="${item.title}">`;
+        titleEl.textContent = item.title;
+        rm.classList.remove('hidden');
+      }else{
+        imgWrap.innerHTML = '';
+        titleEl.textContent = 'Empty';
+        rm.classList.add('hidden');
+      }
+    });
+  }
+
+  // remove from a slot
+  document.getElementById('slots').addEventListener('click', e=>{
+    const rm = e.target.closest('.slot-remove'); if(!rm) return;
+    const slot = e.target.closest('.slot');
+    const idx = Number(slot.dataset.index);
+    chosen.splice(idx,1);
+    refresh();
+  });
+
+  // pick from shade strip
+  strip.addEventListener('click', e=>{
+    const btn = e.target.closest('.shade'); if(!btn) return;
+    const id = btn.dataset.variantId;
+    const title = btn.dataset.title;
+    const imgEl = btn.querySelector('img'); const img = imgEl ? imgEl.src : '';
+
+    if(!ALLOW_DUPES && chosen.find(x => x.id === id)){
+      shadeName.textContent = `${title} is already selected`;
+      return;
+    }
+    if(chosen.length >= PICK_COUNT) return;
+
+    chosen.push({ id, title, img });
+    shadeName.textContent = title;
+    refresh();
+  });
+
+  // add to cart
+  addBtn.addEventListener('click', async ()=>{
+    if(chosen.length !== PICK_COUNT) return;
+    const bundleId = `SET-${Date.now()}`;
+    const items = chosen.map(x => ({
+      id: x.id, quantity: 1,
+      properties: { Bundle: '{{ builder_product.title | escape }}', BundleID: bundleId }
+    }));
+
+    try{
+      const res = await fetch('/cart/add.js', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({ items })
+      });
+      if(!res.ok) throw new Error();
+      window.location = '/cart';
+    }catch(e){
+      alert('Could not add your set. Please try again.');
+    }
+  });
+
+  refresh();
+})();
+</script>

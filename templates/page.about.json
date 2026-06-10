@@ -1,0 +1,104 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "1765966959bd8b55ad": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_03d24cd_ncyN8W": {
+          "type": "ai_gen_block_03d24cd",
+          "settings": {
+            "max_width": 1200,
+            "section_padding": 50,
+            "column_gap": 40,
+            "content_gap": 20,
+            "background_color": "#f9e0eb",
+            "column_1_superheader": "",
+            "column_1_heading": "Welcome to Janelle!                                                                    ___________",
+            "column_1_text": "<p>Founded in 2021 by Enjy and Samar, Janelle is a cosmetics brand that specializes in lip gloss. Our mission is to provide high-quality products at affordable prices, making beauty accessible to everyone.<br/></p>",
+            "column_2_image": "shopify://shop_images/IMG_2796-1-scaled-scaled.webp",
+            "column_2_text": "<p>Our founders, Enjy and Samar, believe that everyone deserves to feel beautiful. They created Janelle with the vision of offering top-tier lip gloss that doesn’t break the bank. Our products are meticulously crafted, ensuring exceptional quality that outperforms high-end brands.<br/>_______________</p>",
+            "column_3_text": "<p>The feedback from our customers has been overwhelmingly positive. They always compare the quality of our lip gloss to that of high-end luxury brands, affirming our commitment to excellence. At Janelle, we take pride in our products and the joy they bring to our customers. We are passionately driven to fulfill this goal and always thrive to be the best in business.</p><p>_______________</p>",
+            "column_3_image": "shopify://shop_images/IMG_8730_35144ea1-fb3e-4271-a8ff-b5252ec2c76d.webp",
+            "superheader_size": 12,
+            "superheader_color": "#999999",
+            "heading_size": 32,
+            "heading_color": "#d585a6",
+            "text_size": 16,
+            "text_color": "#121212",
+            "image_border_radius": 0
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_4f40f26_VfkrmB": {
+          "type": "ai_gen_block_4f40f26",
+          "settings": {
+            "title": "Join us on this journey of beauty and discover the magic of Janelle lip gloss today! 💄.",
+            "title_color": "#d585a6",
+            "font_size": 22,
+            "font_weight": "600",
+            "text_alignment": "center",
+            "desktop_width_percent": 100
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_b27fa87_6WPCBW": {
+          "type": "ai_gen_block_b27fa87",
+          "settings": {
+            "clients_count": 7100,
+            "clients_label": "Happy Clients",
+            "orders_count": 8000,
+            "orders_label": "Total Orders",
+            "background_color": "#f9e0eb",
+            "item_background_color": "#ffffff",
+            "number_color": "#d585a6",
+            "label_color": "#121212",
+            "border_color": "#d585a6",
+            "number_size": 48,
+            "label_size": 26,
+            "number_weight": "700",
+            "text_alignment": "center",
+            "border_radius": 8,
+            "border_thickness": 1,
+            "show_icons": true,
+            "icon_color": "#d585a6",
+            "icon_size": 48,
+            "icon_margin": 12,
+            "container_width": 900,
+            "section_padding": 52,
+            "item_padding": 40,
+            "gap": 30,
+            "number_margin": 8,
+            "animation_duration": 2000,
+            "desktop_width_percent": 100
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_03d24cd_ncyN8W",
+        "ai_gen_block_4f40f26_VfkrmB",
+        "ai_gen_block_b27fa87_6WPCBW"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "1765966959bd8b55ad"
+  ]
+}

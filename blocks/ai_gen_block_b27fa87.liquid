@@ -1,0 +1,479 @@
+{% doc %}
+  @prompt
+    i want 2 counters one for clients and one for total orders (Dynamic )
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-stats-counter-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding }}px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-stats-counter__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-stats-counter__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: {{ block.settings.gap }}px;
+  }
+
+  .ai-stats-counter__item-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    padding: {{ block.settings.item_padding }}px;
+    background-color: {{ block.settings.item_background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    border: {{ block.settings.border_thickness }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-stats-counter__number-{{ ai_gen_id }} {
+    font-size: {{ block.settings.number_size }}px;
+    font-weight: {{ block.settings.number_weight }};
+    color: {{ block.settings.number_color }};
+    margin: 0 0 {{ block.settings.number_margin }}px;
+    line-height: 1.2;
+  }
+
+  .ai-stats-counter__label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.label_size }}px;
+    color: {{ block.settings.label_color }};
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .ai-stats-counter__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    margin: 0 auto {{ block.settings.icon_margin }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-stats-counter__icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: {{ block.settings.icon_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-stats-counter__grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.gap | times: 0.8 }}px;
+    }
+
+    .ai-stats-counter__number-{{ ai_gen_id }} {
+      font-size: {{ block.settings.number_size | times: 0.8 }}px;
+    }
+
+    .ai-stats-counter__label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.label_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<stats-counter-{{ ai_gen_id }}
+  class="ai-stats-counter-{{ ai_gen_id }}"
+  data-duration="{{ block.settings.animation_duration }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-stats-counter__container-{{ ai_gen_id }}">
+    <div class="ai-stats-counter__grid-{{ ai_gen_id }}">
+      <div class="ai-stats-counter__item-{{ ai_gen_id }}">
+        {% if block.settings.show_icons %}
+          <div class="ai-stats-counter__icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+        {% endif %}
+        <div
+          class="ai-stats-counter__number-{{ ai_gen_id }}"
+          data-target="{{ block.settings.clients_count }}"
+          data-counter="clients"
+        >
+          0
+        </div>
+        <p class="ai-stats-counter__label-{{ ai_gen_id }}">{{ block.settings.clients_label }}</p>
+      </div>
+
+      <div class="ai-stats-counter__item-{{ ai_gen_id }}">
+        {% if block.settings.show_icons %}
+          <div class="ai-stats-counter__icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </div>
+        {% endif %}
+        <div
+          class="ai-stats-counter__number-{{ ai_gen_id }}"
+          data-target="{{ block.settings.orders_count }}"
+          data-counter="orders"
+        >
+          0
+        </div>
+        <p class="ai-stats-counter__label-{{ ai_gen_id }}">{{ block.settings.orders_label }}</p>
+      </div>
+    </div>
+  </div>
+</stats-counter-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StatsCounter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.animated = false;
+      }
+
+      connectedCallback() {
+        this.duration = parseInt(this.dataset.duration) || 2000;
+        this.counters = this.querySelectorAll('[data-counter]');
+        
+        if ('IntersectionObserver' in window) {
+          this.observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting && !this.animated) {
+                  this.animateCounters();
+                  this.animated = true;
+                }
+              });
+            },
+            { threshold: 0.5 }
+          );
+          this.observer.observe(this);
+        } else {
+          this.animateCounters();
+        }
+      }
+
+      animateCounters() {
+        this.counters.forEach((counter) => {
+          const target = parseInt(counter.dataset.target) || 0;
+          const startTime = performance.now();
+          
+          const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / this.duration, 1);
+            
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const current = Math.floor(easeOutQuart * target);
+            
+            counter.textContent = this.formatNumber(current);
+            
+            if (progress < 1) {
+              requestAnimationFrame(updateCounter);
+            } else {
+              counter.textContent = this.formatNumber(target);
+            }
+          };
+          
+          requestAnimationFrame(updateCounter);
+        });
+      }
+
+      formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+    }
+
+    customElements.define('stats-counter-{{ ai_gen_id }}', StatsCounter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stats counter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Clients counter"
+    },
+    {
+      "type": "range",
+      "id": "clients_count",
+      "min": 0,
+      "max": 9000,
+      "step": 100,
+      "label": "Clients count",
+      "default": 5000
+    },
+    {
+      "type": "text",
+      "id": "clients_label",
+      "label": "Clients label",
+      "default": "Happy Clients"
+    },
+    {
+      "type": "header",
+      "content": "Orders counter"
+    },
+    {
+      "type": "range",
+      "id": "orders_count",
+      "min": 0,
+      "max": 9000,
+      "step": 100,
+      "label": "Orders count",
+      "default": 8000
+    },
+    {
+      "type": "text",
+      "id": "orders_label",
+      "label": "Orders label",
+      "default": "Total Orders"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Item background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Number color",
+      "default": "#fcc0d9"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "number_size",
+      "min": 24,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Number size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Label size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "number_weight",
+      "label": "Number weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icons",
+      "label": "Show icons",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#fcc0d9"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_margin",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Icon spacing",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 400,
+      "max": 1400,
+      "step": 100,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Item padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between items",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "number_margin",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Number spacing",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "min": 1000,
+      "max": 5000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Animation duration",
+      "default": 2000
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stats counter"
+    }
+  ]
+}
+{% endschema %}
