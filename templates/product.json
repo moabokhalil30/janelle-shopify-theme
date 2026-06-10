@@ -39,7 +39,16 @@
         "t2",
         "t3"
       ],
-      "settings": {}
+      "settings": {
+        "alignment": "center",
+        "gap": 34,
+        "padding_y": 10,
+        "max_width": 1200,
+        "font_size": 13,
+        "bg_color": "#ffffff",
+        "text_color": "#121212",
+        "divider_color": "#e9dde4"
+      }
     },
     "1763511245fe04337c": {
       "type": "apps",
@@ -71,20 +80,45 @@
         },
         "featured_review": {
           "type": "featured_review",
-          "settings": {}
+          "settings": {
+            "label": "⭐ Featured review",
+            "quote": "<p>The only liner that lasts through my whole shift without fading. Brunette is gorgeous.</p>",
+            "author": "Mariam H., Verified buyer",
+            "show_stars": true,
+            "rating": 5,
+            "corner_radius": 6,
+            "bg_color": "#f3e4ec",
+            "accent_color": "#d585a6",
+            "text_color": "#121212"
+          }
         },
         "benefits": {
           "type": "benefit_bullets",
-          "settings": {}
+          "settings": {
+            "icon": "✓",
+            "bullet_1": "<strong>Long-wearing colour</strong> that stays put through coffee & meals",
+            "bullet_2": "<strong>Creamy, non-drying</strong> formula — glides on, never tugs",
+            "bullet_3": "<strong>Cruelty-free</strong> & flavoured",
+            "bullet_4": "",
+            "icon_color": "#b9648a",
+            "text_color": "#121212"
+          }
         },
         "social": {
           "type": "social_proof",
-          "settings": {}
+          "settings": {
+            "icon": "🔥",
+            "text": "Bought 247 times in the last 30 days",
+            "show_border": true,
+            "text_color": "#b9648a",
+            "bg_color": "#ffffff",
+            "border_color": "#e9dde4"
+          }
         },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
-            "picker_type": "button",
+            "picker_type": "dropdown",
             "swatch_shape": "circle"
           }
         },
@@ -101,18 +135,34 @@
         },
         "guarantee": {
           "type": "guarantee",
-          "settings": {}
+          "settings": {
+            "icon": "🛡️",
+            "text": "Free returns within 30 days",
+            "alignment": "center",
+            "text_color": "#6b6b6b"
+          }
         },
         "trust": {
           "type": "trust_row",
-          "settings": {}
+          "settings": {
+            "corner_radius": 6,
+            "icon_1": "🐰",
+            "label_1": "Cruelty-free",
+            "icon_2": "🚚",
+            "label_2": "Free shipping over EGP 1,000",
+            "icon_3": "🔒",
+            "label_3": "Secure checkout",
+            "bg_color": "#f3e4ec",
+            "text_color": "#121212"
+          }
         },
         "howto": {
           "type": "collapsible_tab",
           "settings": {
             "heading": "How to Use",
             "icon": "none",
-            "content": "<p>Line lips from the cupid's bow outward, then fill in for a long-wearing base. Pair with any Janelle gloss.</p>"
+            "content": "<p>Line lips from the cupid's bow outward, then fill in for a long-wearing base. Pair with any Janelle gloss.</p>",
+            "page": ""
           }
         },
         "ingredients": {
@@ -120,7 +170,8 @@
           "settings": {
             "heading": "Ingredients",
             "icon": "none",
-            "content": "<p>Add the full ingredient list here.</p>"
+            "content": "<p>Add the full ingredient list here.</p>",
+            "page": ""
           }
         },
         "shade_guide": {
@@ -128,7 +179,8 @@
           "settings": {
             "heading": "Shade guide",
             "icon": "none",
-            "content": "<p>Describe each shade so shoppers can choose with confidence.</p>"
+            "content": "<p>Describe each shade so shoppers can choose with confidence.</p>",
+            "page": ""
           }
         },
         "shipping": {
@@ -136,21 +188,26 @@
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
-            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>"
+            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>",
+            "page": ""
           }
         },
         "description": {
           "type": "description",
+          "disabled": true,
           "settings": {}
         },
         "complementary": {
           "type": "complementary",
           "settings": {
             "block_heading": "Complete your look",
+            "make_collapsible_row": false,
+            "icon": "price_tag",
             "product_list_limit": 3,
             "products_per_page": 3,
             "pagination_style": "dots",
-            "image_ratio": "square"
+            "image_ratio": "square",
+            "enable_quick_add": false
           }
         },
         "share": {
@@ -243,7 +300,18 @@
     },
     "sticky_atc": {
       "type": "pdp-sticky-atc",
-      "settings": {}
+      "settings": {
+        "mobile_only": true,
+        "show_image": true,
+        "show_after": 500,
+        "button_label": "Add to cart",
+        "button_radius": 4,
+        "bg_color": "#ffffff",
+        "text_color": "#121212",
+        "border_color": "#e9dde4",
+        "button_bg": "#b9648a",
+        "button_text": "#ffffff"
+      }
     }
   },
   "order": [
