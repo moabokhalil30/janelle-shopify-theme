@@ -74,6 +74,24 @@
           "type": "price",
           "settings": {}
         },
+        "kit_contents_KDadQi": {
+          "type": "kit_contents",
+          "settings": {
+            "heading": "What's in the kit",
+            "image_1": "shopify://shop_images/Rosewood_c05a4878-9757-450e-b9b2-5211e966848f.jpg",
+            "title_1": "Gloss",
+            "role_1": "shine + colour",
+            "image_2": "shopify://shop_images/IMG_8570.webp",
+            "title_2": "Liner",
+            "role_2": "define + fill",
+            "image_3": "shopify://shop_images/Paradise_240405fc-432c-40a8-a96e-925dabcf21c4.jpg",
+            "title_3": "Gloss",
+            "role_3": "on-the-go",
+            "text_color": "#121212",
+            "accent_color": "#b9648a",
+            "placeholder_color": "#f3e4ec"
+          }
+        },
         "featured_review": {
           "type": "featured_review",
           "settings": {
@@ -185,6 +203,7 @@
         "product_rating",
         "title",
         "price",
+        "kit_contents_KDadQi",
         "featured_review",
         "benefits",
         "bundle_builder",
