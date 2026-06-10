@@ -111,13 +111,13 @@
             "complete_text": "Your kit is ready.",
             "adding_text": "Adding your kit...",
             "error_text": "Could not add your kit. Please try again.",
-            "label_1": "Squeeze gloss",
-            "source_handle_1": "lip-gloss-squeeze-tube",
+            "label_1": "Lip liner 1",
+            "source_handle_1": "lip-liner-07-chocolate",
             "source_product_1": "lip-liner-07-chocolate",
-            "label_2": "Brush gloss",
-            "source_handle_2": "lip-gloss-brush-tube",
+            "label_2": "Lip liner 2",
+            "source_handle_2": "lip-liner-07-chocolate",
             "source_product_2": "lip-liner-07-chocolate",
-            "label_3": "Lip liner",
+            "label_3": "Lip liner 3",
             "source_handle_3": "lip-liner-07-chocolate",
             "source_product_3": "lip-liner-07-chocolate"
           }

@@ -42,12 +42,17 @@
   <div class="janelle-bundle-picker__selected" aria-live="polite">
     {%- for index in (1..3) -%}
       {%- liquid
+        assign source_product = source_1
         assign slot_label = block.settings.label_1
         if index == 2
+          assign source_product = source_2
           assign slot_label = block.settings.label_2
         elsif index == 3
+          assign source_product = source_3
           assign slot_label = block.settings.label_3
         endif
+
+        assign source_title = source_product.title
       -%}
       <div class="janelle-bundle-picker__slot" data-selected-slot="{{ index }}">
         <div class="janelle-bundle-picker__slot-media" data-selected-media>
@@ -55,6 +60,9 @@
         </div>
         <div>
           <span>{{ slot_label }}</span>
+          {%- if source_title != blank and source_title != slot_label -%}
+            <small>{{ source_title }}</small>
+          {%- endif -%}
           <strong data-selected-title>{{ block.settings.empty_text }}</strong>
         </div>
       </div>
@@ -76,8 +84,13 @@
       -%}
       <fieldset class="janelle-bundle-picker__group" data-bundle-group="{{ index }}">
         <legend>
-          <span>Step {{ index }}</span>
-          <strong>{{ slot_label }}</strong>
+          <span class="janelle-bundle-picker__legend-main">
+            <span class="janelle-bundle-picker__step">Step {{ index }}</span>
+            <strong>{{ slot_label }}</strong>
+          </span>
+          {%- if source_product.title != blank and source_product.title != slot_label -%}
+            <em>{{ source_product.title }}</em>
+          {%- endif -%}
         </legend>
 
         {%- if source_product != blank and source_product.variants.size > 0 -%}
@@ -293,6 +306,15 @@
     overflow-wrap: anywhere;
   }
 
+  .janelle-bundle-picker__slot small {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--jb-muted);
+    font-size: 1.05rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
   .janelle-bundle-picker__groups {
     display: grid;
     gap: 1rem;
@@ -308,26 +330,41 @@
 
   .janelle-bundle-picker__group legend {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
+    justify-content: space-between;
     gap: 0.7rem;
+    width: calc(100% - 0.6rem);
     padding: 0 0.3rem;
     color: var(--jb-ink);
     font-size: 1.35rem;
     font-weight: 700;
   }
 
-  .janelle-bundle-picker__group legend span {
+  .janelle-bundle-picker__legend-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+
+  .janelle-bundle-picker__step {
     color: var(--jb-accent);
     font-size: 1rem;
     letter-spacing: 0.08rem;
     text-transform: uppercase;
   }
 
+  .janelle-bundle-picker__group legend em {
+    max-width: 14rem;
+    color: var(--jb-muted);
+    font-size: 1.05rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: right;
+  }
+
   .janelle-bundle-picker__rail {
-    display: grid;
-    grid-template-columns: 3.2rem minmax(0, 1fr) 3.2rem;
-    align-items: center;
-    gap: 0.6rem;
+    position: relative;
     margin-top: 0.9rem;
   }
 
@@ -336,25 +373,38 @@
     gap: 0.8rem;
     overflow-x: auto;
     padding: 0.2rem 0.2rem 0.8rem;
+    scroll-padding-inline: 3.4rem;
     scroll-snap-type: x proximity;
     scrollbar-color: var(--jb-accent) transparent;
     scroll-behavior: smooth;
   }
 
   .janelle-bundle-picker__scroll {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3.2rem;
-    height: 3.2rem;
+    width: 3rem;
+    height: 3rem;
     border: 0.1rem solid var(--jb-line);
     border-radius: 999px;
-    background: var(--jb-surface);
+    background: rgba(255, 255, 255, 0.92);
     color: var(--jb-accent);
     cursor: pointer;
     font-size: 2.2rem;
     line-height: 1;
+    transform: translateY(-50%);
     transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease;
+  }
+
+  .janelle-bundle-picker__scroll--prev {
+    left: 0.4rem;
+  }
+
+  .janelle-bundle-picker__scroll--next {
+    right: 0.4rem;
   }
 
   .janelle-bundle-picker__scroll:hover {
@@ -363,10 +413,11 @@
   }
 
   .janelle-bundle-picker__option {
-    flex: 0 0 9.6rem;
+    flex: 0 0 calc((100% - 1.6rem) / 3);
     display: grid;
     gap: 0.6rem;
-    min-width: 0;
+    min-width: 7.4rem;
+    max-width: 10.8rem;
     padding: 0.7rem;
     border: 0.1rem solid var(--jb-line);
     border-radius: 0.7rem;
@@ -502,11 +553,30 @@
     }
 
     .janelle-bundle-picker__selected {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
     }
 
-    .janelle-bundle-picker__option {
-      flex-basis: 9rem;
+    .janelle-bundle-picker__slot {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      min-height: 8.4rem;
+      text-align: center;
+    }
+
+    .janelle-bundle-picker__slot-media {
+      justify-self: center;
+      width: 3.8rem;
+    }
+
+    .janelle-bundle-picker__group legend {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .janelle-bundle-picker__group legend em {
+      max-width: none;
+      text-align: left;
     }
   }
 </style>
@@ -542,20 +612,35 @@
       return root.closest('product-info') || document.querySelector('product-info');
     }
 
+    function updateImageElement(imageElement, image, alt) {
+      if (!imageElement || !image) return;
+      imageElement.src = image;
+      imageElement.removeAttribute('srcset');
+      imageElement.removeAttribute('sizes');
+      imageElement.alt = alt || '';
+    }
+
+    function uniqueElements(elements) {
+      return elements.filter((element, index) => element && elements.indexOf(element) === index);
+    }
+
     function updateMainGallery(image, alt) {
       if (!image) return;
 
       const productInfo = getProductInfo();
       const gallery = productInfo?.querySelector('media-gallery');
+      const mediaWrapper = productInfo?.querySelector('.product__media-wrapper');
       const activeSlide =
         gallery?.querySelector('.product__media-item.is-active') ||
+        gallery?.querySelector('.product__media-item[aria-current="true"]') ||
         gallery?.querySelector('.product__media-item');
-      const activeImage = activeSlide?.querySelector('img');
+      const images = uniqueElements([
+        activeSlide?.querySelector('img'),
+        gallery?.querySelector('.product__media-list .product__media-item img'),
+        mediaWrapper?.querySelector('.product__media-list .product__media-item img')
+      ]);
 
-      if (!activeImage) return;
-      activeImage.src = image;
-      activeImage.removeAttribute('srcset');
-      activeImage.alt = alt || '';
+      images.forEach((imageElement) => updateImageElement(imageElement, image, alt));
     }
 
     function ensureGalleryPreview() {
@@ -596,6 +681,29 @@
           <span>${escapeHtml(item.variantTitle)}</span>
         </button>
       `).join('');
+
+      if (latestSelection?.image) {
+        updateMainGallery(latestSelection.image, latestSelection.variantTitle);
+      }
+
+      syncNativeGalleryItems(items, latestSelection);
+    }
+
+    function syncNativeGalleryItems(items, latestSelection) {
+      const productInfo = getProductInfo();
+      const gallery = productInfo?.querySelector('media-gallery');
+      if (!gallery) return;
+
+      const mediaImages = [...gallery.querySelectorAll('.product__media-list .product__media-item img')];
+      const thumbnailImages = [...gallery.querySelectorAll('.thumbnail-list__item img')];
+      const preserveFirstMedia = mediaImages.length > items.length;
+
+      items.forEach((item, index) => {
+        const mediaIndex = preserveFirstMedia ? index + 1 : index;
+        const imageAlt = `${item.productTitle || bundleName} - ${item.variantTitle || ''}`;
+        updateImageElement(mediaImages[mediaIndex] || mediaImages[index], item.image, imageAlt);
+        updateImageElement(thumbnailImages[mediaIndex] || thumbnailImages[index], item.image, imageAlt);
+      });
 
       if (latestSelection?.image) {
         updateMainGallery(latestSelection.image, latestSelection.variantTitle);
@@ -646,7 +754,7 @@
         preview.querySelector('[data-selected-title]').textContent = option.dataset.variantTitle;
         const media = preview.querySelector('[data-selected-media]');
         if (media && option.dataset.image) {
-          media.innerHTML = `<img src="${option.dataset.image}" alt="${option.dataset.variantTitle}">`;
+          media.innerHTML = `<img src="${escapeHtml(option.dataset.image)}" alt="${escapeHtml(option.dataset.variantTitle)}">`;
         }
       }
 
