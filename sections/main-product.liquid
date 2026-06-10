@@ -477,6 +477,8 @@
 
               {%- when 'variant_picker' -%}
                 {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+              {%- when 'bundle_builder' -%}
+                {% render 'product-bundle-builder', product: product, block: block %}
               {%- when 'buy_buttons' -%}
                 {%- render 'buy-buttons',
                   block: block,
@@ -1007,6 +1009,33 @@
           "label": "t:sections.main-product.blocks.buy_buttons.settings.show_gift_card_recipient.label",
           "info": "t:sections.main-product.blocks.buy_buttons.settings.show_gift_card_recipient.info"
         }
+      ]
+    },
+    {
+      "type": "bundle_builder",
+      "name": "Bundle builder",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Build your kit" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Choose your shades" },
+        { "type": "text", "id": "empty_text", "label": "Empty slot text", "default": "Not selected" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Add selected kit to cart" },
+        { "type": "text", "id": "incomplete_text", "label": "Incomplete status", "default": "Choose all 3 shades to continue" },
+        { "type": "text", "id": "complete_text", "label": "Complete status", "default": "Your kit is ready." },
+        { "type": "text", "id": "adding_text", "label": "Adding status", "default": "Adding your kit..." },
+        { "type": "text", "id": "error_text", "label": "Error status", "default": "Could not add your kit. Please try again." },
+        { "type": "header", "content": "Slot 1" },
+        { "type": "text", "id": "label_1", "label": "Label", "default": "Squeeze gloss" },
+        { "type": "text", "id": "source_handle_1", "label": "Fallback product handle", "default": "lip-gloss-squeeze-tube" },
+        { "type": "product", "id": "source_product_1", "label": "Source product" },
+        { "type": "header", "content": "Slot 2" },
+        { "type": "text", "id": "label_2", "label": "Label", "default": "Brush gloss" },
+        { "type": "text", "id": "source_handle_2", "label": "Fallback product handle", "default": "lip-gloss-brush-tube" },
+        { "type": "product", "id": "source_product_2", "label": "Source product" },
+        { "type": "header", "content": "Slot 3" },
+        { "type": "text", "id": "label_3", "label": "Label", "default": "Lip liner" },
+        { "type": "text", "id": "source_handle_3", "label": "Fallback product handle", "default": "lip-liner-07-chocolate" },
+        { "type": "product", "id": "source_product_3", "label": "Source product" }
       ]
     },
     {

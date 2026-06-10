@@ -9,53 +9,193 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "main-product-builder",
+    "trust_bar": {
+      "type": "pdp-trust-bar",
       "blocks": {
-        "squeeze_gloss": {
-          "type": "slot",
+        "t1": { "type": "item", "settings": { "icon": "🎁", "label": "Build your own kit" } },
+        "t2": { "type": "item", "settings": { "icon": "🚚", "label": "Free shipping over EGP 1,000" } },
+        "t3": { "type": "item", "settings": { "icon": "⭐", "label": "Happiness guarantee" } }
+      },
+      "block_order": ["t1", "t2", "t3"],
+      "settings": {
+        "enable_marquee": true,
+        "marquee_speed": 26
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
           "settings": {
-            "label": "Squeeze gloss",
-            "source_handle": "lip-gloss-squeeze-tube",
-            "source_product": "lip-gloss-squeeze-tube"
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
           }
         },
-        "brush_gloss": {
-          "type": "slot",
+        "product_rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "featured_review": {
+          "type": "featured_review",
           "settings": {
-            "label": "Brush gloss",
-            "source_handle": "lip-gloss-brush-tube",
-            "source_product": "lip-gloss-brush-tube"
+            "quote": "<p>Best value — got my favourite shades in one kit.</p>",
+            "author": "Verified buyer"
           }
         },
-        "lip_liner": {
-          "type": "slot",
+        "benefits": {
+          "type": "benefit_bullets",
           "settings": {
-            "label": "Lip liner",
-            "source_handle": "lip-liner-07-chocolate",
-            "source_product": "lip-liner-07-chocolate"
+            "bullet_1": "Choose shades from the real Janelle products",
+            "bullet_2": "Selected shades show before adding to cart",
+            "bullet_3": "Inventory comes from the actual component products",
+            "bullet_4": ""
+          }
+        },
+        "bundle_builder": {
+          "type": "bundle_builder",
+          "settings": {
+            "eyebrow": "Build your kit",
+            "heading": "Choose your shades",
+            "empty_text": "Not selected",
+            "button_label": "Add selected kit to cart",
+            "incomplete_text": "Choose all 3 shades to continue",
+            "complete_text": "Your kit is ready.",
+            "adding_text": "Adding your kit...",
+            "error_text": "Could not add your kit. Please try again.",
+            "label_1": "Squeeze gloss",
+            "source_handle_1": "lip-gloss-squeeze-tube",
+            "source_product_1": "lip-gloss-squeeze-tube",
+            "label_2": "Brush gloss",
+            "source_handle_2": "lip-gloss-brush-tube",
+            "source_product_2": "lip-gloss-brush-tube",
+            "label_3": "Lip liner",
+            "source_handle_3": "lip-liner-07-chocolate",
+            "source_product_3": "lip-liner-07-chocolate"
+          }
+        },
+        "guarantee": {
+          "type": "guarantee",
+          "settings": {}
+        },
+        "trust": {
+          "type": "trust_row",
+          "settings": {
+            "icon_1": "🎁",
+            "label_1": "Build your kit"
+          }
+        },
+        "included": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "What's included",
+            "icon": "none",
+            "content": "<p>Your selected glosses and liner are added as real products in cart.</p>"
+          }
+        },
+        "howto": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "How to Use",
+            "icon": "none",
+            "content": "<p>Choose one shade in each step, then add the selected kit to cart.</p>"
+          }
+        },
+        "shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "none",
+            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>"
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
           }
         }
       },
       "block_order": [
-        "squeeze_gloss",
-        "brush_gloss",
-        "lip_liner"
+        "vendor",
+        "product_rating",
+        "title",
+        "price",
+        "featured_review",
+        "benefits",
+        "bundle_builder",
+        "guarantee",
+        "trust",
+        "included",
+        "howto",
+        "shipping",
+        "share"
       ],
       "settings": {
-        "eyebrow": "Build your set",
-        "subtitle": "<p>Pick each shade from the real Janelle products. Your selections appear in the kit preview before adding to cart.</p>",
-        "price_label": "Selected total",
-        "empty_slot_text": "Not selected",
-        "button_label": "Add selected set to cart",
-        "incomplete_text": "Choose all shades to continue ([count]/[total])",
-        "complete_text": "Your set is ready.",
-        "adding_text": "Adding your set...",
-        "error_text": "Could not add your set. Please try again.",
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "media_size": "large",
+        "constrain_to_viewport": true,
+        "media_fit": "cover",
+        "gallery_layout": "thumbnail_slider",
+        "mobile_thumbnails": "show",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "hide_variants": true,
+        "enable_video_looping": false,
         "padding_top": 36,
-        "padding_bottom": 36
+        "padding_bottom": 12
+      }
+    },
+    "1758831124533b2a49": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_T9ExWW": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "real_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": ["judge_me_reviews_review_widget_T9ExWW"],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 2,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "padding_top": 36,
+        "padding_bottom": 28
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "trust_bar",
+    "main",
+    "1758831124533b2a49",
+    "related-products"
+  ]
 }
