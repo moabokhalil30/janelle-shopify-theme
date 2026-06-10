@@ -12,11 +12,33 @@
     "trust_bar": {
       "type": "pdp-trust-bar",
       "blocks": {
-        "t1": { "type": "item", "settings": { "icon": "🐰", "label": "Cruelty-free" } },
-        "t2": { "type": "item", "settings": { "icon": "🚚", "label": "Free shipping over EGP 1,000" } },
-        "t3": { "type": "item", "settings": { "icon": "⭐", "label": "Happiness guarantee" } }
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "🐰",
+            "label": "Cruelty-free"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "🚚",
+            "label": "Free shipping over EGP 1,000"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "⭐",
+            "label": "Happiness guarantee"
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3"],
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
       "settings": {}
     },
     "1763511245fe04337c": {
@@ -124,10 +146,10 @@
         "complementary": {
           "type": "complementary",
           "settings": {
+            "block_heading": "Complete your look",
             "product_list_limit": 3,
             "products_per_page": 3,
             "pagination_style": "dots",
-            "block_heading": "Complete your look",
             "image_ratio": "square"
           }
         },
@@ -135,12 +157,6 @@
           "type": "share",
           "settings": {
             "share_label": "Share"
-          }
-        },
-        "easify_box_builder": {
-          "type": "shopify://apps/easify-box-builder/blocks/box-builder-embedded-content/5e4620dd-6bb8-4776-ada5-5f18c69faedd",
-          "settings": {
-            "boxHandle": ""
           }
         }
       },
@@ -163,8 +179,7 @@
         "shipping",
         "description",
         "complementary",
-        "share",
-        "easify_box_builder"
+        "share"
       ],
       "settings": {
         "enable_sticky_info": true,
