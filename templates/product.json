@@ -82,6 +82,7 @@
         },
         "kit_contents_X7PaE4": {
           "type": "kit_contents",
+          "disabled": true,
           "settings": {
             "heading": "What's in the kit",
             "image_1": "shopify://shop_images/PowerPink.jpg",
@@ -137,6 +138,7 @@
         },
         "bundle_builder_NtdFm9": {
           "type": "bundle_builder",
+          "disabled": true,
           "settings": {
             "eyebrow": "Build your kit",
             "heading": "Choose your shades",
@@ -146,6 +148,7 @@
             "complete_text": "Your kit is ready.",
             "adding_text": "Adding your kit...",
             "error_text": "Could not add your kit. Please try again.",
+            "cart_mode": "bundle_product",
             "label_1": "Squeeze gloss",
             "source_handle_1": "lip-gloss-squeeze-tube",
             "source_product_1": "lip-liner-07-chocolate",
@@ -159,9 +162,8 @@
         },
         "variant_picker": {
           "type": "variant_picker",
-          "disabled": true,
           "settings": {
-            "picker_type": "dropdown",
+            "picker_type": "button",
             "swatch_shape": "circle"
           }
         },
@@ -291,7 +293,7 @@
         "media_size": "large",
         "constrain_to_viewport": true,
         "media_fit": "cover",
-        "gallery_layout": "thumbnail",
+        "gallery_layout": "thumbnail_slider",
         "mobile_thumbnails": "show",
         "media_position": "left",
         "image_zoom": "lightbox",
