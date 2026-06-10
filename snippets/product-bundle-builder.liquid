@@ -35,8 +35,13 @@
         endif
       -%}
       <div class="janelle-bundle-picker__slot" data-selected-slot="{{ index }}">
-        <span>{{ slot_label }}</span>
-        <strong data-selected-title>{{ block.settings.empty_text }}</strong>
+        <div class="janelle-bundle-picker__slot-media" data-selected-media>
+          <span>{{ index }}</span>
+        </div>
+        <div>
+          <span>{{ slot_label }}</span>
+          <strong data-selected-title>{{ block.settings.empty_text }}</strong>
+        </div>
       </div>
     {%- endfor -%}
   </div>
@@ -57,18 +62,22 @@
       <fieldset class="janelle-bundle-picker__group" data-bundle-group="{{ index }}">
         <legend>
           <span>Step {{ index }}</span>
-          {{ slot_label }}
+          <strong>{{ slot_label }}</strong>
         </legend>
 
         {%- if source_product != blank and source_product.variants.size > 0 -%}
           <div class="janelle-bundle-picker__options">
             {%- for variant in source_product.variants -%}
-              {%- liquid
-                assign variant_image = variant.featured_image
-                if variant_image == blank
-                  assign variant_image = source_product.featured_image
-                endif
-              -%}
+                {%- liquid
+                  assign variant_image = variant.featured_image
+                  if variant_image == blank
+                    assign variant_image = source_product.featured_image
+                  endif
+                  assign variant_title = variant.title
+                  if variant_title == 'Default Title'
+                    assign variant_title = source_product.title
+                  endif
+                -%}
               <button
                 class="janelle-bundle-picker__option"
                 type="button"
@@ -76,7 +85,7 @@
                 data-slot="{{ index }}"
                 data-variant-id="{{ variant.id }}"
                 data-product-title="{{ source_product.title | escape }}"
-                data-variant-title="{{ variant.title | escape }}"
+                data-variant-title="{{ variant_title | escape }}"
                 data-image="{% if variant_image %}{{ variant_image | image_url: width: 240 }}{% endif %}"
                 aria-pressed="false"
                 {% unless variant.available %}disabled{% endunless %}
@@ -86,11 +95,13 @@
                     {{
                       variant_image
                       | image_url: width: 180
-                      | image_tag: loading: 'lazy', widths: '90, 140, 180', alt: variant.title
+                      | image_tag: loading: 'lazy', widths: '90, 140, 180', alt: variant_title
                     }}
+                  {%- else -%}
+                    <span>{{ variant_title | slice: 0, 1 }}</span>
                   {%- endif -%}
                 </span>
-                <span class="janelle-bundle-picker__name">{{ variant.title }}</span>
+                <span class="janelle-bundle-picker__name">{{ variant_title }}</span>
               </button>
             {%- endfor -%}
           </div>
@@ -110,35 +121,55 @@
 
 <style>
   .janelle-bundle-picker {
+    --jb-ink: #3c2633;
+    --jb-muted: #7b6572;
+    --jb-accent: #b9648a;
+    --jb-line: #ead7e2;
+    --jb-soft: #fff7fa;
+    --jb-surface: #ffffff;
     margin: 2rem 0;
     max-width: 44rem;
+    padding: 1.4rem;
+    border: 0.1rem solid var(--jb-line);
+    border-radius: 0.8rem;
+    background: linear-gradient(180deg, var(--jb-surface), var(--jb-soft));
+    box-shadow: 0 1rem 3rem rgba(60, 38, 51, 0.08);
   }
 
   .janelle-bundle-picker__head {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 1.2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
   }
 
   .janelle-bundle-picker__head p {
     margin: 0 0 0.3rem;
-    color: rgba(var(--color-foreground), 0.62);
+    color: var(--jb-accent);
     font-size: 1rem;
     font-weight: 700;
-    letter-spacing: 0.1rem;
+    letter-spacing: 0.12rem;
     text-transform: uppercase;
   }
 
   .janelle-bundle-picker__head h2 {
     margin: 0;
-    font-size: 1.8rem;
+    color: var(--jb-ink);
+    font-size: 2rem;
     line-height: 1.15;
   }
 
   .janelle-bundle-picker__head span {
-    color: rgba(var(--color-foreground), 0.68);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.4rem;
+    height: 3rem;
+    border: 0.1rem solid var(--jb-line);
+    border-radius: 999px;
+    background: var(--jb-surface);
+    color: var(--jb-accent);
     font-size: 1.2rem;
     font-weight: 700;
   }
@@ -147,25 +178,53 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.8rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.4rem;
   }
 
   .janelle-bundle-picker__slot {
+    display: grid;
+    grid-template-columns: 4.4rem minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: center;
     min-width: 0;
-    padding: 0.9rem;
-    border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+    min-height: 6.4rem;
+    padding: 0.8rem;
+    border: 0.1rem solid var(--jb-line);
     border-radius: 0.7rem;
-    background: rgba(var(--color-foreground), 0.035);
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .janelle-bundle-picker__slot.is-selected {
-    border-color: rgba(var(--color-foreground), 0.34);
-    background: rgb(var(--color-background));
+    border-color: rgba(185, 100, 138, 0.42);
+    background: var(--jb-surface);
+    box-shadow: 0 0.6rem 1.8rem rgba(60, 38, 51, 0.07);
+  }
+
+  .janelle-bundle-picker__slot-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 4.4rem;
+    aspect-ratio: 1 / 1;
+    border: 0.1rem solid var(--jb-line);
+    border-radius: 0.6rem;
+    background: var(--jb-soft);
+    color: var(--jb-accent);
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .janelle-bundle-picker__slot-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .janelle-bundle-picker__slot span {
     display: block;
-    color: rgba(var(--color-foreground), 0.62);
+    color: var(--jb-muted);
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.08rem;
@@ -175,6 +234,7 @@
   .janelle-bundle-picker__slot strong {
     display: block;
     margin-top: 0.25rem;
+    color: var(--jb-ink);
     font-size: 1.15rem;
     line-height: 1.2;
     overflow-wrap: anywhere;
@@ -182,26 +242,29 @@
 
   .janelle-bundle-picker__groups {
     display: grid;
-    gap: 1.2rem;
+    gap: 1rem;
   }
 
   .janelle-bundle-picker__group {
     margin: 0;
     padding: 1rem;
-    border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+    border: 0.1rem solid var(--jb-line);
     border-radius: 0.8rem;
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .janelle-bundle-picker__group legend {
     display: flex;
+    align-items: baseline;
     gap: 0.7rem;
     padding: 0 0.3rem;
+    color: var(--jb-ink);
     font-size: 1.35rem;
     font-weight: 700;
   }
 
   .janelle-bundle-picker__group legend span {
-    color: rgba(var(--color-foreground), 0.58);
+    color: var(--jb-accent);
     font-size: 1rem;
     letter-spacing: 0.08rem;
     text-transform: uppercase;
@@ -212,28 +275,35 @@
     gap: 0.8rem;
     margin-top: 0.9rem;
     overflow-x: auto;
-    padding: 0.2rem 0.2rem 0.6rem;
+    padding: 0.2rem 0.2rem 0.8rem;
     scroll-snap-type: x proximity;
+    scrollbar-color: var(--jb-accent) transparent;
   }
 
   .janelle-bundle-picker__option {
-    flex: 0 0 8.8rem;
+    flex: 0 0 9.6rem;
     display: grid;
     gap: 0.6rem;
     min-width: 0;
-    padding: 0.6rem;
-    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+    padding: 0.7rem;
+    border: 0.1rem solid var(--jb-line);
     border-radius: 0.7rem;
-    background: rgb(var(--color-background));
-    color: rgb(var(--color-foreground));
+    background: var(--jb-surface);
+    color: var(--jb-ink);
     cursor: pointer;
     scroll-snap-align: start;
     text-align: left;
+    transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease, transform var(--duration-short) ease;
+  }
+
+  .janelle-bundle-picker__option:hover {
+    border-color: rgba(185, 100, 138, 0.42);
+    transform: translateY(-0.1rem);
   }
 
   .janelle-bundle-picker__option[aria-pressed='true'] {
-    border-color: rgb(var(--color-foreground));
-    box-shadow: 0 0 0 0.2rem rgb(var(--color-foreground));
+    border-color: var(--jb-accent);
+    box-shadow: 0 0 0 0.2rem rgba(185, 100, 138, 0.22), 0 0.8rem 1.8rem rgba(60, 38, 51, 0.1);
   }
 
   .janelle-bundle-picker__option:disabled {
@@ -242,9 +312,15 @@
   }
 
   .janelle-bundle-picker__image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     border-radius: 0.5rem;
-    background: rgba(var(--color-foreground), 0.035);
+    background: var(--jb-soft);
+    color: var(--jb-accent);
+    font-size: 2rem;
+    font-weight: 700;
     aspect-ratio: 1 / 1;
   }
 
@@ -257,6 +333,7 @@
 
   .janelle-bundle-picker__name {
     min-height: 2.8em;
+    color: var(--jb-ink);
     font-size: 1.15rem;
     font-weight: 650;
     line-height: 1.2;
@@ -265,6 +342,7 @@
 
   .janelle-bundle-picker [data-add-bundle] {
     margin-top: 1.4rem;
+    min-height: 5rem;
   }
 
   .janelle-bundle-picker [data-add-bundle][disabled] {
@@ -275,9 +353,23 @@
   .janelle-bundle-picker__status,
   .janelle-bundle-picker__missing {
     margin: 0.8rem 0 0;
-    color: rgba(var(--color-foreground), 0.68);
+    color: var(--jb-muted);
     font-size: 1.2rem;
     text-align: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .janelle-bundle-picker {
+      padding: 1.1rem;
+    }
+
+    .janelle-bundle-picker__selected {
+      grid-template-columns: 1fr;
+    }
+
+    .janelle-bundle-picker__option {
+      flex-basis: 9rem;
+    }
   }
 </style>
 
@@ -319,13 +411,18 @@
       selected.set(slot, {
         id: Number(option.dataset.variantId),
         productTitle: option.dataset.productTitle,
-        variantTitle: option.dataset.variantTitle
+        variantTitle: option.dataset.variantTitle,
+        image: option.dataset.image
       });
 
       const preview = root.querySelector(`[data-selected-slot="${slot}"]`);
       if (preview) {
         preview.classList.add('is-selected');
         preview.querySelector('[data-selected-title]').textContent = option.dataset.variantTitle;
+        const media = preview.querySelector('[data-selected-media]');
+        if (media && option.dataset.image) {
+          media.innerHTML = `<img src="${option.dataset.image}" alt="${option.dataset.variantTitle}">`;
+        }
       }
 
       refresh();
