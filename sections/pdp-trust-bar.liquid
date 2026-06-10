@@ -1,0 +1,70 @@
+{%- comment -%}
+  Janelle — Trust bar (under-header strip). Add to the product template (or any page).
+  Up to 4 items; icon + label each. Colors, alignment and divider fully customizable.
+{%- endcomment -%}
+
+{%- assign tb = 'tb-' | append: section.id -%}
+{% style %}
+  .{{ tb }}{background:{{ section.settings.bg_color }};border-top:1px solid {{ section.settings.divider_color }};border-bottom:1px solid {{ section.settings.divider_color }};padding:{{ section.settings.padding_y }}px 1.5rem;}
+  .{{ tb }}__inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:{{ section.settings.alignment }};gap:{{ section.settings.gap }}px;max-width:{{ section.settings.max_width }}px;margin:0 auto;}
+  .{{ tb }}__item{display:inline-flex;align-items:center;gap:.6rem;font-size:{{ section.settings.font_size }}px;color:{{ section.settings.text_color }};white-space:nowrap;}
+  .{{ tb }}__ic{font-size:1.4em;line-height:1;}
+  @media (max-width:749px){
+    .{{ tb }}__inner{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .{{ tb }}__inner::-webkit-scrollbar{display:none;}
+  }
+{% endstyle %}
+
+<div class="{{ tb }}" {{ section.shopify_attributes }}>
+  <div class="{{ tb }}__inner">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.label != blank -%}
+        <span class="{{ tb }}__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}<span class="{{ tb }}__ic">{{ block.settings.icon }}</span>{%- endif -%}
+          {{ block.settings.label }}
+        </span>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "PDP trust bar",
+  "tag": "section",
+  "class": "section-pdp-trust-bar",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "alignment", "label": "Alignment", "options": [ { "value": "flex-start", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "space-between", "label": "Space between" } ], "default": "center" },
+    { "type": "range", "id": "gap", "label": "Gap between items", "min": 8, "max": 64, "step": 2, "unit": "px", "default": 34 },
+    { "type": "range", "id": "padding_y", "label": "Vertical padding", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 10 },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 600, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "font_size", "label": "Font size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 13 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" },
+    { "type": "color", "id": "divider_color", "label": "Top/bottom border", "default": "#e9dde4" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Trust item",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji or character)", "default": "🐰" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Cruelty-free" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "PDP trust bar",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "🐰", "label": "Cruelty-free" } },
+        { "type": "item", "settings": { "icon": "🚚", "label": "Free shipping over EGP 1,000" } },
+        { "type": "item", "settings": { "icon": "⭐", "label": "Happiness guarantee" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

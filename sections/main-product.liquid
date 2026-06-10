@@ -674,6 +674,87 @@
                 </product-recommendations>
               {%- when 'icon-with-text' -%}
                 {% render 'icon-with-text', block: block %}
+
+              {%- comment -%} ===== Janelle custom PDP blocks ===== {%- endcomment -%}
+              {%- when 'featured_review' -%}
+                {%- assign fr_id = 'fr-' | append: block.id -%}
+                {% style %}
+                  .{{ fr_id }}{background:{{ block.settings.bg_color }};border-left:3px solid {{ block.settings.accent_color }};border-radius:{{ block.settings.corner_radius }}px;padding:1.4rem 1.6rem;margin:1.2rem 0;}
+                  .{{ fr_id }}__label{font-size:1.1rem;letter-spacing:.1rem;text-transform:uppercase;color:{{ block.settings.accent_color }};margin-bottom:.5rem;}
+                  .{{ fr_id }}__quote{font-style:italic;color:{{ block.settings.text_color }};font-size:1.5rem;line-height:1.45;}
+                  .{{ fr_id }}__who{font-size:1.2rem;color:{{ block.settings.text_color }};opacity:.75;margin-top:.6rem;}
+                  .{{ fr_id }}__stars{color:{{ block.settings.accent_color }};letter-spacing:.15rem;}
+                {% endstyle %}
+                <div class="{{ fr_id }}" {{ block.shopify_attributes }}>
+                  {%- if block.settings.label != blank -%}<div class="{{ fr_id }}__label">{{ block.settings.label }}</div>{%- endif -%}
+                  <div class="{{ fr_id }}__quote">{{ block.settings.quote }}</div>
+                  <div class="{{ fr_id }}__who">
+                    {%- if block.settings.show_stars and block.settings.rating > 0 -%}<span class="{{ fr_id }}__stars">{% for i in (1..block.settings.rating) %}★{% endfor %}</span> {% endif -%}
+                    {{ block.settings.author }}
+                  </div>
+                </div>
+
+              {%- when 'benefit_bullets' -%}
+                {%- assign bb_id = 'bb-' | append: block.id -%}
+                {% style %}
+                  .{{ bb_id }}{list-style:none;margin:1.2rem 0;padding:0;}
+                  .{{ bb_id }} li{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.7rem;font-size:1.5rem;line-height:1.4;color:{{ block.settings.text_color }};}
+                  .{{ bb_id }} .bb-ck{color:{{ block.settings.icon_color }};font-weight:700;flex:0 0 auto;}
+                {% endstyle %}
+                <ul class="{{ bb_id }}" {{ block.shopify_attributes }}>
+                  {%- if block.settings.bullet_1 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_1 }}</span></li>{%- endif -%}
+                  {%- if block.settings.bullet_2 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_2 }}</span></li>{%- endif -%}
+                  {%- if block.settings.bullet_3 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_3 }}</span></li>{%- endif -%}
+                  {%- if block.settings.bullet_4 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_4 }}</span></li>{%- endif -%}
+                </ul>
+
+              {%- when 'social_proof' -%}
+                {%- assign sp_id = 'sp-' | append: block.id -%}
+                {% style %}
+                  .{{ sp_id }}{display:inline-flex;align-items:center;gap:.6rem;font-size:1.3rem;color:{{ block.settings.text_color }};background:{{ block.settings.bg_color }};{% if block.settings.show_border %}border:1px solid {{ block.settings.border_color }};{% endif %}padding:.6rem 1.2rem;border-radius:2rem;margin:.6rem 0;}
+                {% endstyle %}
+                <div {{ block.shopify_attributes }}>
+                  <span class="{{ sp_id }}">{%- if block.settings.icon != blank -%}{{ block.settings.icon }} {% endif -%}{{ block.settings.text }}</span>
+                </div>
+
+              {%- when 'trust_row' -%}
+                {%- assign tr_id = 'tr-' | append: block.id -%}
+                {% style %}
+                  .{{ tr_id }}{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.4rem 0;padding:1.2rem;background:{{ block.settings.bg_color }};border-radius:{{ block.settings.corner_radius }}px;}
+                  .{{ tr_id }} .tr-item{flex:1 1 28%;min-width:9rem;text-align:center;font-size:1.2rem;line-height:1.3;color:{{ block.settings.text_color }};}
+                  .{{ tr_id }} .tr-ic{font-size:2rem;display:block;margin-bottom:.4rem;}
+                {% endstyle %}
+                <div class="{{ tr_id }}" {{ block.shopify_attributes }}>
+                  {%- if block.settings.label_1 != blank -%}<div class="tr-item"><span class="tr-ic">{{ block.settings.icon_1 }}</span>{{ block.settings.label_1 }}</div>{%- endif -%}
+                  {%- if block.settings.label_2 != blank -%}<div class="tr-item"><span class="tr-ic">{{ block.settings.icon_2 }}</span>{{ block.settings.label_2 }}</div>{%- endif -%}
+                  {%- if block.settings.label_3 != blank -%}<div class="tr-item"><span class="tr-ic">{{ block.settings.icon_3 }}</span>{{ block.settings.label_3 }}</div>{%- endif -%}
+                </div>
+
+              {%- when 'guarantee' -%}
+                {%- assign gt_id = 'gt-' | append: block.id -%}
+                {% style %}
+                  .{{ gt_id }}{text-align:{{ block.settings.alignment }};font-size:1.2rem;color:{{ block.settings.text_color }};margin:.4rem 0 1.2rem;}
+                {% endstyle %}
+                <div class="{{ gt_id }}" {{ block.shopify_attributes }}>{%- if block.settings.icon != blank -%}{{ block.settings.icon }} {% endif -%}{{ block.settings.text }}</div>
+
+              {%- when 'kit_contents' -%}
+                {%- assign kc_id = 'kc-' | append: block.id -%}
+                {% style %}
+                  .{{ kc_id }}__label{font-size:1.2rem;letter-spacing:.1rem;text-transform:uppercase;color:{{ block.settings.text_color }};opacity:.7;margin:1.2rem 0 .6rem;}
+                  .{{ kc_id }}{display:flex;gap:1rem;margin:.4rem 0 1.2rem;}
+                  .{{ kc_id }} .kc-item{flex:1;text-align:center;font-size:1.2rem;color:{{ block.settings.text_color }};}
+                  .{{ kc_id }} .kc-ph{aspect-ratio:1/1;background:{{ block.settings.placeholder_color }};border-radius:6px;margin-bottom:.6rem;overflow:hidden;}
+                  .{{ kc_id }} .kc-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+                  .{{ kc_id }} .kc-role{display:block;color:{{ block.settings.accent_color }};}
+                {% endstyle %}
+                <div {{ block.shopify_attributes }}>
+                  {%- if block.settings.heading != blank -%}<div class="{{ kc_id }}__label">{{ block.settings.heading }}</div>{%- endif -%}
+                  <div class="{{ kc_id }}">
+                    {%- if block.settings.title_1 != blank -%}<div class="kc-item"><div class="kc-ph">{% if block.settings.image_1 %}{{ block.settings.image_1 | image_url: width: 300 | image_tag: loading: 'lazy' }}{% endif %}</div><strong>{{ block.settings.title_1 }}</strong><span class="kc-role">{{ block.settings.role_1 }}</span></div>{%- endif -%}
+                    {%- if block.settings.title_2 != blank -%}<div class="kc-item"><div class="kc-ph">{% if block.settings.image_2 %}{{ block.settings.image_2 | image_url: width: 300 | image_tag: loading: 'lazy' }}{% endif %}</div><strong>{{ block.settings.title_2 }}</strong><span class="kc-role">{{ block.settings.role_2 }}</span></div>{%- endif -%}
+                    {%- if block.settings.title_3 != blank -%}<div class="kc-item"><div class="kc-ph">{% if block.settings.image_3 %}{{ block.settings.image_3 | image_url: width: 300 | image_tag: loading: 'lazy' }}{% endif %}</div><strong>{{ block.settings.title_3 }}</strong><span class="kc-role">{{ block.settings.role_3 }}</span></div>{%- endif -%}
+                  </div>
+                </div>
             {%- endcase -%}
           {%- endfor -%}
           <a href="{{ product.url }}" class="link product__view-details animate-arrow">
@@ -2085,6 +2166,101 @@
           "label": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.label",
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
         }
+      ]
+    },
+    {
+      "type": "featured_review",
+      "name": "Featured review",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "⭐ Featured review" },
+        { "type": "richtext", "id": "quote", "label": "Review quote", "default": "<p>The only liner that lasts through my whole shift without fading. Brunette is gorgeous.</p>" },
+        { "type": "text", "id": "author", "label": "Author", "default": "Mariam H., Verified buyer" },
+        { "type": "checkbox", "id": "show_stars", "label": "Show stars", "default": true },
+        { "type": "range", "id": "rating", "label": "Star rating", "min": 0, "max": 5, "step": 1, "default": 5 },
+        { "type": "range", "id": "corner_radius", "label": "Corner radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 6 },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "bg_color", "label": "Background", "default": "#f3e4ec" },
+        { "type": "color", "id": "accent_color", "label": "Accent (border + stars)", "default": "#d585a6" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" }
+      ]
+    },
+    {
+      "type": "benefit_bullets",
+      "name": "Benefit bullets",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Bullet icon", "default": "✓" },
+        { "type": "inline_richtext", "id": "bullet_1", "label": "Bullet 1", "default": "<strong>Long-wearing colour</strong> that stays put through coffee & meals" },
+        { "type": "inline_richtext", "id": "bullet_2", "label": "Bullet 2", "default": "<strong>Creamy, non-drying</strong> formula — glides on, never tugs" },
+        { "type": "inline_richtext", "id": "bullet_3", "label": "Bullet 3", "default": "<strong>Cruelty-free</strong> & flavoured" },
+        { "type": "inline_richtext", "id": "bullet_4", "label": "Bullet 4", "default": "" },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "icon_color", "label": "Icon color", "default": "#b9648a" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" }
+      ]
+    },
+    {
+      "type": "social_proof",
+      "name": "Social proof",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon", "default": "🔥" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Bought 247 times in the last 30 days" },
+        { "type": "checkbox", "id": "show_border", "label": "Show border", "default": true },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#b9648a" },
+        { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+        { "type": "color", "id": "border_color", "label": "Border", "default": "#e9dde4" }
+      ]
+    },
+    {
+      "type": "trust_row",
+      "name": "Trust row",
+      "settings": [
+        { "type": "range", "id": "corner_radius", "label": "Corner radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 6 },
+        { "type": "header", "content": "Item 1" },
+        { "type": "text", "id": "icon_1", "label": "Icon", "default": "🐰" },
+        { "type": "text", "id": "label_1", "label": "Label", "default": "Cruelty-free" },
+        { "type": "header", "content": "Item 2" },
+        { "type": "text", "id": "icon_2", "label": "Icon", "default": "🚚" },
+        { "type": "text", "id": "label_2", "label": "Label", "default": "Free shipping over EGP 1,000" },
+        { "type": "header", "content": "Item 3" },
+        { "type": "text", "id": "icon_3", "label": "Icon", "default": "🔒" },
+        { "type": "text", "id": "label_3", "label": "Label", "default": "Secure checkout" },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "bg_color", "label": "Background", "default": "#f3e4ec" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" }
+      ]
+    },
+    {
+      "type": "guarantee",
+      "name": "Guarantee line",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon", "default": "🛡️" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Free returns within 30 days" },
+        { "type": "select", "id": "alignment", "label": "Alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" } ], "default": "center" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#6b6b6b" }
+      ]
+    },
+    {
+      "type": "kit_contents",
+      "name": "Kit contents (bundles)",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "What's in the kit" },
+        { "type": "header", "content": "Item 1" },
+        { "type": "image_picker", "id": "image_1", "label": "Image" },
+        { "type": "text", "id": "title_1", "label": "Title", "default": "Gloss" },
+        { "type": "text", "id": "role_1", "label": "Role", "default": "shine + colour" },
+        { "type": "header", "content": "Item 2" },
+        { "type": "image_picker", "id": "image_2", "label": "Image" },
+        { "type": "text", "id": "title_2", "label": "Title", "default": "Liner" },
+        { "type": "text", "id": "role_2", "label": "Role", "default": "define + fill" },
+        { "type": "header", "content": "Item 3" },
+        { "type": "image_picker", "id": "image_3", "label": "Image" },
+        { "type": "text", "id": "title_3", "label": "Title", "default": "Mini" },
+        { "type": "text", "id": "role_3", "label": "Role", "default": "on-the-go" },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" },
+        { "type": "color", "id": "accent_color", "label": "Role text", "default": "#b9648a" },
+        { "type": "color", "id": "placeholder_color", "label": "Image placeholder", "default": "#f3e4ec" }
       ]
     }
   ],

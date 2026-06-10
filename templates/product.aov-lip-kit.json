@@ -9,6 +9,16 @@
  */
 {
   "sections": {
+    "trust_bar": {
+      "type": "pdp-trust-bar",
+      "blocks": {
+        "t1": { "type": "item", "settings": { "icon": "🎁", "label": "Save EGP 370 vs separate" } },
+        "t2": { "type": "item", "settings": { "icon": "🚚", "label": "Free shipping over EGP 1,000" } },
+        "t3": { "type": "item", "settings": { "icon": "⭐", "label": "Happiness guarantee" } }
+      },
+      "block_order": ["t1", "t2", "t3"],
+      "settings": {}
+    },
     "1763511245fe04337c": {
       "type": "apps",
       "blocks": {
@@ -34,6 +44,10 @@
             "text_style": "uppercase"
           }
         },
+        "product_rating": {
+          "type": "rating",
+          "settings": {}
+        },
         "title": {
           "type": "title",
           "settings": {}
@@ -42,11 +56,37 @@
           "type": "price",
           "settings": {}
         },
+        "featured_review": {
+          "type": "featured_review",
+          "settings": {
+            "quote": "<p>Best value — got my two favourite shades plus a mini, and the pouch is adorable.</p>",
+            "author": "Salma R., Verified buyer"
+          }
+        },
+        "benefits": {
+          "type": "benefit_bullets",
+          "settings": {
+            "bullet_1": "Your <strong>3 favourites in one kit</strong> — gloss, liner & a mini",
+            "bullet_2": "<strong>Best value</strong> — save EGP 370 vs buying separately",
+            "bullet_3": "Comes in a <strong>reusable Janelle pouch</strong> — gift-ready",
+            "bullet_4": ""
+          }
+        },
+        "social": {
+          "type": "social_proof",
+          "settings": {
+            "text": "Bought 189 times in the last 30 days"
+          }
+        },
+        "kit_contents": {
+          "type": "kit_contents",
+          "settings": {}
+        },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
-            "picker_type": "button",
-            "swatch_shape": "square"
+            "picker_type": "dropdown",
+            "swatch_shape": "circle"
           }
         },
         "quantity_selector": {
@@ -56,8 +96,43 @@
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "guarantee": {
+          "type": "guarantee",
+          "settings": {}
+        },
+        "trust": {
+          "type": "trust_row",
+          "settings": {
+            "icon_1": "🎁",
+            "label_1": "Save EGP 370"
+          }
+        },
+        "included": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "What's included",
+            "icon": "none",
+            "content": "<p>1 full-size gloss + 1 lip liner + 1 mini gloss, in a reusable Janelle pouch.</p>"
+          }
+        },
+        "howto": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "How to Use",
+            "icon": "none",
+            "content": "<p>Line, fill, then top with gloss. Keep the mini in your bag for touch-ups.</p>"
+          }
+        },
+        "shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "none",
+            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>"
           }
         },
         "description": {
@@ -77,11 +152,21 @@
       },
       "block_order": [
         "vendor",
+        "product_rating",
         "title",
         "price",
+        "featured_review",
+        "benefits",
+        "social",
+        "kit_contents",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
+        "guarantee",
+        "trust",
+        "included",
+        "howto",
+        "shipping",
         "description",
         "share",
         "aov_ai_bundle_mix_match_offer_inline_EYcC9j"
@@ -93,19 +178,13 @@
         "constrain_to_viewport": true,
         "media_fit": "cover",
         "gallery_layout": "thumbnail_slider",
-        "mobile_thumbnails": "hide",
+        "mobile_thumbnails": "show",
         "media_position": "left",
         "image_zoom": "lightbox",
         "hide_variants": true,
         "enable_video_looping": false,
         "padding_top": 36,
         "padding_bottom": 12
-      }
-    },
-    "17672249385735c9f9": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
       }
     },
     "1758831124533b2a49": {
@@ -146,52 +225,19 @@
         "padding_bottom": 28
       }
     },
-    "1758395518b065cbcb": {
-      "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_499a62c_3y67dP": {
-          "type": "ai_gen_block_499a62c",
-          "settings": {
-            "image": "shopify://shop_images/j-e1668088942314-150x60.png",
-            "max_width": 200,
-            "alignment": "center",
-            "border_radius": 0,
-            "title": "",
-            "subtitle": "",
-            "text_color": "#ffffff",
-            "title_size": 24,
-            "subtitle_size": 16,
-            "opacity": 100,
-            "enable_overlay": false,
-            "overlay_color": "#000000",
-            "overlay_opacity": 30,
-            "enable_link": false,
-            "image_link": "",
-            "hover_opacity": 80,
-            "margin_top": 40,
-            "margin_bottom": 40
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_499a62c_3y67dP"
-      ],
-      "disabled": true,
-      "settings": {}
-    },
-    "1758391660da50c0a7": {
-      "type": "_blocks",
-      "settings": {}
+    "sticky_atc": {
+      "type": "pdp-sticky-atc",
+      "settings": {
+        "button_label": "Add kit to cart"
+      }
     }
   },
   "order": [
+    "trust_bar",
     "1763511245fe04337c",
     "main",
-    "17672249385735c9f9",
     "1758831124533b2a49",
     "related-products",
-    "1758395518b065cbcb",
-    "1758391660da50c0a7"
+    "sticky_atc"
   ]
 }

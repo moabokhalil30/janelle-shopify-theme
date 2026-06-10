@@ -1,0 +1,86 @@
+{%- comment -%}
+  Janelle — Mobile sticky add-to-cart bar. Add to the product template.
+  Appears on scroll (mobile by default). Button smooth-scrolls to the main buy button,
+  so the shopper always adds the shade/variant they actually selected.
+{%- endcomment -%}
+
+{%- assign sa = 'sa-' | append: section.id -%}
+{%- assign variant = product.selected_or_first_available_variant -%}
+{% style %}
+  .{{ sa }}{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:1rem;
+    padding:.8rem 1.5rem;background:{{ section.settings.bg_color }};border-top:1px solid {{ section.settings.border_color }};
+    box-shadow:0 -4px 16px rgba(0,0,0,.06);transform:translateY(110%);transition:transform .25s ease;}
+  .{{ sa }}.is-visible{transform:translateY(0);}
+  .{{ sa }}__media{width:44px;height:44px;border-radius:6px;object-fit:cover;flex:0 0 auto;}
+  .{{ sa }}__info{flex:1;min-width:0;}
+  .{{ sa }}__title{font-size:1.3rem;color:{{ section.settings.text_color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .{{ sa }}__price{font-size:1.3rem;font-weight:600;color:{{ section.settings.text_color }};}
+  .{{ sa }}__btn{flex:0 0 auto;border:none;border-radius:{{ section.settings.button_radius }}px;cursor:pointer;
+    background:{{ section.settings.button_bg }};color:{{ section.settings.button_text }};
+    font-size:1.3rem;letter-spacing:.05rem;padding:1.1rem 2rem;}
+  {% unless section.settings.mobile_only %}@media(min-width:990px){.{{ sa }}{display:flex;}}{% endunless %}
+  @media(min-width:990px){ {% if section.settings.mobile_only %}.{{ sa }}{display:none;}{% endif %} }
+{% endstyle %}
+
+<sticky-atc
+  class="{{ sa }}"
+  data-show-after="{{ section.settings.show_after }}"
+  {{ section.shopify_attributes }}
+>
+  {%- if section.settings.show_image and product.featured_media -%}
+    <img class="{{ sa }}__media" src="{{ product.featured_media | image_url: width: 88 }}" alt="" width="44" height="44" loading="lazy">
+  {%- endif -%}
+  <div class="{{ sa }}__info">
+    <div class="{{ sa }}__title">{{ product.title | escape }}</div>
+    <div class="{{ sa }}__price">{{ variant.price | money }}</div>
+  </div>
+  <button type="button" class="{{ sa }}__btn" data-sticky-atc-trigger>
+    {{ section.settings.button_label }}
+  </button>
+</sticky-atc>
+
+<script>
+  if (!customElements.get('sticky-atc')) {
+    customElements.define('sticky-atc', class extends HTMLElement {
+      connectedCallback() {
+        this.threshold = parseInt(this.dataset.showAfter, 10) || 500;
+        this.onScroll = this.onScroll.bind(this);
+        window.addEventListener('scroll', this.onScroll, { passive: true });
+        this.onScroll();
+        var btn = this.querySelector('[data-sticky-atc-trigger]');
+        if (btn) btn.addEventListener('click', function () {
+          var target = document.querySelector('.product-form__submit, [id^="ProductSubmitButton"], product-form');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function () { if (target.focus) target.focus(); }, 400);
+          }
+        });
+      }
+      disconnectedCallback() { window.removeEventListener('scroll', this.onScroll); }
+      onScroll() { this.classList.toggle('is-visible', window.scrollY > this.threshold); }
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "PDP sticky add-to-cart",
+  "tag": "section",
+  "class": "section-pdp-sticky-atc",
+  "settings": [
+    { "type": "paragraph", "content": "Shows a sticky bar on scroll. The button scrolls to the main Add to cart so the selected variant is added." },
+    { "type": "checkbox", "id": "mobile_only", "label": "Show on mobile only", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show product thumbnail", "default": true },
+    { "type": "range", "id": "show_after", "label": "Show after scrolling", "min": 200, "max": 1200, "step": 50, "unit": "px", "default": 500 },
+    { "type": "text", "id": "button_label", "label": "Button text", "default": "Add to cart" },
+    { "type": "range", "id": "button_radius", "label": "Button corner radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 4 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Bar background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" },
+    { "type": "color", "id": "border_color", "label": "Top border", "default": "#e9dde4" },
+    { "type": "color", "id": "button_bg", "label": "Button background", "default": "#b9648a" },
+    { "type": "color", "id": "button_text", "label": "Button text", "default": "#ffffff" }
+  ],
+  "presets": [ { "name": "PDP sticky add-to-cart" } ]
+}
+{% endschema %}
