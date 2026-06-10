@@ -1,14 +1,29 @@
 {%- liquid
   assign builder_id = 'bundle-picker-' | append: section.id | append: '-' | append: block.id
-  assign source_1 = block.settings.source_product_1
-  assign source_2 = block.settings.source_product_2
-  assign source_3 = block.settings.source_product_3
+  assign source_1_setting = block.settings.source_product_1
+  assign source_2_setting = block.settings.source_product_2
+  assign source_3_setting = block.settings.source_product_3
+  assign source_1_handle = source_1_setting.handle | default: source_1_setting
+  assign source_2_handle = source_2_setting.handle | default: source_2_setting
+  assign source_3_handle = source_3_setting.handle | default: source_3_setting
+  assign source_1 = source_1_setting
+  assign source_2 = source_2_setting
+  assign source_3 = source_3_setting
 
+  if source_1.variants.size == blank and source_1_handle != blank
+    assign source_1 = all_products[source_1_handle]
+  endif
   if source_1.variants.size == blank and block.settings.source_handle_1 != blank
     assign source_1 = all_products[block.settings.source_handle_1]
   endif
+  if source_2.variants.size == blank and source_2_handle != blank
+    assign source_2 = all_products[source_2_handle]
+  endif
   if source_2.variants.size == blank and block.settings.source_handle_2 != blank
     assign source_2 = all_products[block.settings.source_handle_2]
+  endif
+  if source_3.variants.size == blank and source_3_handle != blank
+    assign source_3 = all_products[source_3_handle]
   endif
   if source_3.variants.size == blank and block.settings.source_handle_3 != blank
     assign source_3 = all_products[block.settings.source_handle_3]
@@ -114,7 +129,7 @@
                 data-variant-id="{{ variant.id }}"
                 data-product-title="{{ source_product.title | escape }}"
                 data-variant-title="{{ variant_title | escape }}"
-                data-image="{% if variant_image %}{{ variant_image | image_url: width: 240 }}{% endif %}"
+                data-image="{% if variant_image %}{{ variant_image | image_url: width: 900 }}{% endif %}"
                 aria-pressed="false"
                 {% unless variant.available %}disabled{% endunless %}
               >
@@ -425,6 +440,62 @@
     text-align: center;
   }
 
+  .janelle-bundle-gallery-preview {
+    margin-top: 1.2rem;
+    padding: 1rem;
+    border: 0.1rem solid var(--jb-line, #ead7e2);
+    border-radius: 0.8rem;
+    background: var(--jb-soft, #fff7fa);
+  }
+
+  .janelle-bundle-gallery-preview[hidden] {
+    display: none;
+  }
+
+  .janelle-bundle-gallery-preview__label {
+    margin: 0 0 0.8rem;
+    color: var(--jb-muted, #7b6572);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+  }
+
+  .janelle-bundle-gallery-preview__list {
+    display: flex;
+    gap: 0.8rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .janelle-bundle-gallery-preview__item {
+    flex: 0 0 8rem;
+    padding: 0.4rem;
+    border: 0.1rem solid var(--jb-line, #ead7e2);
+    border-radius: 0.7rem;
+    background: var(--jb-surface, #fff);
+    color: var(--jb-ink, #3c2633);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .janelle-bundle-gallery-preview__item img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+
+  .janelle-bundle-gallery-preview__item span {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
   @media screen and (max-width: 749px) {
     .janelle-bundle-picker {
       padding: 1.1rem;
@@ -457,6 +528,80 @@
     const addingText = {{ block.settings.adding_text | json }};
     const errorText = {{ block.settings.error_text | json }};
 
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]);
+    }
+
+    function getProductInfo() {
+      return root.closest('product-info') || document.querySelector('product-info');
+    }
+
+    function updateMainGallery(image, alt) {
+      if (!image) return;
+
+      const productInfo = getProductInfo();
+      const gallery = productInfo?.querySelector('media-gallery');
+      const activeSlide =
+        gallery?.querySelector('.product__media-item.is-active') ||
+        gallery?.querySelector('.product__media-item');
+      const activeImage = activeSlide?.querySelector('img');
+
+      if (!activeImage) return;
+      activeImage.src = image;
+      activeImage.removeAttribute('srcset');
+      activeImage.alt = alt || '';
+    }
+
+    function ensureGalleryPreview() {
+      const productInfo = getProductInfo();
+      const mediaWrapper = productInfo?.querySelector('.product__media-wrapper');
+      if (!mediaWrapper) return null;
+
+      let preview = mediaWrapper.querySelector('.janelle-bundle-gallery-preview');
+      if (!preview) {
+        preview = document.createElement('div');
+        preview.className = 'janelle-bundle-gallery-preview';
+        preview.hidden = true;
+        preview.innerHTML = `
+          <p class="janelle-bundle-gallery-preview__label">Selected shades</p>
+          <div class="janelle-bundle-gallery-preview__list" data-bundle-gallery-preview></div>
+        `;
+        preview.addEventListener('click', (event) => {
+          const item = event.target.closest('[data-gallery-image]');
+          if (!item) return;
+          updateMainGallery(item.dataset.galleryImage, item.dataset.galleryAlt);
+        });
+        mediaWrapper.appendChild(preview);
+      }
+
+      return preview;
+    }
+
+    function syncGalleryPreview(latestSelection) {
+      const preview = ensureGalleryPreview();
+      const list = preview?.querySelector('[data-bundle-gallery-preview]');
+      if (!preview || !list) return;
+
+      const items = [...selected.values()].filter((item) => item.image);
+      preview.hidden = items.length === 0;
+      list.innerHTML = items.map((item) => `
+        <button class="janelle-bundle-gallery-preview__item" type="button" data-gallery-image="${escapeHtml(item.image)}" data-gallery-alt="${escapeHtml(item.variantTitle)}">
+          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.variantTitle)}" loading="lazy">
+          <span>${escapeHtml(item.variantTitle)}</span>
+        </button>
+      `).join('');
+
+      if (latestSelection?.image) {
+        updateMainGallery(latestSelection.image, latestSelection.variantTitle);
+      }
+    }
+
     function refresh() {
       const count = selected.size;
       const complete = count === requiredCount && requiredCount > 0;
@@ -486,12 +631,14 @@
       });
       option.setAttribute('aria-pressed', 'true');
 
-      selected.set(slot, {
+      const selection = {
         id: Number(option.dataset.variantId),
         productTitle: option.dataset.productTitle,
         variantTitle: option.dataset.variantTitle,
         image: option.dataset.image
-      });
+      };
+
+      selected.set(slot, selection);
 
       const preview = root.querySelector(`[data-selected-slot="${slot}"]`);
       if (preview) {
@@ -503,6 +650,7 @@
         }
       }
 
+      syncGalleryPreview(selection);
       refresh();
     });
 
