@@ -12,14 +12,44 @@
     "trust_bar": {
       "type": "pdp-trust-bar",
       "blocks": {
-        "t1": { "type": "item", "settings": { "icon": "🎁", "label": "Build your own kit" } },
-        "t2": { "type": "item", "settings": { "icon": "🚚", "label": "Free shipping over EGP 1,000" } },
-        "t3": { "type": "item", "settings": { "icon": "⭐", "label": "Happiness guarantee" } }
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "🎁",
+            "label": "Build your own kit"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "🚚",
+            "label": "Free shipping over EGP 1,000"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "⭐",
+            "label": "Happiness guarantee"
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3"],
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
       "settings": {
+        "alignment": "center",
+        "gap": 34,
+        "padding_y": 10,
+        "max_width": 1200,
+        "font_size": 13,
         "enable_marquee": true,
-        "marquee_speed": 26
+        "marquee_speed": 26,
+        "bg_color": "#ffffff",
+        "text_color": "#121212",
+        "divider_color": "#e9dde4"
       }
     },
     "main": {
@@ -47,17 +77,27 @@
         "featured_review": {
           "type": "featured_review",
           "settings": {
+            "label": "⭐ Featured review",
             "quote": "<p>Best value — got my favourite shades in one kit.</p>",
-            "author": "Verified buyer"
+            "author": "Verified buyer",
+            "show_stars": true,
+            "rating": 5,
+            "corner_radius": 6,
+            "bg_color": "#f3e4ec",
+            "accent_color": "#d585a6",
+            "text_color": "#121212"
           }
         },
         "benefits": {
           "type": "benefit_bullets",
           "settings": {
+            "icon": "✓",
             "bullet_1": "Choose shades from the real Janelle products",
             "bullet_2": "Selected shades show before adding to cart",
             "bullet_3": "Inventory comes from the actual component products",
-            "bullet_4": ""
+            "bullet_4": "",
+            "icon_color": "#b9648a",
+            "text_color": "#121212"
           }
         },
         "bundle_builder": {
@@ -73,10 +113,10 @@
             "error_text": "Could not add your kit. Please try again.",
             "label_1": "Squeeze gloss",
             "source_handle_1": "lip-gloss-squeeze-tube",
-            "source_product_1": "lip-gloss-squeeze-tube",
+            "source_product_1": "lip-liner-07-chocolate",
             "label_2": "Brush gloss",
             "source_handle_2": "lip-gloss-brush-tube",
-            "source_product_2": "lip-gloss-brush-tube",
+            "source_product_2": "lip-liner-07-chocolate",
             "label_3": "Lip liner",
             "source_handle_3": "lip-liner-07-chocolate",
             "source_product_3": "lip-liner-07-chocolate"
@@ -84,13 +124,25 @@
         },
         "guarantee": {
           "type": "guarantee",
-          "settings": {}
+          "settings": {
+            "icon": "🛡️",
+            "text": "Free returns within 30 days",
+            "alignment": "center",
+            "text_color": "#6b6b6b"
+          }
         },
         "trust": {
           "type": "trust_row",
           "settings": {
+            "corner_radius": 6,
             "icon_1": "🎁",
-            "label_1": "Build your kit"
+            "label_1": "Build your kit",
+            "icon_2": "🚚",
+            "label_2": "Free shipping over EGP 1,000",
+            "icon_3": "🔒",
+            "label_3": "Secure checkout",
+            "bg_color": "#f3e4ec",
+            "text_color": "#121212"
           }
         },
         "included": {
@@ -98,7 +150,8 @@
           "settings": {
             "heading": "What's included",
             "icon": "none",
-            "content": "<p>Your selected glosses and liner are added as real products in cart.</p>"
+            "content": "<p>Your selected glosses and liner are added as real products in cart.</p>",
+            "page": ""
           }
         },
         "howto": {
@@ -106,7 +159,8 @@
           "settings": {
             "heading": "How to Use",
             "icon": "none",
-            "content": "<p>Choose one shade in each step, then add the selected kit to cart.</p>"
+            "content": "<p>Choose one shade in each step, then add the selected kit to cart.</p>",
+            "page": ""
           }
         },
         "shipping": {
@@ -114,7 +168,8 @@
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
-            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>"
+            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>",
+            "page": ""
           }
         },
         "share": {
@@ -168,7 +223,9 @@
           }
         }
       },
-      "block_order": ["judge_me_reviews_review_widget_T9ExWW"],
+      "block_order": [
+        "judge_me_reviews_review_widget_T9ExWW"
+      ],
       "settings": {
         "include_margins": true
       }
