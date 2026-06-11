@@ -76,6 +76,7 @@
         },
         "kit_contents_KDadQi": {
           "type": "kit_contents",
+          "disabled": true,
           "settings": {
             "heading": "What's in the kit",
             "image_1": "shopify://shop_images/Rosewood_c05a4878-9757-450e-b9b2-5211e966848f.jpg",
