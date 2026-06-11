@@ -92,7 +92,15 @@
           assign slot_label = block.settings.label_3
         endif
       -%}
-      <fieldset class="janelle-bundle-picker__group" data-bundle-group="{{ index }}">
+      {%- comment -%}
+        Ordered list of the source product's image media. The JS uses this to
+        derive each shade's image "run" (from a variant's main photo up to the
+        next variant's main photo) — mirroring how the single product page
+        groups a shade's photos.
+      {%- endcomment -%}
+      {%- assign jb_img_i = 0 -%}
+      {%- capture source_media_json -%}[{%- for m in source_product.media -%}{%- if m.media_type == 'image' -%}{%- if jb_img_i > 0 -%},{%- endif -%}"{{ m.preview_image | image_url: width: 1200 }}"{%- assign jb_img_i = jb_img_i | plus: 1 -%}{%- endif -%}{%- endfor -%}]{%- endcapture -%}
+      <fieldset class="janelle-bundle-picker__group" data-bundle-group="{{ index }}" data-source-media="{{ source_media_json | escape }}">
         <legend>
           <span class="janelle-bundle-picker__legend-main">
             <span class="janelle-bundle-picker__step">Step {{ index }}</span>
@@ -276,16 +284,16 @@
   }
 
   .janelle-bundle-picker__slot {
-    display: grid;
-    grid-template-columns: 4.4rem minmax(0, 1fr);
-    gap: 0.8rem;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
     min-width: 0;
-    min-height: 6.4rem;
-    padding: 0.8rem;
+    padding: 0.9rem 0.7rem;
     border: 0.1rem solid var(--jb-line);
-    border-radius: 0.7rem;
+    border-radius: 0.8rem;
     background: rgba(255, 255, 255, 0.72);
+    text-align: center;
   }
 
   .janelle-bundle-picker__slot.is-selected {
@@ -299,7 +307,8 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    width: 4.4rem;
+    width: 100%;
+    max-width: 5.6rem;
     aspect-ratio: 1 / 1;
     border: 0.1rem solid var(--jb-line);
     border-radius: 0.6rem;
@@ -349,6 +358,10 @@
   }
 
   .janelle-bundle-picker__group {
+    /* min-width:0 is essential: a <fieldset> defaults to min-width:min-content,
+       which would let the swatch rail expand to full content width and overflow
+       the page instead of scrolling internally. */
+    min-width: 0;
     margin: 0;
     padding: 1rem;
     border: 0.1rem solid var(--jb-line);
@@ -391,46 +404,71 @@
     text-align: right;
   }
 
+  /* Swatches are a horizontal slider on every breakpoint. Arrows flank the
+     rail (so they never overlap swatches) on desktop; mobile relies on swipe.
+     Keeps the section short instead of a tall wrapping grid. */
   .janelle-bundle-picker__rail {
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
     margin-top: 0.9rem;
   }
 
-  /* Desktop default: swatches wrap into a tidy grid, no horizontal scroll/arrows. */
   .janelle-bundle-picker__options {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8.4rem, 1fr));
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
     gap: 0.8rem;
-    padding: 0.2rem;
+    overflow-x: auto;
+    padding: 0.3rem 0.2rem 1rem;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    /* Keep horizontal swipes inside the rail — never chain to the page. */
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(185, 100, 138, 0.5) transparent;
   }
 
-  /* Arrows are mobile-only; hidden on desktop where the grid wraps. */
-  .janelle-bundle-picker__scroll {
+  /* Arrows only appear when the rail actually overflows (set by JS). */
+  .janelle-bundle-picker__rail:not([data-scrollable]) .janelle-bundle-picker__scroll {
     display: none;
-    position: absolute;
-    top: 50%;
-    z-index: 2;
+  }
+
+  .janelle-bundle-picker__rail:not([data-scrollable]) .janelle-bundle-picker__options {
+    justify-content: center;
+  }
+
+  .janelle-bundle-picker__scroll[disabled] {
+    cursor: default;
+    opacity: 0.3;
+  }
+
+  .janelle-bundle-picker__options::-webkit-scrollbar {
+    height: 0.5rem;
+  }
+
+  .janelle-bundle-picker__options::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(185, 100, 138, 0.35);
+  }
+
+  .janelle-bundle-picker__scroll {
+    flex: 0 0 auto;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 3rem;
     height: 3rem;
     border: 0.1rem solid var(--jb-line);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--jb-surface);
     color: var(--jb-accent);
     cursor: pointer;
-    font-size: 2.2rem;
+    font-size: 2rem;
     line-height: 1;
-    transform: translateY(-50%);
     transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease;
-  }
-
-  .janelle-bundle-picker__scroll--prev {
-    left: 0.4rem;
-  }
-
-  .janelle-bundle-picker__scroll--next {
-    right: 0.4rem;
   }
 
   .janelle-bundle-picker__scroll:hover {
@@ -441,6 +479,7 @@
   .janelle-bundle-picker__option {
     display: grid;
     gap: 0.6rem;
+    flex: 0 0 9rem;
     min-width: 0;
     padding: 0.7rem;
     border: 0.1rem solid var(--jb-line);
@@ -515,26 +554,78 @@
     text-align: center;
   }
 
+  /* Picked-shade photo gallery, injected into the main gallery column (so it
+     sits "at the top" with the product photos). Global class names + literal
+     colors because it lives outside the .janelle-bundle-picker scope. */
+  .janelle-shade-thumbs {
+    margin: 1.2rem 0 0;
+  }
+
+  .janelle-shade-thumbs__label {
+    display: block;
+    margin: 0 0 0.6rem;
+    color: #7b6572;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.04rem;
+    text-transform: uppercase;
+  }
+
+  .janelle-shade-thumbs__row {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    overscroll-behavior: contain;
+    padding-bottom: 0.4rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(185, 100, 138, 0.5) transparent;
+  }
+
+  .janelle-shade-thumbs__item {
+    flex: 0 0 auto;
+    width: 6rem;
+    height: 6rem;
+    padding: 0;
+    border: 0.1rem solid #ead7e2;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .janelle-shade-thumbs__item:hover {
+    border-color: #d18bac;
+  }
+
+  .janelle-shade-thumbs__item.is-active {
+    border-color: #b9648a;
+    box-shadow: 0 0 0 0.2rem rgba(185, 100, 138, 0.25);
+  }
+
+  .janelle-shade-thumbs__item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   @media screen and (max-width: 749px) {
     .janelle-bundle-picker {
       padding: 1.1rem;
     }
 
+    .janelle-shade-thumbs__item {
+      width: 5rem;
+      height: 5rem;
+    }
+
     .janelle-bundle-picker__selected {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.6rem;
     }
 
-    .janelle-bundle-picker__slot {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-      min-height: 8.4rem;
-      text-align: center;
-    }
-
     .janelle-bundle-picker__slot-media {
-      justify-self: center;
-      width: 3.8rem;
+      max-width: 4.6rem;
     }
 
     .janelle-bundle-picker__group legend {
@@ -547,27 +638,14 @@
       text-align: left;
     }
 
-    /* Mobile: horizontal scroll rail with arrows tucked into side gutters. */
-    .janelle-bundle-picker__options {
-      display: flex;
-      grid-template-columns: none;
-      gap: 0.8rem;
-      overflow-x: auto;
-      padding: 0.2rem 3.2rem 0.8rem;
-      scroll-padding-inline: 3.4rem;
-      scroll-snap-type: x proximity;
-      scrollbar-color: var(--jb-accent) transparent;
-      scroll-behavior: smooth;
-    }
-
+    /* Mobile: swipe the rail — hide arrows so swatches get the full width and
+       peek ~3 up. */
     .janelle-bundle-picker__scroll {
-      display: inline-flex;
+      display: none;
     }
 
     .janelle-bundle-picker__option {
-      flex: 0 0 calc((100% - 7.8rem) / 3);
-      min-width: 8.4rem;
-      scroll-snap-align: start;
+      flex: 0 0 8.2rem;
     }
   }
 </style>
@@ -613,33 +691,143 @@
       imageElement.alt = alt || '';
     }
 
-    // Resolve the gallery's currently-visible (active) main image element.
-    function getActiveMainImage() {
-      const gallery = getProductInfo()?.querySelector('media-gallery');
-      const list = gallery?.querySelector('.product__media-list');
-      if (!list) return null;
-      const slide =
-        list.querySelector('.product__media-item.is-active') ||
-        list.querySelector('.product__media-item[aria-current="true"]') ||
-        list.querySelector('.product__media-item');
-      const img = slide?.querySelector('img');
-      return img ? { list, slide, img } : null;
+    // True only for an <img> that is actually rendered at a meaningful size.
+    // This is the key check: this store's gallery is injected by an app, and
+    // Dawn's own .product__media-list is present but ZERO-SIZED (hidden), so
+    // swapping it changed nothing visible. We must swap the image the customer
+    // actually sees.
+    function isVisibleImage(img) {
+      if (!img || !img.isConnected) return false;
+      const r = img.getBoundingClientRect();
+      return r.width > 40 && r.height > 40;
     }
 
-    // Swap the main product photo to preview the latest shade pick. Robust to
-    // Dawn's lazy-loading/srcset and brings the swapped slide into view on mobile.
-    function showShadeInMainGallery(selection) {
-      if (!selection || !selection.image) return;
-      const target = getActiveMainImage();
-      if (!target) return;
+    // Largest visible <img> in the product media area — theme/app agnostic
+    // fallback so this keeps working for any bundle or future gallery.
+    function largestVisibleImage(scope) {
+      let best = null;
+      let bestArea = 0;
+      scope.querySelectorAll('img').forEach((img) => {
+        if (!isVisibleImage(img)) return;
+        const r = img.getBoundingClientRect();
+        const area = r.width * r.height;
+        // Ignore tiny UI/thumbnail images; the hero is by far the biggest.
+        if (area > 30000 && area > bestArea) {
+          bestArea = area;
+          best = img;
+        }
+      });
+      return best;
+    }
 
-      const alt = `${selection.productTitle || bundleName} - ${selection.variantTitle || ''}`.trim();
-      updateImageElement(target.img, selection.image, alt);
-      target.img.setAttribute('loading', 'eager');
-
-      if (target.slide && typeof target.list.scrollTo === 'function') {
-        target.list.scrollTo({ left: target.slide.offsetLeft, behavior: 'smooth' });
+    // Resolve the primary visible hero image, trying the known app gallery
+    // first, then Dawn's active/first slide, then the largest visible image.
+    function getMainHeroImage() {
+      const scope = getProductInfo() || document;
+      const candidates = [
+        '.pv-preview-gallery-main-img img',
+        '.product__media-item.is-active img',
+        '.product__media-item[aria-current="true"] img',
+        '.product__media-list img'
+      ];
+      for (const sel of candidates) {
+        const img = scope.querySelector(sel);
+        if (isVisibleImage(img)) return img;
       }
+      return largestVisibleImage(scope);
+    }
+
+    // Swap the visible main product photo. Robust to lazy-loading/srcset and to
+    // app-injected galleries.
+    function setHeroImage(url, selection) {
+      if (!url) return;
+      const img = getMainHeroImage();
+      if (!img) return;
+      const alt = `${selection.productTitle || bundleName} - ${selection.variantTitle || ''}`.trim();
+      updateImageElement(img, url, alt);
+      img.setAttribute('loading', 'eager');
+      img.style.opacity = '1';
+
+      const slide = img.closest('.product__media-item');
+      const list = img.closest('.product__media-list');
+      if (slide && list && typeof list.scrollTo === 'function') {
+        list.scrollTo({ left: slide.offsetLeft, behavior: 'smooth' });
+      }
+    }
+
+    const baseUrl = (u) => String(u || '').split('?')[0];
+
+    // Derive a shade's image run from the source product's ordered media: from
+    // this variant's main photo up to the next variant's main photo. Mirrors how
+    // the single product page groups a shade's photos. Falls back to the single
+    // featured image when the source product's media isn't grouped.
+    function computeShadeImages(option) {
+      const group = option.closest('[data-bundle-group]');
+      let media = [];
+      try { media = JSON.parse(group && group.dataset.sourceMedia || '[]'); } catch (e) { media = []; }
+      const featured = option.dataset.image;
+      if (!media.length) return featured ? [featured] : [];
+
+      const indexOfUrl = (u) => media.findIndex((m) => baseUrl(m) === baseUrl(u));
+      const start = indexOfUrl(featured);
+      if (start < 0) return featured ? [featured] : [];
+
+      const featuredIndices = [...group.querySelectorAll('[data-bundle-option]')]
+        .map((o) => indexOfUrl(o.dataset.image))
+        .filter((i) => i >= 0)
+        .sort((a, b) => a - b);
+      const next = featuredIndices.find((i) => i > start);
+      const run = media.slice(start, next === undefined ? media.length : next);
+      return run.length ? run : [media[start]];
+    }
+
+    // Render the picked shade's images as a small photo gallery at the top of
+    // the main product gallery column (big image already swapped; these are the
+    // clickable thumbnails). One strip, reused for whichever shade was last picked.
+    function showShadeGallery(images, selection) {
+      const list = images && images.length ? images : (selection.image ? [selection.image] : []);
+      if (!list.length) return;
+
+      setHeroImage(list[0], selection);
+
+      const heroImg = getMainHeroImage();
+      // The gallery column (.pv-flex-column) holds the main image + its
+      // thumbnails; appending here keeps the shade strip directly below the
+      // whole gallery on desktop and stacked under it on mobile.
+      const galleryCol = heroImg && (heroImg.closest('.pv-flex-column') || heroImg.closest('[class*="pv-preview-gallery"]'));
+
+      let strip = document.getElementById('janelle-shade-thumbs');
+      if (!strip) {
+        strip = document.createElement('div');
+        strip.id = 'janelle-shade-thumbs';
+        strip.className = 'janelle-shade-thumbs';
+        strip.innerHTML = '<span class="janelle-shade-thumbs__label"></span><div class="janelle-shade-thumbs__row"></div>';
+        if (galleryCol) {
+          galleryCol.appendChild(strip);
+        } else {
+          // Fallback: show inside the builder if the app gallery isn't found.
+          root.querySelector('.janelle-bundle-picker__selected').insertAdjacentElement('afterend', strip);
+        }
+      }
+
+      strip.querySelector('.janelle-shade-thumbs__label').textContent =
+        `${selection.variantTitle || ''}`.trim();
+      const row = strip.querySelector('.janelle-shade-thumbs__row');
+      row.innerHTML = '';
+      // A single image needs no thumbnails — the hero already shows it.
+      strip.style.display = list.length < 2 ? 'none' : '';
+      list.forEach((url, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'janelle-shade-thumbs__item' + (i === 0 ? ' is-active' : '');
+        btn.innerHTML = `<img src="${escapeHtml(url)}" alt="" loading="lazy">`;
+        btn.addEventListener('click', () => {
+          setHeroImage(url, selection);
+          row.querySelectorAll('.janelle-shade-thumbs__item').forEach((x) => x.classList.remove('is-active'));
+          btn.classList.add('is-active');
+        });
+        row.appendChild(btn);
+      });
     }
 
     function refresh() {
@@ -648,6 +836,31 @@
       progress.textContent = `${count}/${requiredCount}`;
       addButton.disabled = !complete;
       status.textContent = complete ? completeText : incompleteText;
+    }
+
+    // Show the desktop arrows only when a rail actually overflows, and disable
+    // them at the start/end so it's clear when there's nowhere left to scroll.
+    function syncRails() {
+      root.querySelectorAll('.janelle-bundle-picker__rail').forEach((rail) => {
+        const row = rail.querySelector('[data-options-row]');
+        if (!row) return;
+        const scrollable = row.scrollWidth - row.clientWidth > 4;
+        rail.toggleAttribute('data-scrollable', scrollable);
+        const prev = rail.querySelector('[data-direction="-1"]');
+        const next = rail.querySelector('[data-direction="1"]');
+        if (prev) prev.disabled = row.scrollLeft <= 2;
+        if (next) next.disabled = row.scrollLeft >= row.scrollWidth - row.clientWidth - 2;
+      });
+    }
+
+    root.querySelectorAll('[data-options-row]').forEach((row) => {
+      row.addEventListener('scroll', syncRails, { passive: true });
+    });
+    window.addEventListener('resize', syncRails);
+    window.addEventListener('load', syncRails);
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(syncRails);
+      root.querySelectorAll('[data-options-row]').forEach((row) => ro.observe(row));
     }
 
     root.addEventListener('click', (event) => {
@@ -690,7 +903,7 @@
         }
       }
 
-      showShadeInMainGallery(selection);
+      showShadeGallery(computeShadeImages(option), selection);
       refresh();
     });
 
@@ -763,5 +976,9 @@
     });
 
     refresh();
+    syncRails();
+    // Swatch images load lazily and change the rail width; re-check shortly after.
+    setTimeout(syncRails, 400);
+    setTimeout(syncRails, 1200);
   })();
 </script>

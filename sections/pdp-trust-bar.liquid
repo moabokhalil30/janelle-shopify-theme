@@ -3,13 +3,24 @@
   Up to 4 items; icon + label each. Colors, alignment and divider fully customizable.
 {%- endcomment -%}
 
-{%- assign tb = 'tb-' | append: section.id -%}
+{%- liquid
+  assign tb = 'tb-' | append: section.id
+  if section.settings.enable_marquee
+    assign lane_count = 2
+    assign lane_repeat = section.settings.repeat_count
+  else
+    assign lane_count = 1
+    assign lane_repeat = 1
+  endif
+-%}
 {% style %}
   .{{ tb }}{background:{{ section.settings.bg_color }};border-top:1px solid {{ section.settings.divider_color }};border-bottom:1px solid {{ section.settings.divider_color }};padding:{{ section.settings.padding_y }}px 0;overflow:hidden;}
   .{{ tb }}__viewport{max-width:{{ section.settings.max_width }}px;margin:0 auto;overflow:hidden;}
+  /* Two identical lanes; spacing baked into each item's margin so the seam
+     between lane A's end and lane B's start matches the in-lane gap exactly. */
   .{{ tb }}__track{display:flex;width:max-content;will-change:transform;}
-  .{{ tb }}__group{display:flex;align-items:center;justify-content:{{ section.settings.alignment }};gap:{{ section.settings.gap }}px;padding:0 calc({{ section.settings.gap }}px / 2);min-width:100%;}
-  .{{ tb }}__item{display:inline-flex;align-items:center;gap:.6rem;font-size:{{ section.settings.font_size }}px;color:{{ section.settings.text_color }};white-space:nowrap;}
+  .{{ tb }}__lane{display:flex;flex:0 0 auto;align-items:center;}
+  .{{ tb }}__item{display:inline-flex;align-items:center;gap:.6rem;margin-right:{{ section.settings.gap }}px;font-size:{{ section.settings.font_size }}px;color:{{ section.settings.text_color }};white-space:nowrap;}
   .{{ tb }}__ic{font-size:1.4em;line-height:1;}
   .{{ tb }}--marquee .{{ tb }}__track{animation:{{ tb }}-marquee {{ section.settings.marquee_speed }}s linear infinite;}
   .{{ tb }}--marquee:hover .{{ tb }}__track{animation-play-state:paused;}
@@ -17,11 +28,12 @@
     from{transform:translate3d(0,0,0);}
     to{transform:translate3d(-50%,0,0);}
   }
+  /* Static (no marquee): one lane, wrapped and aligned, no repeats. */
+  .{{ tb }}:not(.{{ tb }}--marquee) .{{ tb }}__track{width:auto;flex-wrap:wrap;justify-content:{{ section.settings.alignment }};}
+  .{{ tb }}:not(.{{ tb }}--marquee) .{{ tb }}__lane{flex-wrap:wrap;justify-content:{{ section.settings.alignment }};}
   @media (prefers-reduced-motion:reduce){
-    .{{ tb }}--marquee .{{ tb }}__track{animation:none;}
-    .{{ tb }}__track{width:auto;justify-content:center;}
-    .{{ tb }}__group--duplicate{display:none;}
-    .{{ tb }}__group{flex-wrap:wrap;}
+    .{{ tb }}--marquee .{{ tb }}__track{animation:none;width:auto;flex-wrap:wrap;justify-content:center;}
+    .{{ tb }}__lane--dup{display:none;}
   }
   @media (max-width:749px){
     .{{ tb }}__viewport{max-width:none;}
@@ -31,15 +43,17 @@
 <div class="{{ tb }}{% if section.settings.enable_marquee %} {{ tb }}--marquee{% endif %}" {{ section.shopify_attributes }}>
   <div class="{{ tb }}__viewport">
     <div class="{{ tb }}__track">
-      {%- for group_index in (1..2) -%}
-        <div class="{{ tb }}__group{% if group_index == 2 %} {{ tb }}__group--duplicate{% endif %}" {% if group_index == 2 %}aria-hidden="true"{% endif %}>
-          {%- for block in section.blocks -%}
-            {%- if block.settings.label != blank -%}
-              <span class="{{ tb }}__item" {% if group_index == 1 %}{{ block.shopify_attributes }}{% endif %}>
-                {%- if block.settings.icon != blank -%}<span class="{{ tb }}__ic">{{ block.settings.icon }}</span>{%- endif -%}
-                {{ block.settings.label }}
-              </span>
-            {%- endif -%}
+      {%- for lane_index in (1..lane_count) -%}
+        <div class="{{ tb }}__lane{% if lane_index == 2 %} {{ tb }}__lane--dup{% endif %}" {% if lane_index == 2 %}aria-hidden="true"{% endif %}>
+          {%- for repeat_index in (1..lane_repeat) -%}
+            {%- for block in section.blocks -%}
+              {%- if block.settings.label != blank -%}
+                <span class="{{ tb }}__item" {% if lane_index == 1 and repeat_index == 1 %}{{ block.shopify_attributes }}{% endif %}>
+                  {%- if block.settings.icon != blank -%}<span class="{{ tb }}__ic">{{ block.settings.icon }}</span>{%- endif -%}
+                  {{ block.settings.label }}
+                </span>
+              {%- endif -%}
+            {%- endfor -%}
           {%- endfor -%}
         </div>
       {%- endfor -%}
@@ -61,6 +75,7 @@
     { "type": "range", "id": "font_size", "label": "Font size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 13 },
     { "type": "checkbox", "id": "enable_marquee", "label": "Enable sliding marquee", "default": true },
     { "type": "range", "id": "marquee_speed", "label": "Marquee speed", "min": 12, "max": 60, "step": 2, "unit": "s", "default": 26 },
+    { "type": "range", "id": "repeat_count", "label": "Message repeats per lane", "info": "Higher = tighter, more continuous loop. Raise if you see a gap before messages repeat.", "min": 2, "max": 10, "step": 1, "default": 4 },
     { "type": "header", "content": "Colors" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" },
