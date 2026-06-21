@@ -680,6 +680,12 @@
               {%- comment -%} ===== Janelle custom PDP blocks ===== {%- endcomment -%}
               {%- when 'featured_review' -%}
                 {%- assign fr_id = 'fr-' | append: block.id -%}
+                {%- liquid
+                  # Per-product overrides via metafields; fall back to the template defaults below.
+                  assign fr_quote = product.metafields.custom.featured_review_quote.value | default: block.settings.quote
+                  assign fr_author = product.metafields.custom.featured_review_author.value | default: block.settings.author
+                  assign fr_rating = product.metafields.custom.featured_review_rating.value | default: block.settings.rating
+                -%}
                 {% style %}
                   .{{ fr_id }}{background:{{ block.settings.bg_color }};border-left:3px solid {{ block.settings.accent_color }};border-radius:{{ block.settings.corner_radius }}px;padding:1.4rem 1.6rem;margin:1.2rem 0;}
                   .{{ fr_id }}__label{font-size:1.1rem;letter-spacing:.1rem;text-transform:uppercase;color:{{ block.settings.accent_color }};margin-bottom:.5rem;}
@@ -689,10 +695,10 @@
                 {% endstyle %}
                 <div class="{{ fr_id }}" {{ block.shopify_attributes }}>
                   {%- if block.settings.label != blank -%}<div class="{{ fr_id }}__label">{{ block.settings.label }}</div>{%- endif -%}
-                  <div class="{{ fr_id }}__quote">{{ block.settings.quote }}</div>
+                  <div class="{{ fr_id }}__quote">{{ fr_quote }}</div>
                   <div class="{{ fr_id }}__who">
-                    {%- if block.settings.show_stars and block.settings.rating > 0 -%}<span class="{{ fr_id }}__stars">{% for i in (1..block.settings.rating) %}★{% endfor %}</span> {% endif -%}
-                    {{ block.settings.author }}
+                    {%- if block.settings.show_stars and fr_rating > 0 -%}<span class="{{ fr_id }}__stars">{% for i in (1..fr_rating) %}★{% endfor %}</span> {% endif -%}
+                    {{ fr_author }}
                   </div>
                 </div>
 
@@ -703,11 +709,20 @@
                   .{{ bb_id }} li{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.7rem;font-size:1.5rem;line-height:1.4;color:{{ block.settings.text_color }};}
                   .{{ bb_id }} .bb-ck{color:{{ block.settings.icon_color }};font-weight:700;flex:0 0 auto;}
                 {% endstyle %}
+                {%- assign usp_list = product.metafields.custom.usp_bullets.value -%}
                 <ul class="{{ bb_id }}" {{ block.shopify_attributes }}>
-                  {%- if block.settings.bullet_1 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_1 }}</span></li>{%- endif -%}
-                  {%- if block.settings.bullet_2 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_2 }}</span></li>{%- endif -%}
-                  {%- if block.settings.bullet_3 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_3 }}</span></li>{%- endif -%}
-                  {%- if block.settings.bullet_4 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_4 }}</span></li>{%- endif -%}
+                  {%- if usp_list != blank and usp_list.size > 0 -%}
+                    {%- comment -%} Per-product USPs from the custom.usp_bullets list metafield. {%- endcomment -%}
+                    {%- for bullet in usp_list -%}
+                      {%- if bullet != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ bullet }}</span></li>{%- endif -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- comment -%} Fallback: template-level bullets (shared across products). {%- endcomment -%}
+                    {%- if block.settings.bullet_1 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_1 }}</span></li>{%- endif -%}
+                    {%- if block.settings.bullet_2 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_2 }}</span></li>{%- endif -%}
+                    {%- if block.settings.bullet_3 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_3 }}</span></li>{%- endif -%}
+                    {%- if block.settings.bullet_4 != blank -%}<li><span class="bb-ck">{{ block.settings.icon }}</span><span>{{ block.settings.bullet_4 }}</span></li>{%- endif -%}
+                  {%- endif -%}
                 </ul>
 
               {%- when 'social_proof' -%}
