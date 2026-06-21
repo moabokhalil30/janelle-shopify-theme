@@ -192,7 +192,7 @@
           "disabled": true,
           "settings": {
             "icon": "🛡️",
-            "text": "Free returns within 30 days",
+            "text": "Wrong or damaged order? We'll make it right",
             "alignment": "center",
             "text_color": "#6b6b6b"
           }
@@ -216,7 +216,7 @@
           "settings": {
             "heading": "How to Use",
             "icon": "none",
-            "content": "<p>Line lips from the cupid's bow outward, then fill in for a long-wearing base. Pair with any Janelle gloss.</p>",
+            "content": "<p>Swipe across bare or lined lips for instant, non-sticky shine. Layer over lipstick for extra depth, and reapply anytime.</p>",
             "page": ""
           }
         },
@@ -225,7 +225,7 @@
           "settings": {
             "heading": "Ingredients",
             "icon": "none",
-            "content": "<p>Add the full ingredient list here.</p>",
+            "content": "<p>Full ingredient list available on request — message us on Instagram @janelle.eg.</p>",
             "page": ""
           }
         },
@@ -234,7 +234,7 @@
           "settings": {
             "heading": "Shade guide",
             "icon": "none",
-            "content": "<p>Describe each shade so shoppers can choose with confidence.</p>",
+            "content": "<p>Explore our full range of shades to find your perfect match.</p>",
             "page": ""
           }
         },
@@ -243,7 +243,7 @@
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
-            "content": "<p>Free shipping over EGP 1,000. Free returns within 30 days.</p>",
+            "content": "<p>Free shipping on orders over EGP 1,000 · 2–7 day delivery across Egypt. Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</p>",
             "page": ""
           }
         },
