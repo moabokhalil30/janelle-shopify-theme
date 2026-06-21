@@ -132,13 +132,13 @@
             "adding_text": "Adding your kit...",
             "error_text": "Could not add your kit. Please try again.",
             "cart_mode": "bundle_product",
-            "label_1": "Lip liner 1",
+            "label_1": "Lip Gloss 1",
             "source_handle_1": "lip-liner-07-chocolate",
-            "source_product_1": "lip-liner-07-chocolate",
-            "label_2": "Lip liner 2",
+            "source_product_1": "lip-gloss-brush-tube",
+            "label_2": "Lip Gloss 2",
             "source_handle_2": "lip-liner-07-chocolate",
-            "source_product_2": "lip-liner-07-chocolate",
-            "label_3": "Lip liner 3",
+            "source_product_2": "lip-gloss-brush-tube",
+            "label_3": "Lip liner",
             "source_handle_3": "lip-liner-07-chocolate",
             "source_product_3": "lip-liner-07-chocolate"
           }
