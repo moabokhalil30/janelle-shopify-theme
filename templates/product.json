@@ -89,25 +89,6 @@
           "type": "price",
           "settings": {}
         },
-        "kit_contents_X7PaE4": {
-          "type": "kit_contents",
-          "disabled": true,
-          "settings": {
-            "heading": "What's in the kit",
-            "image_1": "shopify://shop_images/PowerPink.jpg",
-            "title_1": "Gloss",
-            "role_1": "shine + colour",
-            "image_2": "shopify://shop_images/Mocha_0bf317cd-e0d2-44f9-aea5-79b4d4e28ba3.jpg",
-            "title_2": "Gloss",
-            "role_2": "define + fill",
-            "image_3": "shopify://shop_images/IMG_8890.webp",
-            "title_3": "Liner",
-            "role_3": "on-the-go",
-            "text_color": "#121212",
-            "accent_color": "#b9648a",
-            "placeholder_color": "#f3e4ec"
-          }
-        },
         "featured_review": {
           "type": "featured_review",
           "settings": {
@@ -201,12 +182,12 @@
           "type": "trust_row",
           "settings": {
             "corner_radius": 6,
-            "icon_1": "🐰",
-            "label_1": "Cruelty-free",
+            "icon_1": "💧",
+            "label_1": "Non-sticky & hydrating",
             "icon_2": "🚚",
-            "label_2": "Free shipping over EGP 1,000",
-            "icon_3": "🔒",
-            "label_3": "Secure checkout",
+            "label_2": "Free shipping over EGP 999",
+            "icon_3": "💋",
+            "label_3": "Pigmented, true-to-photo color",
             "bg_color": "#f3e4ec",
             "text_color": "#121212"
           }
@@ -217,16 +198,19 @@
             "heading": "How to Use",
             "icon": "none",
             "content": "<p>Swipe across bare or lined lips for instant, non-sticky shine. Layer over lipstick for extra depth, and reapply anytime.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "ingredients": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "Ingredients",
             "icon": "none",
             "content": "<p>Full ingredient list available on request — message us on Instagram @janelle.eg.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "shade_guide": {
@@ -235,7 +219,8 @@
             "heading": "Shade guide",
             "icon": "none",
             "content": "<p>Explore our full range of shades to find your perfect match.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "shipping": {
@@ -244,7 +229,8 @@
             "heading": "Shipping & Returns",
             "icon": "none",
             "content": "<p>Free shipping on orders over EGP 1,000 · 2–7 day delivery across Egypt. Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "description": {
@@ -278,7 +264,6 @@
         "product_rating",
         "title",
         "price",
-        "kit_contents_X7PaE4",
         "featured_review",
         "benefits",
         "social",
