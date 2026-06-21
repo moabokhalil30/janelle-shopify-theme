@@ -98,8 +98,8 @@
           "type": "featured_review",
           "settings": {
             "label": "⭐ Featured review",
-            "quote": "<p>Best value — got my favourite shades in one kit.</p>",
-            "author": "Verified buyer",
+            "quote": "",
+            "author": "",
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
@@ -112,9 +112,9 @@
           "type": "benefit_bullets",
           "settings": {
             "icon": "✓",
-            "bullet_1": "Choose shades from the real Janelle products",
-            "bullet_2": "Selected shades show before adding to cart",
-            "bullet_3": "Bundle price stays fixed while shade choices are saved",
+            "bullet_1": "",
+            "bullet_2": "",
+            "bullet_3": "",
             "bullet_4": "",
             "icon_color": "#b9648a",
             "text_color": "#121212"
@@ -159,7 +159,7 @@
             "icon_1": "🎁",
             "label_1": "Build your kit",
             "icon_2": "🚚",
-            "label_2": "Free shipping over EGP 1,000",
+            "label_2": "Free shipping over EGP 999",
             "icon_3": "🔒",
             "label_3": "Secure checkout",
             "bg_color": "#f3e4ec",
@@ -168,6 +168,7 @@
         },
         "included": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "What's included",
             "icon": "none",
@@ -181,7 +182,7 @@
           "settings": {
             "heading": "How to Use",
             "icon": "none",
-            "content": "<p>Choose one shade in each step, then add the selected kit to cart.</p>",
+            "content": "",
             "page": "",
             "metafield_key": ""
           }
@@ -191,7 +192,7 @@
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
-            "content": "<p>Free shipping on orders over EGP 1,000 · 2–7 day delivery across Egypt. Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</p>",
+            "content": "<ul><li>Free shipping on orders over EGP 999 </li><li>2–7 day delivery across Egypt. </li><li>Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</li></ul>",
             "page": "",
             "metafield_key": ""
           }
