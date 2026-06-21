@@ -12,18 +12,25 @@
     "trust_bar": {
       "type": "pdp-trust-bar",
       "blocks": {
+        "item_eBjYaq": {
+          "type": "item",
+          "settings": {
+            "icon": "💋",
+            "label": "Pigmented, true-to-photo color"
+          }
+        },
         "t1": {
           "type": "item",
           "settings": {
-            "icon": "🐰",
-            "label": "Cruelty-free"
+            "icon": "💧",
+            "label": "Non-sticky & hydrating"
           }
         },
         "t2": {
           "type": "item",
           "settings": {
-            "icon": "🚚",
-            "label": "Free shipping over EGP 1,000"
+            "icon": "✨",
+            "label": "Long-lasting shine"
           }
         },
         "t3": {
@@ -35,6 +42,7 @@
         }
       },
       "block_order": [
+        "item_eBjYaq",
         "t1",
         "t2",
         "t3"
@@ -47,6 +55,7 @@
         "font_size": 13,
         "enable_marquee": true,
         "marquee_speed": 26,
+        "repeat_count": 4,
         "bg_color": "#ffffff",
         "text_color": "#121212",
         "divider_color": "#e9dde4"
