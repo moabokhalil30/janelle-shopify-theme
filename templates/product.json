@@ -229,7 +229,7 @@
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
-            "content": "<p>Free shipping on orders over EGP 1,000 · 2–7 day delivery across Egypt. Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</p>",
+            "content": "<ul><li>Free shipping on orders over EGP 999</li><li>2–7 day delivery across Egypt.</li><li>Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</li></ul>",
             "page": "",
             "metafield_key": ""
           }
