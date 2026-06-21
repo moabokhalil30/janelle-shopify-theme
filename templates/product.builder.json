@@ -23,7 +23,7 @@
           "type": "item",
           "settings": {
             "icon": "🚚",
-            "label": "Free shipping over EGP 1,000"
+            "label": "Free shipping over EGP 999"
           }
         },
         "t3": {
@@ -47,6 +47,7 @@
         "font_size": 13,
         "enable_marquee": true,
         "marquee_speed": 26,
+        "repeat_count": 4,
         "bg_color": "#ffffff",
         "text_color": "#121212",
         "divider_color": "#e9dde4"
@@ -171,7 +172,8 @@
             "heading": "What's included",
             "icon": "none",
             "content": "<p>Your selected shades are saved on the Lip Kit order so the bundle keeps its fixed price.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "howto": {
@@ -180,7 +182,8 @@
             "heading": "How to Use",
             "icon": "none",
             "content": "<p>Choose one shade in each step, then add the selected kit to cart.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "shipping": {
@@ -189,7 +192,8 @@
             "heading": "Shipping & Returns",
             "icon": "none",
             "content": "<p>Free shipping on orders over EGP 1,000 · 2–7 day delivery across Egypt. Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</p>",
-            "page": ""
+            "page": "",
+            "metafield_key": ""
           }
         },
         "share": {
