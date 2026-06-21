@@ -266,8 +266,21 @@ a.product__text {
   margin-top: 0;
 }
 
-.product__accordion .accordion__content {
-  padding: 0 1rem;
+.product .product__accordion .accordion__content {
+  padding: 0 1rem 0.4rem;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  letter-spacing: normal;
+  color: rgb(92, 52, 68);
+  max-width: 46rem;
+}
+
+.product .product__accordion .accordion__content > * {
+  margin-top: 0;
+}
+
+.product .product__accordion details > summary {
+  padding-bottom: 0.6rem;
 }
 
 .product .price .badge {
