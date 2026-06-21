@@ -93,8 +93,8 @@
           "type": "featured_review",
           "settings": {
             "label": "⭐ Featured review",
-            "quote": "<p>I never imagined that the quality would be that good !!!<br/>It really feels like a high end product with the perfect shade and great formula. Literally the best I ever tried </p>",
-            "author": "Mariam H., Verified buyer",
+            "quote": "",
+            "author": "",
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
