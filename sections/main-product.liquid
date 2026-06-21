@@ -211,10 +211,23 @@
                 {{ block.settings.custom_liquid }}
               {%- when 'collapsible_tab' -%}
                 {%- liquid
-                  # Per-product override: if a metafield key is set and the product has custom.<key>, use it.
+                  # Per-product override for collapsible content. Prefer an explicit metafield key
+                  # setting; otherwise map common headings to known product metafields. This keeps
+                  # working even if the theme editor strips the optional metafield_key setting.
+                  assign ct_key = block.settings.metafield_key
+                  if ct_key == blank
+                    assign ct_head = block.settings.heading | downcase
+                    if ct_head contains 'how to'
+                      assign ct_key = 'how_to_use'
+                    elsif ct_head contains 'ingredient'
+                      assign ct_key = 'ingredients'
+                    elsif ct_head contains 'shade'
+                      assign ct_key = 'shade_guide'
+                    endif
+                  endif
                   assign ct_mf = blank
-                  if block.settings.metafield_key != blank
-                    assign ct_mf = product.metafields.custom[block.settings.metafield_key]
+                  if ct_key != blank
+                    assign ct_mf = product.metafields.custom[ct_key]
                   endif
                 -%}
                 <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
