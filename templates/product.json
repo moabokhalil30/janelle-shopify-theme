@@ -107,9 +107,9 @@
           "type": "benefit_bullets",
           "settings": {
             "icon": "✓",
-            "bullet_1": "<strong>Long-wearing colour</strong> that stays put through coffee & meals",
-            "bullet_2": "<strong>Creamy, non-drying</strong> formula — glides on, never tugs",
-            "bullet_3": "<strong>Cruelty-free</strong> & flavoured",
+            "bullet_1": "",
+            "bullet_2": "",
+            "bullet_3": "",
             "bullet_4": "",
             "icon_color": "#b9648a",
             "text_color": "#121212"
