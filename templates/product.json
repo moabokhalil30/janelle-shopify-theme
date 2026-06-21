@@ -197,7 +197,7 @@
           "settings": {
             "heading": "How to Use",
             "icon": "none",
-            "content": "<p>Swipe across bare or lined lips for instant, non-sticky shine. Layer over lipstick for extra depth, and reapply anytime.</p>",
+            "content": "",
             "page": "",
             "metafield_key": ""
           }
@@ -215,10 +215,11 @@
         },
         "shade_guide": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "Shade guide",
             "icon": "none",
-            "content": "<p>Explore our full range of shades to find your perfect match.</p>",
+            "content": "",
             "page": "",
             "metafield_key": ""
           }
