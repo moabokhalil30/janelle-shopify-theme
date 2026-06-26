@@ -63,6 +63,15 @@
     },
     "1763511245fe04337c": {
       "type": "apps",
+      "blocks": {
+        "ns_variant_images_nestscale_product_variant_page_NdYYHn": {
+          "type": "shopify://apps/ns-variant-images/blocks/nestscale_product_variant_page/53eb5ed4-3892-414c-808b-3ea84516b10d",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "ns_variant_images_nestscale_product_variant_page_NdYYHn"
+      ],
       "settings": {
         "include_margins": true
       }
