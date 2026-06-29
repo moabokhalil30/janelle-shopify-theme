@@ -158,11 +158,6 @@
         "type": "shopify://apps/ns-color-swatch-variant-images/blocks/nestscale_product_variant/53eb5ed4-3892-414c-808b-3ea84516b10d",
         "disabled": false,
         "settings": {}
-      },
-      "1579591383489211490": {
-        "type": "shopify://apps/vario/blocks/app-embed/622e8656-34ee-4cb0-92c3-60ea95cfc0b8",
-        "disabled": false,
-        "settings": {}
       }
     },
     "color_schemes": {
@@ -223,10 +218,10 @@
       },
       "scheme-9a0984ba-085d-4b2f-bcbe-40a42aacca1f": {
         "settings": {
-          "background": "#f3e4ec",
+          "background": "#F5D5E6",
           "background_gradient": "",
-          "text": "#d585a6",
-          "button": "#fcc0d9",
+          "text": "#E4B6D5",
+          "button": "#F5D5E6",
           "button_label": "#121212",
           "secondary_button_label": "#121212",
           "shadow": "#f3e4ec"
@@ -247,11 +242,11 @@
         "settings": {
           "background": "#ffffff",
           "background_gradient": "",
-          "text": "#d585a6",
-          "button": "#fcc0d9",
+          "text": "#E4B6D5",
+          "button": "#F5D5E6",
           "button_label": "#ffffff",
-          "secondary_button_label": "#fcc0d9",
-          "shadow": "#d585a6"
+          "secondary_button_label": "#F5D5E6",
+          "shadow": "#E4B6D5"
         }
       },
       "scheme-section-bg-custom": {
