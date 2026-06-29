@@ -65,6 +65,7 @@
         assign source_title = source_product.title
       -%}
       <div class="janelle-bundle-picker__slot" data-selected-slot="{{ index }}">
+        <span class="janelle-bundle-picker__check" aria-hidden="true">✓</span>
         <div class="janelle-bundle-picker__slot-media" data-selected-media>
           <span>{{ index }}</span>
         </div>
@@ -284,6 +285,7 @@
   }
 
   .janelle-bundle-picker__slot {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -292,14 +294,49 @@
     padding: 0.9rem 0.7rem;
     border: 0.1rem solid var(--jb-line);
     border-radius: 0.8rem;
-    background: rgba(255, 255, 255, 0.72);
+    background: #fdeef5;
     text-align: center;
+    transition: background var(--duration-short) ease, border-color var(--duration-short) ease, box-shadow var(--duration-short) ease;
   }
 
+  /* Selected slot stays in the pink family (no white swap): deeper blush fill +
+     accent border + glow ring, reinforced by the ✓ check badge below. */
   .janelle-bundle-picker__slot.is-selected {
-    border-color: rgba(185, 100, 138, 0.42);
-    background: var(--jb-surface);
-    box-shadow: 0 0.6rem 1.8rem rgba(60, 38, 51, 0.07);
+    border-color: var(--jb-accent);
+    background: #f6cfe1;
+    box-shadow: 0 0 0 0.2rem rgba(185, 100, 138, 0.22), 0 0.6rem 1.8rem rgba(60, 38, 51, 0.08);
+  }
+
+  .janelle-bundle-picker__check {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 999px;
+    background: var(--jb-accent);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 0.2rem 0.6rem rgba(60, 38, 51, 0.18);
+  }
+
+  .janelle-bundle-picker__slot.is-selected .janelle-bundle-picker__check {
+    display: flex;
+  }
+
+  /* Keep the picked shade's photo on white so it reads cleanly on the deep fill. */
+  .janelle-bundle-picker__slot.is-selected .janelle-bundle-picker__slot-media {
+    background: #fff;
+    border-color: var(--jb-accent);
+  }
+
+  .janelle-bundle-picker__slot.is-selected strong {
+    color: var(--jb-accent);
   }
 
   .janelle-bundle-picker__slot-media {
@@ -668,6 +705,11 @@
     const errorText = {{ block.settings.error_text | json }};
     const cartMode = root.dataset.cartMode || 'bundle_product';
     const bundleVariantId = Number(root.dataset.bundleVariantId || 0);
+    const slotLabels = {
+      '1': {{ block.settings.label_1 | json }},
+      '2': {{ block.settings.label_2 | json }},
+      '3': {{ block.settings.label_3 | json }}
+    };
 
     function escapeHtml(value) {
       return String(value || '').replace(/[&<>"']/g, (char) => ({
@@ -911,19 +953,22 @@
       if (selected.size !== requiredCount) return;
 
       const bundleId = `BB-${Date.now()}`;
-      const selections = [...selected.entries()]
-        .sort(([slotA], [slotB]) => Number(slotA) - Number(slotB))
-        .map(([, item]) => item);
+      const sortedEntries = [...selected.entries()].sort(
+        ([slotA], [slotB]) => Number(slotA) - Number(slotB)
+      );
+      const selections = sortedEntries.map(([, item]) => item);
+      const slotName = (slot) => slotLabels[slot] || `Shade ${slot}`;
       let items;
 
       if (cartMode === 'component_variants') {
-        items = selections.map((item) => ({
+        // Each shade is its own cart line — its variant title already names the
+        // shade — so only carry hidden bookkeeping props for grouping.
+        items = sortedEntries.map(([, item]) => ({
           id: item.id,
           quantity: 1,
           properties: {
-            Bundle: bundleName,
-            BundleID: bundleId,
-            Selection: `${item.productTitle} - ${item.variantTitle}`
+            _Bundle: bundleName,
+            _BundleID: bundleId
           }
         }));
       } else {
@@ -932,15 +977,17 @@
           return;
         }
 
+        // Customer-facing cart shows only the chosen shade per slot
+        // ("Lip Gloss 1: Stardust"). Bookkeeping props are prefixed with "_" so
+        // the theme hides them from cart/checkout but keeps them on the order.
         const properties = {
-          Bundle: bundleName,
-          BundleID: bundleId,
-          'Bundle selections': selections.map((item) => `${item.productTitle} - ${item.variantTitle}`).join(' / '),
-          'Component variant IDs': selections.map((item) => item.id).join(', ')
+          _Bundle: bundleName,
+          _BundleID: bundleId,
+          '_Component variant IDs': selections.map((item) => item.id).join(', ')
         };
 
-        selections.forEach((item, index) => {
-          properties[`Shade ${index + 1}`] = `${item.productTitle} - ${item.variantTitle}`;
+        sortedEntries.forEach(([slot, item]) => {
+          properties[slotName(slot)] = item.variantTitle;
         });
 
         items = [
