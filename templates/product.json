@@ -72,6 +72,7 @@
       "block_order": [
         "ns_variant_images_nestscale_product_variant_page_NdYYHn"
       ],
+      "disabled": true,
       "settings": {
         "include_margins": true
       }
@@ -307,6 +308,10 @@
         "padding_bottom": 12
       }
     },
+    "1782696296b9b9265f": {
+      "type": "_blocks",
+      "settings": {}
+    },
     "17672249385735c9f9": {
       "type": "apps",
       "settings": {
@@ -371,6 +376,7 @@
     "trust_bar",
     "1763511245fe04337c",
     "main",
+    "1782696296b9b9265f",
     "17672249385735c9f9",
     "1758831124533b2a49",
     "related-products",
