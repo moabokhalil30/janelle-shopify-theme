@@ -1,0 +1,284 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "trust_bar": {
+      "type": "pdp-trust-bar",
+      "blocks": {
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "🎁",
+            "label": "Build your own kit"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "🚚",
+            "label": "Free shipping over EGP 999"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "⭐",
+            "label": "Happiness guarantee"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "alignment": "center",
+        "gap": 34,
+        "padding_y": 10,
+        "max_width": 1200,
+        "font_size": 13,
+        "enable_marquee": true,
+        "marquee_speed": 26,
+        "repeat_count": 4,
+        "bg_color": "#ffffff",
+        "text_color": "#121212",
+        "divider_color": "#e9dde4"
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "product_rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "kit_contents_KDadQi": {
+          "type": "kit_contents",
+          "disabled": true,
+          "settings": {
+            "heading": "What's in the kit",
+            "image_1": "shopify://shop_images/Rosewood_c05a4878-9757-450e-b9b2-5211e966848f.jpg",
+            "title_1": "Gloss",
+            "role_1": "shine + colour",
+            "image_2": "shopify://shop_images/IMG_8570.webp",
+            "title_2": "Liner",
+            "role_2": "define + fill",
+            "image_3": "shopify://shop_images/Paradise_240405fc-432c-40a8-a96e-925dabcf21c4.jpg",
+            "title_3": "Gloss",
+            "role_3": "on-the-go",
+            "text_color": "#121212",
+            "accent_color": "#b9648a",
+            "placeholder_color": "#f3e4ec"
+          }
+        },
+        "featured_review": {
+          "type": "featured_review",
+          "settings": {
+            "label": "⭐ Featured review",
+            "quote": "",
+            "author": "",
+            "show_stars": true,
+            "rating": 5,
+            "corner_radius": 6,
+            "bg_color": "#f3e4ec",
+            "accent_color": "#d585a6",
+            "text_color": "#121212"
+          }
+        },
+        "benefits": {
+          "type": "benefit_bullets",
+          "settings": {
+            "icon": "✓",
+            "bullet_1": "",
+            "bullet_2": "",
+            "bullet_3": "",
+            "bullet_4": "",
+            "icon_color": "#b9648a",
+            "text_color": "#121212"
+          }
+        },
+        "bundle_builder": {
+          "type": "bundle_builder",
+          "settings": {
+            "eyebrow": "Build your kit",
+            "heading": "Choose your shades",
+            "empty_text": "Not selected",
+            "button_label": "Add selected kit to cart",
+            "incomplete_text": "Choose all 3 shades to continue",
+            "complete_text": "Your kit is ready.",
+            "adding_text": "Adding your kit...",
+            "error_text": "Could not add your kit. Please try again.",
+            "cart_mode": "bundle_product",
+            "label_1": "Lip Gloss 1",
+            "source_handle_1": "lip-liner-07-chocolate",
+            "source_product_1": "lip-gloss-squeeze-tube-copy",
+            "label_2": "Lip Gloss 2",
+            "source_handle_2": "lip-liner-07-chocolate",
+            "source_product_2": "lip-gloss-squeeze-tube-copy",
+            "label_3": "Lip Gloss 3",
+            "source_handle_3": "lip-liner-07-chocolate",
+            "source_product_3": "lip-gloss-squeeze-tube-copy"
+          }
+        },
+        "guarantee": {
+          "type": "guarantee",
+          "settings": {
+            "icon": "🛡️",
+            "text": "Wrong or damaged order? We'll make it right",
+            "alignment": "center",
+            "text_color": "#6b6b6b"
+          }
+        },
+        "trust": {
+          "type": "trust_row",
+          "settings": {
+            "corner_radius": 6,
+            "icon_1": "🎁",
+            "label_1": "Build your kit",
+            "icon_2": "🚚",
+            "label_2": "Free shipping over EGP 999",
+            "icon_3": "🔒",
+            "label_3": "Secure checkout",
+            "bg_color": "#f3e4ec",
+            "text_color": "#121212"
+          }
+        },
+        "included": {
+          "type": "collapsible_tab",
+          "disabled": true,
+          "settings": {
+            "heading": "What's included",
+            "icon": "none",
+            "content": "<p>Your selected shades are saved on the Lip Kit order so the bundle keeps its fixed price.</p>",
+            "page": "",
+            "metafield_key": ""
+          }
+        },
+        "howto": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "How to Use",
+            "icon": "none",
+            "content": "",
+            "page": "",
+            "metafield_key": ""
+          }
+        },
+        "shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "none",
+            "content": "<ul><li>Free shipping on orders over EGP 999 </li><li>2–7 day delivery across Egypt. </li><li>Refunds or exchanges are only available if you received a wrong or damaged order — reach out and we'll make it right.</li></ul>",
+            "page": "",
+            "metafield_key": ""
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "product_rating",
+        "title",
+        "price",
+        "kit_contents_KDadQi",
+        "featured_review",
+        "benefits",
+        "bundle_builder",
+        "guarantee",
+        "trust",
+        "included",
+        "howto",
+        "shipping",
+        "share"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "media_size": "large",
+        "constrain_to_viewport": true,
+        "media_fit": "cover",
+        "gallery_layout": "thumbnail",
+        "mobile_thumbnails": "show",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 12
+      }
+    },
+    "1758831124533b2a49": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_T9ExWW": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "real_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_T9ExWW"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 2,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "trust_bar",
+    "main",
+    "1758831124533b2a49",
+    "related-products"
+  ]
+}
