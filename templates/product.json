@@ -189,7 +189,6 @@
         },
         "trust": {
           "type": "trust_row",
-          "disabled": true,
           "settings": {
             "corner_radius": 6,
             "icon_1": "💧",
@@ -204,6 +203,7 @@
         },
         "trust_row_XmXGiG": {
           "type": "trust_row",
+          "disabled": true,
           "settings": {
             "corner_radius": 6,
             "icon_1": "",
