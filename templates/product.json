@@ -189,6 +189,7 @@
         },
         "trust": {
           "type": "trust_row",
+          "disabled": true,
           "settings": {
             "corner_radius": 6,
             "icon_1": "💧",
@@ -260,7 +261,6 @@
         },
         "description": {
           "type": "description",
-          "disabled": true,
           "settings": {}
         },
         "complementary": {
