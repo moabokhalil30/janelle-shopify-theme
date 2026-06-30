@@ -219,6 +219,7 @@
         },
         "howto": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "How to Use",
             "icon": "none",
