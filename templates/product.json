@@ -21,6 +21,7 @@
         },
         "t1": {
           "type": "item",
+          "disabled": true,
           "settings": {
             "icon": "💧",
             "label": "Non-sticky & hydrating"
