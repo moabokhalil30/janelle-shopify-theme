@@ -252,6 +252,7 @@
         },
         "shipping": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
