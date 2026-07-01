@@ -152,8 +152,13 @@
             "text_color": "#6b6b6b"
           }
         },
+        "description_QP44iD": {
+          "type": "description",
+          "settings": {}
+        },
         "trust": {
           "type": "trust_row",
+          "disabled": true,
           "settings": {
             "corner_radius": 6,
             "icon_1": "🎁",
@@ -179,6 +184,7 @@
         },
         "howto": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "How to Use",
             "icon": "none",
@@ -189,6 +195,7 @@
         },
         "shipping": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
@@ -214,6 +221,7 @@
         "benefits",
         "bundle_builder",
         "guarantee",
+        "description_QP44iD",
         "trust",
         "included",
         "howto",
