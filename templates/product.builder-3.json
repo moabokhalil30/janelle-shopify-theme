@@ -154,6 +154,7 @@
         },
         "trust": {
           "type": "trust_row",
+          "disabled": true,
           "settings": {
             "corner_radius": 6,
             "icon_1": "🎁",
@@ -179,6 +180,7 @@
         },
         "howto": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "How to Use",
             "icon": "none",
@@ -189,6 +191,7 @@
         },
         "shipping": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
@@ -196,6 +199,10 @@
             "page": "",
             "metafield_key": ""
           }
+        },
+        "description_jE6Djg": {
+          "type": "description",
+          "settings": {}
         },
         "share": {
           "type": "share",
@@ -218,6 +225,7 @@
         "included",
         "howto",
         "shipping",
+        "description_jE6Djg",
         "share"
       ],
       "settings": {
