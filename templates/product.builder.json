@@ -98,8 +98,8 @@
           "type": "featured_review",
           "settings": {
             "label": "⭐ Featured review",
-            "quote": "",
-            "author": "",
+            "quote": "<p><em>So useful as a kit and the shades are so pretty 💖</em></p>",
+            "author": "Manar",
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
@@ -112,7 +112,7 @@
           "type": "benefit_bullets",
           "settings": {
             "icon": "✓",
-            "bullet_1": "",
+            "bullet_1": "Mix and match any 3 full size janelle products at a discounted price",
             "bullet_2": "",
             "bullet_3": "",
             "bullet_4": "",
@@ -154,6 +154,7 @@
         },
         "trust": {
           "type": "trust_row",
+          "disabled": true,
           "settings": {
             "corner_radius": 6,
             "icon_1": "🎁",
@@ -179,6 +180,7 @@
         },
         "howto": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "How to Use",
             "icon": "none",
@@ -189,6 +191,7 @@
         },
         "shipping": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "Shipping & Returns",
             "icon": "none",
