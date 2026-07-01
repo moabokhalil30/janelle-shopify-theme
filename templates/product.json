@@ -66,6 +66,7 @@
       "blocks": {
         "ns_variant_images_nestscale_product_variant_page_NdYYHn": {
           "type": "shopify://apps/ns-variant-images/blocks/nestscale_product_variant_page/53eb5ed4-3892-414c-808b-3ea84516b10d",
+          "disabled": true,
           "settings": {}
         }
       },
