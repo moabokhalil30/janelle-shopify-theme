@@ -145,6 +145,7 @@
         },
         "guarantee": {
           "type": "guarantee",
+          "disabled": true,
           "settings": {
             "icon": "🛡️",
             "text": "Wrong or damaged order? We'll make it right",
