@@ -15,7 +15,7 @@
         "slide_c6hxMg": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_1020_final.webp",
+            "image": "shopify://shop_images/Untitled_27_x_13_cm.png",
             "image_overlay_opacity": 0,
             "heading": "",
             "heading_size": "h1",
@@ -231,7 +231,7 @@
             "button_text_color": "#ffffff",
             "button_hover_bg_color": "#d585a6",
             "category_1_enabled": true,
-            "category_1_image": "shopify://shop_images/Untitled_design_4.webp",
+            "category_1_image": "shopify://shop_images/IMG_47501.png",
             "category_1_title": "The beauty bag",
             "category_1_price": "700 EGP",
             "category_1_compare_price": "",
@@ -287,7 +287,7 @@
             "category_7_enabled": true,
             "category_7_image": "shopify://shop_images/IMG_1782.jpg",
             "category_7_title": "Lip Gloss (brush tube)",
-            "category_7_price": "360 EGP",
+            "category_7_price": "380 EGP",
             "category_7_compare_price": "",
             "category_7_button_text": "Choose your shades now",
             "category_7_button_link": "shopify://products/lip-gloss-brush-tube",
