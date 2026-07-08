@@ -14,6 +14,7 @@
       "blocks": {
         "item_eBjYaq": {
           "type": "item",
+          "disabled": true,
           "settings": {
             "icon": "💋",
             "label": "Pigmented, true-to-photo color"
