@@ -11,8 +11,12 @@
   "sections": {
     "cart-items": {
       "type": "main-cart-items",
+      "custom_css": [
+        ".cart-item__name {font-size: 1.8rem !important;}",
+        ".cart-item__price {font-size: 0.85rem !important;}"
+      ],
       "settings": {
-        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "color_scheme": "scheme-section-bg-custom",
         "padding_top": 36,
         "padding_bottom": 36
       }
@@ -38,7 +42,7 @@
         "buttons"
       ],
       "settings": {
-        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "color_scheme": "scheme-section-bg-custom",
         "padding_top": 20,
         "padding_bottom": 40
       }
