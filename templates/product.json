@@ -104,8 +104,8 @@
           "type": "featured_review",
           "settings": {
             "label": "⭐ Featured review",
-            "quote": "",
-            "author": "",
+            "quote": "<p>The bag is amazing bgdd!<br/>It is very huge inside and the quality is INSANE !!<br/>Worth itt</p>",
+            "author": "Marina Shenouda",
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
