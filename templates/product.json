@@ -117,6 +117,32 @@
         },
         "benefits": {
           "type": "benefit_bullets",
+          "disabled": true,
+          "settings": {
+            "icon": "✓",
+            "bullet_1": "",
+            "bullet_2": "",
+            "bullet_3": "",
+            "bullet_4": "",
+            "icon_color": "#b9648a",
+            "text_color": "#121212"
+          }
+        },
+        "benefit_bullets_ECTMAX": {
+          "type": "benefit_bullets",
+          "settings": {
+            "icon": "✓",
+            "bullet_1": "Creamy & non drying formula- glides on smoothly",
+            "bullet_2": "",
+            "bullet_3": "Defines & shapes for fuller lips",
+            "bullet_4": "",
+            "icon_color": "#b9648a",
+            "text_color": "#121212"
+          }
+        },
+        "benefit_bullets_kUFkxA": {
+          "type": "benefit_bullets",
+          "disabled": true,
           "settings": {
             "icon": "✓",
             "bullet_1": "",
@@ -296,6 +322,8 @@
         "price",
         "featured_review",
         "benefits",
+        "benefit_bullets_ECTMAX",
+        "benefit_bullets_kUFkxA",
         "social",
         "bundle_builder_NtdFm9",
         "variant_picker",
