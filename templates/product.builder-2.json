@@ -98,8 +98,8 @@
           "type": "featured_review",
           "settings": {
             "label": "⭐ Featured review",
-            "quote": "",
-            "author": "",
+            "quote": "<p>One of the best lipglosses out there</p>",
+            "author": "looshi",
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
