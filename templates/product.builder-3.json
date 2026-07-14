@@ -98,8 +98,8 @@
           "type": "featured_review",
           "settings": {
             "label": "⭐ Featured review",
-            "quote": "",
-            "author": "",
+            "quote": "<p>Very good formula</p>",
+            "author": "إنچي إيهاب محمد",
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
