@@ -72,11 +72,27 @@
     >
   {%- endif -%}
 
-  {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  {%- liquid
+    assign selected_variant = product.selected_or_first_available_variant
+    assign variant_attached_images = product.images | where: 'attached_to_variant?', true
+    assign hidden_variant_images = ''
+    for img in variant_attached_images
+      assign belongs_to_selected_variant = false
+      for img_variant in img.variants
+        if img_variant.id == selected_variant.id
+          assign belongs_to_selected_variant = true
+        endif
+      endfor
+      unless belongs_to_selected_variant
+        assign hidden_variant_images = hidden_variant_images | append: img.src | append: '|'
+      endunless
+    endfor
+    assign hidden_variant_images = hidden_variant_images | split: '|'
+  -%}
   <div class="page-width">
     <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
       <div class="grid__item product__media-wrapper">
-        {% render 'product-media-gallery', variant_images: variant_images %}
+        {% render 'product-media-gallery', hidden_variant_images: hidden_variant_images %}
       </div>
       <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         <section
@@ -806,7 +822,7 @@
       </div>
     </div>
 
-    {% render 'product-media-modal', variant_images: variant_images %}
+    {% render 'product-media-modal', hidden_variant_images: hidden_variant_images %}
 
     {% assign popups = section.blocks | where: 'type', 'popup' %}
     {%- for block in popups -%}

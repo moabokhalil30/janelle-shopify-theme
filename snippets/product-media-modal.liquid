@@ -3,7 +3,7 @@
 
   Accepts:
   - product: {Object} Product liquid object
-  - variant_images: {Array} Product images associated with a variant
+  - hidden_variant_images: {Array} Product image srcs attached to variants other than the selected one
 
   Usage:
   {% render 'product-media-modal' %}
@@ -41,14 +41,12 @@
 
       {%- for media in product.media -%}
         {%- liquid
-          if section.settings.hide_variants and variant_images contains media.src or variant_images contains media.id
-            assign variant_image = true
-          else
-            assign variant_image = false
+          if section.settings.hide_variants and hidden_variant_images contains media.src
+            continue
           endif
 
           unless media.id == product.selected_or_first_available_variant.featured_media.id
-            render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: variant_image
+            render 'product-media', media: media, loop: section.settings.enable_video_looping
           endunless
         -%}
       {%- endfor -%}
