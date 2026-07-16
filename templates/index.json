@@ -148,6 +148,141 @@
         "padding_bottom": 0
       }
     },
+    "featured_product_W6Yern": {
+      "type": "featured-product",
+      "blocks": {
+        "text_9JhTDX": {
+          "type": "text",
+          "settings": {
+            "text": "{{ section.settings.product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title_j9DMBy": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h1"
+          }
+        },
+        "price_zXemde": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker_mmhyL6": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle"
+          }
+        },
+        "quantity_selector_zzCftA": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons_9DXJec": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "share_WiBEhw": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "text_9JhTDX",
+        "title_j9DMBy",
+        "price_zXemde",
+        "variant_picker_mmhyL6",
+        "quantity_selector_zzCftA",
+        "buy_buttons_9DXJec",
+        "share_WiBEhw"
+      ],
+      "disabled": true,
+      "name": "t:sections.featured-product.presets.name",
+      "settings": {
+        "product": "",
+        "color_scheme": "",
+        "secondary_background": false,
+        "media_size": "medium",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "hide_variants": false,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "17841988363791fe2d": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_c4616e1_rJKKJG": {
+          "type": "ai_gen_block_c4616e1",
+          "disabled": true,
+          "settings": {
+            "collection": "all-products",
+            "product_limit": 12,
+            "desktop_width_percent": 100,
+            "box_background_color": "#f9f9f9",
+            "box_border_color": "#e0e0e0",
+            "box_border_thickness": 1,
+            "box_border_radius": 8,
+            "box_padding": 30,
+            "grid_gap": 20,
+            "card_background_color": "#ffffff",
+            "card_border_radius": 4,
+            "card_padding": 15,
+            "show_price": true,
+            "text_alignment": "left",
+            "title_color": "#121212",
+            "title_font_size": 16,
+            "price_color": "#666666",
+            "price_font_size": 14
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_9ea8f37_iCr6rf": {
+          "type": "ai_gen_block_9ea8f37",
+          "disabled": true,
+          "settings": {
+            "selected_products": [
+              "lip-kit-bundle"
+            ],
+            "show_price": true,
+            "show_vendor": false,
+            "max_images": 4,
+            "transition_speed": 0.5,
+            "image_aspect_ratio": "1 / 1",
+            "grid_gap": 24,
+            "desktop_width_percent": 100,
+            "section_padding": 40,
+            "card_background": "#ffffff",
+            "card_border_radius": 8,
+            "card_padding": 20,
+            "card_shadow_opacity": 0.1,
+            "title_font_size": 18,
+            "title_color": "#121212",
+            "title_hover_color": "#b9648a",
+            "price_font_size": 16,
+            "price_color": "#121212",
+            "vendor_font_size": 12,
+            "vendor_color": "#666666"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_c4616e1_rJKKJG",
+        "ai_gen_block_9ea8f37_iCr6rf"
+      ],
+      "settings": {}
+    },
     "17665770919d9b6881": {
       "type": "_blocks",
       "blocks": {
@@ -734,6 +869,8 @@
   "order": [
     "slideshow_xwqYtR",
     "rich_text_AYfVGY",
+    "featured_product_W6Yern",
+    "17841988363791fe2d",
     "17665770919d9b6881",
     "176657518343664f32",
     "multirow_3mGFbd",
