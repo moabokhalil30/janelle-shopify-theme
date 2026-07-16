@@ -1,6 +1,437 @@
+{% doc %}
+  @prompt
+    I want to create a boxed container on my Shopify store that dynamically displays **all products** as a grid of product cards.
+    
+    Requirements:
+    
+    1. The container should hold multiple product cards filling the box area, showing all products from my store (or a specific collection).
+    
+    2. Each product card includes:
+       - The main product image.
+       - The product name.
+       Both image and name should be clickable links to the product detail page.
+    
+    3. Layout:
+       - On laptop and larger screens, product cards should be displayed in rows with **2 products side-by-side** per row.
+       - On smaller devices (tablet and mobile), product cards should stack vertically, one per row.
+    
+    4. Hover effect:
+       - When a user hovers on a product card, the main image should smoothly transition to show the next image from that product’s gallery/photos.
+       - If the product has multiple images, cycling through or switching to the second image is ideal.
+    
+    5. The whole card grid should be inside a visually distinct **boxed section** with some padding and possibly a subtle border or background to differentiate it from the rest of the page.
+    
+    6. The code must be fully dynamic so I can easily add or remove products from Shopify admin or collections without changing the code.
+    
+    7. Provide the complete Liquid code snippet along with any necessary HTML, CSS, and JavaScript, ready to put in a Shopify theme section/template.
+    
+    Make sure the code is clean, readable, and responsive for all screen sizes.
+    
+    Thank you!
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-grid-container-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-product-grid-box-{{ ai_gen_id }} {
+    background-color: {{ block.settings.box_background_color }};
+    border: {{ block.settings.box_border_thickness }}px solid {{ block.settings.box_border_color }};
+    border-radius: {{ block.settings.box_border_radius }}px;
+    padding: {{ block.settings.box_padding }}px;
+  }
+
+  .ai-product-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+  }
+
+  .ai-product-card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    background-color: {{ block.settings.card_background_color }};
+    transition: transform 0.3s ease;
+  }
+
+  .ai-product-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+  }
+
+  .ai-product-card-link-{{ ai_gen_id }} {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ai-product-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-product-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-product-image-{{ ai_gen_id }}.ai-product-image-primary-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-product-image-{{ ai_gen_id }}.ai-product-image-secondary-{{ ai_gen_id }} {
+    opacity: 0;
+  }
+
+  .ai-product-card-{{ ai_gen_id }}:hover .ai-product-image-primary-{{ ai_gen_id }} {
+    opacity: 0;
+  }
+
+  .ai-product-card-{{ ai_gen_id }}:hover .ai-product-image-secondary-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-product-info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .ai-product-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    color: {{ block.settings.price_color }};
+    margin-top: 8px;
+  }
+
+  .ai-product-grid-empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-product-grid-container-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<product-grid-{{ ai_gen_id }} class="ai-product-grid-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-grid-box-{{ ai_gen_id }}">
+    {% liquid
+      if block.settings.collection != blank
+        assign products_to_display = block.settings.collection.products
+      else
+        assign products_to_display = collections.all.products
+      endif
+
+      if block.settings.product_limit > 0
+        assign products_to_display = products_to_display | slice: 0, block.settings.product_limit
+      endif
+    %}
+
+    {% if products_to_display.size > 0 %}
+      <div class="ai-product-grid-{{ ai_gen_id }}">
+        {% for product in products_to_display %}
+          <div class="ai-product-card-{{ ai_gen_id }}">
+            <a href="{{ product.url }}" class="ai-product-card-link-{{ ai_gen_id }}">
+              <div class="ai-product-image-wrapper-{{ ai_gen_id }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    class="ai-product-image-{{ ai_gen_id }} ai-product-image-primary-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="600"
+                    height="600"
+                  >
+                  {% if product.images[1] %}
+                    <img
+                      src="{{ product.images[1] | image_url: width: 600 }}"
+                      alt="{{ product.images[1].alt | escape }}"
+                      class="ai-product-image-{{ ai_gen_id }} ai-product-image-secondary-{{ ai_gen_id }}"
+                      loading="lazy"
+                      width="600"
+                      height="600"
+                    >
+                  {% endif %}
+                {% else %}
+                  <div class="ai-product-image-placeholder-{{ ai_gen_id }}">
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="ai-product-info-{{ ai_gen_id }}">
+                <h3 class="ai-product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                {% if block.settings.show_price %}
+                  <div class="ai-product-price-{{ ai_gen_id }}">
+                    {{ product.price | money }}
+                  </div>
+                {% endif %}
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="ai-product-grid-empty-{{ ai_gen_id }}">
+        No products found. Add products to your store or select a collection.
+      </div>
+    {% endif %}
+  </div>
+</product-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.cards = this.querySelectorAll('.ai-product-card-{{ ai_gen_id }}');
+        this.setupImageHover();
+      }
+
+      setupImageHover() {
+        this.cards.forEach((card) => {
+          const primaryImage = card.querySelector('.ai-product-image-primary-{{ ai_gen_id }}');
+          const secondaryImage = card.querySelector('.ai-product-image-secondary-{{ ai_gen_id }}');
+
+          if (primaryImage && secondaryImage) {
+            card.addEventListener('mouseenter', () => {
+              primaryImage.style.opacity = '0';
+              secondaryImage.style.opacity = '1';
+            });
+
+            card.addEventListener('mouseleave', () => {
+              primaryImage.style.opacity = '1';
+              secondaryImage.style.opacity = '0';
+            });
+          }
+        });
+      }
+    }
+
+    customElements.define('product-grid-{{ ai_gen_id }}', ProductGrid{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Product grid",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product source"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "label": "Product limit",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Box style"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "box_background_color",
+      "label": "Background color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "box_border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "box_border_thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "box_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "box_padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Grid layout"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Product card"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Product info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Price font size",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product grid"
+    }
+  ]
+}
 {% endschema %}
