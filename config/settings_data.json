@@ -154,11 +154,6 @@
         "disabled": false,
         "settings": {}
       },
-      "3782161271425840822": {
-        "type": "shopify://apps/ns-color-swatch-variant-images/blocks/nestscale_product_variant/53eb5ed4-3892-414c-808b-3ea84516b10d",
-        "disabled": false,
-        "settings": {}
-      },
       "11349500561483629931": {
         "type": "shopify://apps/notify-me/blocks/app-embed/b399b727-6c85-44fc-9e21-63114bd72054",
         "disabled": false,
