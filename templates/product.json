@@ -324,13 +324,14 @@
         "complementary",
         "share"
       ],
+      "custom_css": [],
       "settings": {
         "enable_sticky_info": true,
         "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
-        "media_size": "large",
+        "media_size": "medium",
         "constrain_to_viewport": true,
-        "media_fit": "cover",
-        "gallery_layout": "thumbnail",
+        "media_fit": "contain",
+        "gallery_layout": "thumbnail_slider",
         "mobile_thumbnails": "show",
         "media_position": "left",
         "image_zoom": "lightbox",
