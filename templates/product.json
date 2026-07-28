@@ -63,22 +63,22 @@
         "divider_color": "#e9dde4"
       }
     },
-    "1763511245fe04337c": {
-      "type": "apps",
-      "blocks": {
-        "ns_variant_images_nestscale_product_variant_page_NdYYHn": {
-          "type": "shopify://apps/ns-variant-images/blocks/nestscale_product_variant_page/53eb5ed4-3892-414c-808b-3ea84516b10d",
-          "disabled": true,
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "ns_variant_images_nestscale_product_variant_page_NdYYHn"
-      ],
-      "settings": {
-        "include_margins": true
-      }
-    },
+    // "1763511245fe04337c": {
+    //   "type": "apps",
+    //   "blocks": {
+    //     "ns_variant_images_nestscale_product_variant_page_NdYYHn": {
+    //       "type": "shopify://apps/ns-variant-images/blocks/nestscale_product_variant_page/53eb5ed4-3892-414c-808b-3ea84516b10d",
+    //       "disabled": true,
+    //       "settings": {}
+    //     }
+    //   },
+    //   "block_order": [
+    //     "ns_variant_images_nestscale_product_variant_page_NdYYHn"
+    //   ],
+    //   "settings": {
+    //     "include_margins": true
+    //   }
+    // },
     "main": {
       "type": "main-product",
       "blocks": {
@@ -418,7 +418,7 @@
   },
   "order": [
     "trust_bar",
-    "1763511245fe04337c",
+    // "1763511245fe04337c",
     "main",
     "17672249385735c9f9",
     "1758831124533b2a49",
