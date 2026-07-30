@@ -298,6 +298,58 @@ if (!customElements.get('product-info')) {
           });
         }
 
+        // sync thumbnails so they reflect the newly selected variant's media
+        const thumbnailsSource = this.querySelector('media-gallery [id^="Slider-Thumbnails"]');
+        const thumbnailsDestination = html.querySelector('media-gallery [id^="Slider-Thumbnails"]');
+
+        const refreshThumbnailsData = () => {
+          const thumbnailItems = Array.from(thumbnailsSource.querySelectorAll('li[data-target]'));
+          const thumbnailSet = new Set(thumbnailItems.map((item) => item.dataset.target));
+          const thumbnailMap = new Map(thumbnailItems.map((item, index) => [item.dataset.target, { item, index }]));
+          return [thumbnailItems, thumbnailSet, thumbnailMap];
+        };
+
+        if (thumbnailsSource && thumbnailsDestination) {
+          let [thumbnailItems, thumbnailSet, thumbnailMap] = refreshThumbnailsData();
+          const destinationThumbnailItems = Array.from(thumbnailsDestination.querySelectorAll('li[data-target]'));
+          const destinationThumbnailSet = new Set(destinationThumbnailItems.map(({ dataset }) => dataset.target));
+          let shouldRefreshThumbnails = false;
+
+          // add items from new data not present in DOM
+          for (let i = destinationThumbnailItems.length - 1; i >= 0; i--) {
+            if (!thumbnailSet.has(destinationThumbnailItems[i].dataset.target)) {
+              thumbnailsSource.prepend(destinationThumbnailItems[i]);
+              shouldRefreshThumbnails = true;
+            }
+          }
+
+          // remove items from DOM not present in new data
+          for (let i = 0; i < thumbnailItems.length; i++) {
+            if (!destinationThumbnailSet.has(thumbnailItems[i].dataset.target)) {
+              thumbnailItems[i].remove();
+              shouldRefreshThumbnails = true;
+            }
+          }
+
+          // refresh
+          if (shouldRefreshThumbnails) [thumbnailItems, thumbnailSet, thumbnailMap] = refreshThumbnailsData();
+
+          // if thumbnail lists don't match, sort to match new data order
+          destinationThumbnailItems.forEach((destinationItem, destinationIndex) => {
+            const sourceData = thumbnailMap.get(destinationItem.dataset.target);
+
+            if (sourceData && sourceData.index !== destinationIndex) {
+              thumbnailsSource.insertBefore(
+                sourceData.item,
+                thumbnailsSource.querySelector(`li:nth-of-type(${destinationIndex + 1})`)
+              );
+
+              // refresh source now that it has been modified
+              [thumbnailItems, thumbnailSet, thumbnailMap] = refreshThumbnailsData();
+            }
+          });
+        }
+
         // set featured media as active in the media gallery
         this.querySelector(`media-gallery`)?.setActiveMedia?.(
           `${this.dataset.section}-${variantFeaturedMediaId}`,

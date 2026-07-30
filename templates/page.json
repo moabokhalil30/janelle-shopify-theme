@@ -18,34 +18,12 @@
     },
     "17672834084d1233d3": {
       "type": "apps",
-      "blocks": {
-        "bundler_custom_bundle_w67B8q": {
-          "type": "shopify://apps/bundler/blocks/custom-bundle/7a6ae1b8-3b16-449b-8429-8bb89a62c664",
-          "settings": {
-            "shortcode": ""
-          }
-        }
-      },
-      "block_order": [
-        "bundler_custom_bundle_w67B8q"
-      ],
       "settings": {
         "include_margins": true
       }
     },
     "1767283399d17478c3": {
       "type": "apps",
-      "blocks": {
-        "bundler_custom_bundle_mxtQ9E": {
-          "type": "shopify://apps/bundler/blocks/custom-bundle/7a6ae1b8-3b16-449b-8429-8bb89a62c664",
-          "settings": {
-            "shortcode": ""
-          }
-        }
-      },
-      "block_order": [
-        "bundler_custom_bundle_mxtQ9E"
-      ],
       "settings": {
         "include_margins": true
       }

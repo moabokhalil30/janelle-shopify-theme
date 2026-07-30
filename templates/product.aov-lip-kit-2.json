@@ -11,15 +11,6 @@
   "sections": {
     "1763511245fe04337c": {
       "type": "apps",
-      "blocks": {
-        "aov_ai_bundle_offer_bundle_builder_JHimTj": {
-          "type": "shopify://apps/aov-ai-bundle/blocks/offer-bundle-builder/0335d423-143c-4ad7-b224-99a1db74a9ee",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "aov_ai_bundle_offer_bundle_builder_JHimTj"
-      ],
       "settings": {
         "include_margins": true
       }
@@ -69,10 +60,6 @@
           "settings": {
             "share_label": "Share"
           }
-        },
-        "aov_ai_bundle_mix_match_offer_inline_EYcC9j": {
-          "type": "shopify://apps/aov-ai-bundle/blocks/mix-match-offer-inline/0335d423-143c-4ad7-b224-99a1db74a9ee",
-          "settings": {}
         }
       },
       "block_order": [
@@ -83,8 +70,7 @@
         "quantity_selector",
         "buy_buttons",
         "description",
-        "share",
-        "aov_ai_bundle_mix_match_offer_inline_EYcC9j"
+        "share"
       ],
       "settings": {
         "enable_sticky_info": true,
