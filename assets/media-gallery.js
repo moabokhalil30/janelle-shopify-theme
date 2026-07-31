@@ -40,16 +40,10 @@ if (!customElements.get('media-gallery')) {
         });
         activeMedia?.classList?.add('is-active');
 
-        if (prepend) {
-          activeMedia.parentElement.firstChild !== activeMedia && activeMedia.parentElement.prepend(activeMedia);
-
-          if (this.elements.thumbnails) {
-            const activeThumbnail = this.elements.thumbnails.querySelector(`[data-target="${mediaId}"]`);
-            activeThumbnail.parentElement.firstChild !== activeThumbnail && activeThumbnail.parentElement.prepend(activeThumbnail);
-          }
-
-          if (this.elements.viewer.slider) this.elements.viewer.resetPages();
-        }
+        // Note: stock Dawn also moves the active slide/thumbnail to the front of the
+        // DOM here. That's intentionally omitted so Shopify's original media order is
+        // never altered by selecting a variant; only pagination state is refreshed.
+        if (prepend && this.elements.viewer.slider) this.elements.viewer.resetPages();
 
         this.preventStickyHeader();
         window.setTimeout(() => {
@@ -67,7 +61,7 @@ if (!customElements.get('media-gallery')) {
         if (!this.elements.thumbnails) return;
         const activeThumbnail = this.elements.thumbnails.querySelector(`[data-target="${mediaId}"]`);
         this.setActiveThumbnail(activeThumbnail);
-        this.announceLiveRegion(activeMedia, activeThumbnail.dataset.mediaPosition);
+        if (activeThumbnail) this.announceLiveRegion(activeMedia, activeThumbnail.dataset.mediaPosition);
       }
 
       setActiveThumbnail(thumbnail) {

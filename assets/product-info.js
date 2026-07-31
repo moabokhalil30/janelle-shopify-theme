@@ -249,14 +249,11 @@ if (!customElements.get('product-info')) {
           if (this.hasAttribute('data-zoom-on-hover')) enableZoomOnHover(2);
           const mediaGallerySourceItems = Array.from(mediaGallerySource.querySelectorAll('li[data-media-id]'));
           const sourceSet = new Set(mediaGallerySourceItems.map((item) => item.dataset.mediaId));
-          const sourceMap = new Map(
-            mediaGallerySourceItems.map((item, index) => [item.dataset.mediaId, { item, index }])
-          );
-          return [mediaGallerySourceItems, sourceSet, sourceMap];
+          return [mediaGallerySourceItems, sourceSet];
         };
 
         if (mediaGallerySource && mediaGalleryDestination) {
-          let [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
+          const [mediaGallerySourceItems, sourceSet] = refreshSourceData();
           const mediaGalleryDestinationItems = Array.from(
             mediaGalleryDestination.querySelectorAll('li[data-media-id]')
           );
@@ -279,75 +276,10 @@ if (!customElements.get('product-info')) {
             }
           }
 
-          // refresh
-          if (shouldRefresh) [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
-
-          // if media galleries don't match, sort to match new data order
-          mediaGalleryDestinationItems.forEach((destinationItem, destinationIndex) => {
-            const sourceData = sourceMap.get(destinationItem.dataset.mediaId);
-
-            if (sourceData && sourceData.index !== destinationIndex) {
-              mediaGallerySource.insertBefore(
-                sourceData.item,
-                mediaGallerySource.querySelector(`li:nth-of-type(${destinationIndex + 1})`)
-              );
-
-              // refresh source now that it has been modified
-              [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
-            }
-          });
-        }
-
-        // sync thumbnails so they reflect the newly selected variant's media
-        const thumbnailsSource = this.querySelector('media-gallery [id^="Slider-Thumbnails"]');
-        const thumbnailsDestination = html.querySelector('media-gallery [id^="Slider-Thumbnails"]');
-
-        const refreshThumbnailsData = () => {
-          const thumbnailItems = Array.from(thumbnailsSource.querySelectorAll('li[data-target]'));
-          const thumbnailSet = new Set(thumbnailItems.map((item) => item.dataset.target));
-          const thumbnailMap = new Map(thumbnailItems.map((item, index) => [item.dataset.target, { item, index }]));
-          return [thumbnailItems, thumbnailSet, thumbnailMap];
-        };
-
-        if (thumbnailsSource && thumbnailsDestination) {
-          let [thumbnailItems, thumbnailSet, thumbnailMap] = refreshThumbnailsData();
-          const destinationThumbnailItems = Array.from(thumbnailsDestination.querySelectorAll('li[data-target]'));
-          const destinationThumbnailSet = new Set(destinationThumbnailItems.map(({ dataset }) => dataset.target));
-          let shouldRefreshThumbnails = false;
-
-          // add items from new data not present in DOM
-          for (let i = destinationThumbnailItems.length - 1; i >= 0; i--) {
-            if (!thumbnailSet.has(destinationThumbnailItems[i].dataset.target)) {
-              thumbnailsSource.prepend(destinationThumbnailItems[i]);
-              shouldRefreshThumbnails = true;
-            }
-          }
-
-          // remove items from DOM not present in new data
-          for (let i = 0; i < thumbnailItems.length; i++) {
-            if (!destinationThumbnailSet.has(thumbnailItems[i].dataset.target)) {
-              thumbnailItems[i].remove();
-              shouldRefreshThumbnails = true;
-            }
-          }
-
-          // refresh
-          if (shouldRefreshThumbnails) [thumbnailItems, thumbnailSet, thumbnailMap] = refreshThumbnailsData();
-
-          // if thumbnail lists don't match, sort to match new data order
-          destinationThumbnailItems.forEach((destinationItem, destinationIndex) => {
-            const sourceData = thumbnailMap.get(destinationItem.dataset.target);
-
-            if (sourceData && sourceData.index !== destinationIndex) {
-              thumbnailsSource.insertBefore(
-                sourceData.item,
-                thumbnailsSource.querySelector(`li:nth-of-type(${destinationIndex + 1})`)
-              );
-
-              // refresh source now that it has been modified
-              [thumbnailItems, thumbnailSet, thumbnailMap] = refreshThumbnailsData();
-            }
-          });
+          // refresh (also re-applies zoom-on-hover to any newly added media).
+          // Existing media is never reordered here, so the gallery keeps
+          // Shopify's original media order regardless of variant selection.
+          if (shouldRefresh) refreshSourceData();
         }
 
         // set featured media as active in the media gallery
