@@ -31,6 +31,14 @@
 
   assign cart_mode = block.settings.cart_mode | default: 'bundle_product'
   assign bundle_variant = product.selected_or_first_available_variant
+
+  # Scoped to exactly these templates — every other template using this
+  # shared snippet (Default, builder-4, liner-test, etc.) keeps the original
+  # showShadeGallery/setHeroImage JS behavior further down, untouched.
+  assign use_native_gallery_sync = false
+  if template.suffix == 'builder' or template.suffix == 'builder-2' or template.suffix == 'builder-3'
+    assign use_native_gallery_sync = true
+  endif
 -%}
 
 <div
@@ -705,6 +713,9 @@
     const errorText = {{ block.settings.error_text | json }};
     const cartMode = root.dataset.cartMode || 'bundle_product';
     const bundleVariantId = Number(root.dataset.bundleVariantId || 0);
+    const useNativeGallerySync = {{ use_native_gallery_sync | json }};
+    const nativeGalleryMediaFit = {{ section.settings.media_fit | json }};
+    const nativeGalleryConstrainToViewport = {{ section.settings.constrain_to_viewport | json }};
     const slotLabels = {
       '1': {{ block.settings.label_1 | json }},
       '2': {{ block.settings.label_2 | json }},
@@ -872,6 +883,76 @@
       });
     }
 
+    function resizeUrl(url, width) {
+      if (!url) return url;
+      if (/([?&])width=\d+/.test(url)) return url.replace(/([?&])width=\d+/, `$1width=${width}`);
+      return url + (url.includes('?') ? '&' : '?') + `width=${width}`;
+    }
+
+    // builder-2 only: drive the theme's own <media-gallery> component instead
+    // of the generic hero-image swap above. Replaces the real GalleryViewer
+    // and GalleryThumbnails content with the selected shade's own image set
+    // (in the same order computeShadeImages already derives), then hands off
+    // to media-gallery's own setActiveMedia() — the same method Dawn's native
+    // thumbnail clicks use — so activation, scrolling and ARIA state all come
+    // from the theme's existing, already-tested gallery code rather than new
+    // CSS-selector guessing.
+    function syncNativeGallery(images, selection) {
+      if (!images || !images.length) return;
+      const mediaGallery = document.querySelector('media-gallery');
+      if (!mediaGallery || typeof mediaGallery.setActiveMedia !== 'function') return;
+
+      const sectionId = mediaGallery.id.replace('MediaGallery-', '');
+      const viewerList = mediaGallery.querySelector('[id^="Slider-Gallery"]');
+      const thumbList = mediaGallery.querySelector('[id^="Slider-Thumbnails"]');
+      if (!viewerList) return;
+
+      const altText = `${selection.productTitle || bundleName} - ${selection.variantTitle || ''}`.trim();
+      const runId = Date.now();
+      const entries = images.map((url, i) => ({ id: `bundle-${runId}-${i}`, url }));
+
+      viewerList.innerHTML = entries
+        .map(
+          (entry, i) => `
+        <li id="Slide-${sectionId}-${entry.id}" class="product__media-item grid__item slider__slide${i === 0 ? ' is-active' : ''}" data-media-id="${sectionId}-${entry.id}">
+          <div class="product-media-container media-type-image media-fit-${nativeGalleryMediaFit} global-media-settings gradient${nativeGalleryConstrainToViewport ? ' constrain-height' : ''}" style="--ratio: 1; --preview-ratio: 1;">
+            <div class="product__media media media--transparent">
+              <img src="${escapeHtml(resizeUrl(entry.url, 1946))}" alt="${escapeHtml(altText)}" loading="${i === 0 ? 'eager' : 'lazy'}">
+            </div>
+          </div>
+        </li>`
+        )
+        .join('');
+
+      if (thumbList) {
+        thumbList.innerHTML = entries
+          .map(
+            (entry, i) => `
+          <li id="Slide-Thumbnails-${sectionId}-${entry.id}" class="thumbnail-list__item slider__slide" data-target="${sectionId}-${entry.id}" data-media-position="${i + 1}">
+            <button class="thumbnail global-media-settings global-media-settings--no-shadow" type="button" aria-label="${escapeHtml(altText)} ${i + 1}">
+              <img src="${escapeHtml(resizeUrl(entry.url, 416))}" alt="${escapeHtml(altText)}" loading="lazy">
+            </button>
+          </li>`
+          )
+          .join('');
+
+        thumbList.querySelectorAll('[data-target]').forEach((item) => {
+          const button = item.querySelector('button');
+          if (!button) return;
+          button.addEventListener('click', () => mediaGallery.setActiveMedia(item.dataset.target, false));
+        });
+      }
+
+      try {
+        if (mediaGallery.elements?.viewer?.resetPages) mediaGallery.elements.viewer.resetPages();
+        if (mediaGallery.elements?.thumbnails?.resetPages) mediaGallery.elements.thumbnails.resetPages();
+      } catch (e) {
+        /* pagination refresh is cosmetic only; safe to skip on failure */
+      }
+
+      mediaGallery.setActiveMedia(`${sectionId}-${entries[0].id}`, false);
+    }
+
     function refresh() {
       const count = selected.size;
       const complete = count === requiredCount && requiredCount > 0;
@@ -945,7 +1026,11 @@
         }
       }
 
-      showShadeGallery(computeShadeImages(option), selection);
+      if (useNativeGallerySync) {
+        syncNativeGallery(computeShadeImages(option), selection);
+      } else {
+        showShadeGallery(computeShadeImages(option), selection);
+      }
       refresh();
     });
 
