@@ -702,6 +702,7 @@
     root.dataset.initialized = 'true';
 
     const selected = new Map();
+    let pendingNativeGallerySync = null;
     const requiredCount = root.querySelectorAll('[data-bundle-group]').length;
     const addButton = root.querySelector('[data-add-bundle]');
     const progress = root.querySelector('[data-bundle-progress]');
@@ -950,7 +951,21 @@
         /* pagination refresh is cosmetic only; safe to skip on failure */
       }
 
-      mediaGallery.setActiveMedia(`${sectionId}-${entries[0].id}`, false);
+      // media-gallery's setActiveMedia() defers its scroll-into-view via a bare
+      // setTimeout that closes over the specific <li> it was called with. If a
+      // second rapid selection replaces that <li> (via the innerHTML swaps
+      // above) before the deferred callback runs, the callback fires against a
+      // now-detached node and throws. Coalescing to a zero-delay timeout (not
+      // requestAnimationFrame, which can be paused entirely for a backgrounded
+      // or inactive tab) ensures only the latest selection in a rapid burst
+      // ever calls it, so the scroll callback always targets a still-attached
+      // element and always actually runs.
+      if (pendingNativeGallerySync) clearTimeout(pendingNativeGallerySync);
+      const targetMediaId = `${sectionId}-${entries[0].id}`;
+      pendingNativeGallerySync = setTimeout(() => {
+        pendingNativeGallerySync = null;
+        mediaGallery.setActiveMedia(targetMediaId, false);
+      }, 0);
     }
 
     function refresh() {
