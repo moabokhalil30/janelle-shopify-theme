@@ -9,62 +9,8 @@
  */
 {
   "sections": {
-    "hero_social_proof": {
-      "type": "hero-social-proof",
-      "blocks": {
-        "rating_hero01": {
-          "type": "rating",
-          "settings": {
-            "rating_text": ""
-          }
-        },
-        "heading_hero01": {
-          "type": "heading",
-          "settings": {
-            "heading": "",
-            "heading_size": "h0"
-          }
-        },
-        "cta_hero01": {
-          "type": "cta_button",
-          "settings": {
-            "label": "",
-            "link": "",
-            "thumbnail": ""
-          }
-        },
-        "cta_hero02": {
-          "type": "cta_button",
-          "settings": {
-            "label": "",
-            "link": "",
-            "thumbnail": ""
-          }
-        },
-        "badge_hero01": {
-          "type": "trust_badge",
-          "settings": {
-            "text": "",
-            "logo": ""
-          }
-        }
-      },
-      "block_order": [
-        "rating_hero01",
-        "heading_hero01",
-        "cta_hero01",
-        "cta_hero02",
-        "badge_hero01"
-      ],
-      "name": "Hero (social proof)",
-      "settings": {
-        "image": "shopify://shop_images/1.jpg",
-        "image_overlay_opacity": 0
-      }
-    },
     "slideshow_xwqYtR": {
       "type": "slideshow",
-      "disabled": true,
       "blocks": {
         "slide_c6hxMg": {
           "type": "slide",
@@ -421,14 +367,14 @@
             "button_hover_bg_color": "#d585a6",
             "category_1_enabled": true,
             "category_1_image": "shopify://shop_images/IMG_47501.png",
-            "category_1_title": "The beauty bag",
+            "category_1_title": "The Beauty Bag",
             "category_1_price": "700 EGP",
             "category_1_compare_price": "",
             "category_1_button_text": "Shop beauty bag",
             "category_1_button_link": "shopify://products/the-beauty-bag",
             "category_1_show_sale": false,
             "category_1_sale_text": "SALE",
-            "category_2_enabled": true,
+            "category_2_enabled": false,
             "category_2_image": "shopify://shop_images/DSC01482.jpg",
             "category_2_title": "Keychain",
             "category_2_price": "300 EGP",
@@ -470,7 +416,7 @@
             "category_6_price": "360 EGP",
             "category_6_compare_price": "",
             "category_6_button_text": "Choose your shades now",
-            "category_6_button_link": "shopify://products/lip-gloss-brush-tube-copy-1",
+            "category_6_button_link": "shopify://products/lip-gloss-squeeze-tube",
             "category_6_show_sale": false,
             "category_6_sale_text": "SALE",
             "category_7_enabled": true,
@@ -921,7 +867,6 @@
     }
   },
   "order": [
-    "hero_social_proof",
     "slideshow_xwqYtR",
     "rich_text_AYfVGY",
     "featured_product_W6Yern",
