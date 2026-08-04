@@ -5,95 +5,141 @@
   if section.index == 1
     assign fetch_priority = 'high'
   endif
+
+  assign has_image = false
+  if section.settings.image != blank
+    assign has_image = true
+    assign image_height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio
+  endif
+
+  assign has_cta = false
+  for block in section.blocks
+    if block.type == 'cta_button' and block.settings.label != blank
+      assign has_cta = true
+      break
+    endif
+  endfor
 -%}
 
-<div class="hero-social-proof">
-  {%- if section.settings.image != blank -%}
-    <div class="hero-social-proof__media">
+{%- if section.settings.hero_height == 'adapt' and has_image -%}
+  {%- style -%}
+    #HeroSP-{{ section.id }} {
+      aspect-ratio: {{ section.settings.image.aspect_ratio }};
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+<div
+  id="HeroSP-{{ section.id }}"
+  class="hero-social-proof hero-social-proof--{{ section.settings.hero_height }} hero-social-proof--align-{{ section.settings.content_position }}"
+  style="--hero-focal: {{ section.settings.focal_point }};"
+>
+  <div class="hero-social-proof__media{% unless has_image %} hero-social-proof__media--placeholder{% endunless %}">
+    {%- if has_image -%}
       {{
         section.settings.image
         | image_url: width: 3840
         | image_tag:
           width: section.settings.image.width,
-          height: section.settings.image.width | divided_by: section.settings.image.aspect_ratio,
+          height: image_height,
           sizes: '100vw',
           widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
           fetchpriority: fetch_priority
       }}
-    </div>
-  {%- endif -%}
+    {%- else -%}
+      {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </div>
 
   {%- if section.settings.image_overlay_opacity > 0 -%}
-    <div class="hero-social-proof__overlay" style="opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};"></div>
+    <div
+      class="hero-social-proof__overlay"
+      style="opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};"
+    ></div>
   {%- endif -%}
 
-  <div class="hero-social-proof__scrim"></div>
+  {%- if section.settings.show_scrim -%}
+    <div class="hero-social-proof__scrim"></div>
+  {%- endif -%}
 
-  <div class="hero-social-proof__content page-width">
-    {%- for block in section.blocks -%}
-      {%- case block.type -%}
-        {%- when 'rating' -%}
-          {%- if block.settings.rating_text != blank -%}
-            <div class="hero-social-proof__rating" {{ block.shopify_attributes }}>
-              {{ block.settings.rating_text }}
-            </div>
-          {%- endif -%}
+  <div class="hero-social-proof__content">
+    <div class="hero-social-proof__inner">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'rating' -%}
+            {%- if block.settings.rating_text != blank -%}
+              <div class="hero-social-proof__rating" {{ block.shopify_attributes }}>
+                {{ block.settings.rating_text }}
+              </div>
+            {%- endif -%}
 
-        {%- when 'heading' -%}
-          {%- if block.settings.heading != blank -%}
-            <h1 class="hero-social-proof__heading {{ block.settings.heading_size }}" {{ block.shopify_attributes }}>
-              {{ block.settings.heading }}
-            </h1>
-          {%- endif -%}
+          {%- when 'heading' -%}
+            {%- if block.settings.heading != blank -%}
+              <h2
+                class="hero-social-proof__heading {{ block.settings.heading_size }}"
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.heading }}
+              </h2>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
 
-      {%- endcase -%}
-    {%- endfor -%}
-
-    {%- assign has_cta = false -%}
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'cta_button' and block.settings.label != blank -%}
-        {%- assign has_cta = true -%}
-      {%- endif -%}
-    {%- endfor -%}
-
-    {%- if has_cta -%}
-      <div class="hero-social-proof__ctas">
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'cta_button' and block.settings.label != blank -%}
-            <a
-              {% if block.settings.link == blank %}
-                role="link" aria-disabled="true"
-              {% else %}
-                href="{{ block.settings.link }}"
-              {% endif %}
-              class="hero-social-proof__cta"
-              {{ block.shopify_attributes }}
-            >
-              <span class="hero-social-proof__cta-label">
-                {{- block.settings.label | escape -}}
-                <span class="icon-caret">{{ 'icon-caret.svg' | inline_asset_content }}</span>
-              </span>
-              {%- if block.settings.thumbnail != blank -%}
-                <span class="hero-social-proof__cta-thumb">
-                  {{ block.settings.thumbnail | image_url: width: 100 | image_tag: width: 72, height: 72, loading: 'lazy' }}
+      {%- if has_cta -%}
+        <div class="hero-social-proof__ctas">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'cta_button' and block.settings.label != blank -%}
+              <a
+                {% if block.settings.link == blank %}
+                  role="link" aria-disabled="true"
+                {% else %}
+                  href="{{ block.settings.link }}"
+                {% endif %}
+                class="hero-social-proof__cta"
+                {{ block.shopify_attributes }}
+              >
+                <span class="hero-social-proof__cta-label">
+                  {{- block.settings.label | escape -}}
+                  <span class="hero-social-proof__cta-caret">
+                    {{- 'icon-caret.svg' | inline_asset_content -}}
+                  </span>
                 </span>
-              {%- endif -%}
-            </a>
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'trust_badge' and block.settings.text != blank -%}
-        <div class="hero-social-proof__badge" {{ block.shopify_attributes }}>
-          {{ block.settings.text }}
-          {%- if block.settings.logo != blank -%}
-            {{ block.settings.logo | image_url: width: 200 | image_tag: class: 'hero-social-proof__badge-logo', widths: '100, 150, 200', loading: 'lazy' }}
-          {%- endif -%}
+                {%- if block.settings.thumbnail != blank -%}
+                  <span class="hero-social-proof__cta-thumb">
+                    {{
+                      block.settings.thumbnail
+                      | image_url: width: 144
+                      | image_tag: width: 72, height: 72, loading: 'lazy', alt: ''
+                    }}
+                  </span>
+                {%- endif -%}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
         </div>
       {%- endif -%}
-    {%- endfor -%}
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'trust_badge' -%}
+          {%- if block.settings.text != blank or block.settings.logo != blank -%}
+            <div class="hero-social-proof__badge" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+              {%- if block.settings.logo != blank -%}
+                {{
+                  block.settings.logo
+                  | image_url: width: 300
+                  | image_tag:
+                    class: 'hero-social-proof__badge-logo',
+                    widths: '100, 150, 200, 300',
+                    loading: 'lazy',
+                    alt: ''
+                }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
   </div>
 </div>
 
@@ -112,6 +158,41 @@
       "label": "Image"
     },
     {
+      "type": "select",
+      "id": "hero_height",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "full", "label": "Full screen" }
+      ],
+      "default": "medium",
+      "label": "Hero height"
+    },
+    {
+      "type": "select",
+      "id": "focal_point",
+      "options": [
+        { "value": "center top", "label": "Top" },
+        { "value": "center", "label": "Centre" },
+        { "value": "center bottom", "label": "Bottom" }
+      ],
+      "default": "center",
+      "label": "Image focal point",
+      "info": "Which part of the photo stays visible when it gets cropped. Tall portrait photos crop a lot on desktop — use this to keep the face in frame."
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "options": [
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "middle", "label": "Middle" }
+      ],
+      "default": "bottom",
+      "label": "Content position"
+    },
+    {
       "type": "range",
       "id": "image_overlay_opacity",
       "min": 0,
@@ -119,8 +200,15 @@
       "step": 5,
       "unit": "%",
       "label": "Image overlay darkness",
-      "info": "Darkens the whole image. Use if the headline or reviews text is hard to read.",
+      "info": "Darkens the whole image. Raise this if the text is hard to read.",
       "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scrim",
+      "default": true,
+      "label": "Fade bottom of image",
+      "info": "Adds a soft dark fade behind the text so it stays readable."
     }
   ],
   "blocks": [
@@ -133,7 +221,7 @@
           "type": "text",
           "id": "rating_text",
           "label": "Rating line",
-          "info": "Type this exactly as you want it to appear, e.g. \"4.8 ★ 1,204 Reviews\". Leave blank to hide."
+          "info": "Type it exactly as you want it shown, e.g. 4.8 ★ 1,204 Reviews. Leave blank to hide."
         }
       ]
     },
@@ -153,10 +241,9 @@
           "options": [
             { "value": "h2", "label": "Small" },
             { "value": "h1", "label": "Medium" },
-            { "value": "h0", "label": "Large" },
-            { "value": "hxl", "label": "Extra large" }
+            { "value": "h0", "label": "Large" }
           ],
-          "default": "h0",
+          "default": "h1",
           "label": "Heading size"
         }
       ]
@@ -169,7 +256,7 @@
           "type": "text",
           "id": "label",
           "label": "Button label",
-          "info": "e.g. Shop All"
+          "default": "Shop all"
         },
         {
           "type": "url",
@@ -180,7 +267,7 @@
           "type": "image_picker",
           "id": "thumbnail",
           "label": "Thumbnail (optional)",
-          "info": "Small square image shown on the right side of the button, like a product photo."
+          "info": "Small square product photo shown on the right of the button."
         }
       ]
     },
@@ -193,12 +280,12 @@
           "type": "richtext",
           "id": "text",
           "label": "Text",
-          "info": "e.g. \"Voted #1 lip gloss brand — Vogue Arabia\". Leave blank to hide."
+          "info": "e.g. a press mention or award line. Leave blank to hide."
         },
         {
           "type": "image_picker",
           "id": "logo",
-          "label": "Press/award logo (optional)"
+          "label": "Press / award logo (optional)"
         }
       ]
     }

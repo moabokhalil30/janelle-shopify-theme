@@ -1,0 +1,232 @@
+.hero-social-proof {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Heights are viewport-based so the hero never becomes a giant empty box. */
+.hero-social-proof--small {
+  min-height: 45vh;
+}
+
+.hero-social-proof--medium {
+  min-height: 60vh;
+}
+
+.hero-social-proof--large {
+  min-height: 75vh;
+}
+
+.hero-social-proof--full {
+  min-height: 100vh;
+}
+
+/* "Adapt to image" gets its aspect-ratio inline from the section;
+   this floor keeps the text from overflowing on very wide images. */
+.hero-social-proof--adapt {
+  min-height: 45vh;
+}
+
+@media screen and (min-width: 750px) {
+  .hero-social-proof--small {
+    min-height: 50vh;
+  }
+
+  .hero-social-proof--medium {
+    min-height: 70vh;
+  }
+
+  .hero-social-proof--large {
+    min-height: 85vh;
+  }
+}
+
+.hero-social-proof__media {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-social-proof__media img,
+.hero-social-proof__media svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-focal, center);
+  display: block;
+}
+
+.hero-social-proof__media--placeholder {
+  background: rgba(var(--color-foreground), 0.04);
+}
+
+.hero-social-proof__overlay,
+.hero-social-proof__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-social-proof__overlay {
+  background: #000;
+}
+
+/* Strong enough to keep white text readable over light imagery
+   (Janelle's photography is pale pink/beige, so a weak scrim disappears). */
+.hero-social-proof__scrim {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 10%,
+    rgba(0, 0, 0, 0.2) 35%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0.78) 100%
+  );
+}
+
+.hero-social-proof--align-middle .hero-social-proof__scrim {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
+.hero-social-proof__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  min-height: inherit;
+  padding: 2.4rem 2rem 3.2rem;
+  color: #fff;
+}
+
+.hero-social-proof--align-bottom .hero-social-proof__content {
+  align-items: flex-end;
+}
+
+.hero-social-proof--align-middle .hero-social-proof__content {
+  align-items: center;
+}
+
+/* Adapt mode: the wrapper is aspect-ratio sized, so the content layer
+   must be absolutely positioned to avoid forcing it taller. */
+.hero-social-proof--adapt .hero-social-proof__content {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-social-proof__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 46rem;
+}
+
+.hero-social-proof__rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+  margin-bottom: 1rem;
+}
+
+.hero-social-proof__heading {
+  color: #fff;
+  margin: 0 0 1.8rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 16px rgba(0, 0, 0, 0.45);
+  text-wrap: balance;
+}
+
+.hero-social-proof__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+}
+
+.hero-social-proof__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #fff;
+  color: #1a1a1a;
+  text-decoration: none;
+  padding: 1.1rem 1.2rem 1.1rem 1.8rem;
+  border-radius: 0.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 5.4rem;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero-social-proof__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+}
+
+.hero-social-proof__cta-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.hero-social-proof__cta-caret {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hero-social-proof__cta-caret svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  transform: rotate(-90deg);
+}
+
+.hero-social-proof__cta-thumb {
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 0.3rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hero-social-proof__cta-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-social-proof__badge {
+  margin-top: 1.6rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+.hero-social-proof__badge p {
+  margin: 0;
+}
+
+.hero-social-proof__badge-logo {
+  display: block;
+  max-width: 11rem;
+  max-height: 3.2rem;
+  width: auto;
+  height: auto;
+  margin: 0.8rem auto 0;
+  object-fit: contain;
+}
