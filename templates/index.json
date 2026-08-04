@@ -9,8 +9,62 @@
  */
 {
   "sections": {
+    "hero_social_proof": {
+      "type": "hero-social-proof",
+      "blocks": {
+        "rating_hero01": {
+          "type": "rating",
+          "settings": {
+            "rating_text": ""
+          }
+        },
+        "heading_hero01": {
+          "type": "heading",
+          "settings": {
+            "heading": "",
+            "heading_size": "h0"
+          }
+        },
+        "cta_hero01": {
+          "type": "cta_button",
+          "settings": {
+            "label": "",
+            "link": "",
+            "thumbnail": ""
+          }
+        },
+        "cta_hero02": {
+          "type": "cta_button",
+          "settings": {
+            "label": "",
+            "link": "",
+            "thumbnail": ""
+          }
+        },
+        "badge_hero01": {
+          "type": "trust_badge",
+          "settings": {
+            "text": "",
+            "logo": ""
+          }
+        }
+      },
+      "block_order": [
+        "rating_hero01",
+        "heading_hero01",
+        "cta_hero01",
+        "cta_hero02",
+        "badge_hero01"
+      ],
+      "name": "Hero (social proof)",
+      "settings": {
+        "image": "shopify://shop_images/1.jpg",
+        "image_overlay_opacity": 0
+      }
+    },
     "slideshow_xwqYtR": {
       "type": "slideshow",
+      "disabled": true,
       "blocks": {
         "slide_c6hxMg": {
           "type": "slide",
@@ -722,7 +776,7 @@
       ],
       "disabled": true,
       "custom_css": [
-        ".image-with-text__media {overflow: hidden; /* ⬅️ This clips anything outside the border-radius */ border-radius: 24px; margin-bottom: 0; padding-bottom: 0;}",
+        ".image-with-text__media {overflow: hidden; /* \u2b05\ufe0f This clips anything outside the border-radius */ border-radius: 24px; margin-bottom: 0; padding-bottom: 0;}",
         ".image-with-text__media img {display: block; width: 100%; margin-bottom: 0;}"
       ],
       "name": "t:sections.multirow.presets.name",
@@ -776,7 +830,7 @@
         "text_jQyUkW": {
           "type": "text",
           "settings": {
-            "text": "<h3><strong>Janelle cosmetics is a premium affordable Beauty Brand </strong></h3><p>“Our main goal is to provide an everyday high-quality formulated beauty products that provides premium finish and are accessible to everyone.<br/>With love, Enjy & Samar🩷</p><p></p>",
+            "text": "<h3><strong>Janelle cosmetics is a premium affordable Beauty Brand\u00a0</strong></h3><p>\u201cOur main goal is to provide an everyday high-quality formulated beauty products that provides premium finish and are accessible to everyone.<br/>With love, Enjy & Samar\ud83e\ude77</p><p></p>",
             "text_style": "body"
           }
         }
@@ -867,6 +921,7 @@
     }
   },
   "order": [
+    "hero_social_proof",
     "slideshow_xwqYtR",
     "rich_text_AYfVGY",
     "featured_product_W6Yern",
