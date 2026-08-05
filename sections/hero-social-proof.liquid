@@ -21,17 +21,8 @@
   endfor
 -%}
 
-{%- if section.settings.hero_height == 'adapt' and has_image -%}
-  {%- style -%}
-    #HeroSP-{{ section.id }} {
-      aspect-ratio: {{ section.settings.image.aspect_ratio }};
-    }
-  {%- endstyle -%}
-{%- endif -%}
-
 <div
-  id="HeroSP-{{ section.id }}"
-  class="hero-social-proof hero-social-proof--{{ section.settings.hero_height }} hero-social-proof--align-{{ section.settings.content_position }} hero-social-proof--panel-{{ section.settings.text_panel }}"
+  class="hero-social-proof color-{{ section.settings.color_scheme }} gradient hero-social-proof--m-{{ section.settings.image_ratio_mobile }} hero-social-proof--d-{{ section.settings.image_ratio_desktop }} hero-social-proof--desktop-{{ section.settings.desktop_layout }}{% unless section.settings.full_width %} hero-social-proof--inset{% endunless %}"
   style="--hero-focal: {{ section.settings.focal_point }};"
 >
   <div class="hero-social-proof__media{% unless has_image %} hero-social-proof__media--placeholder{% endunless %}">
@@ -51,67 +42,66 @@
     {%- endif -%}
   </div>
 
-  {%- if section.settings.image_overlay_opacity > 0 -%}
-    <div
-      class="hero-social-proof__overlay"
-      style="opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};"
-    ></div>
-  {%- endif -%}
-
-  {%- if section.settings.show_scrim -%}
-    <div class="hero-social-proof__scrim"></div>
-  {%- endif -%}
-
   <div class="hero-social-proof__content">
     <div class="hero-social-proof__inner">
-      {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when 'rating' -%}
-            {%- comment -%}
-              Requires the text: stars on their own would imply a rating with
-              nothing to back it up. Fill the social proof line and they appear.
-            {%- endcomment -%}
-            {%- if block.settings.rating_text != blank -%}
-              {%- liquid
-                assign star_pct = block.settings.rating | times: 20
-                capture star_row
-                  for i in (1..5)
-                    echo '<svg class="hero-social-proof__star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.27l-6.18 3.23L7 13.63l-5-4.87 6.91-1z"/></svg>'
-                  endfor
-                endcapture
-              -%}
-              <div class="hero-social-proof__proof" {{ block.shopify_attributes }}>
-                {%- if block.settings.show_stars -%}
-                  <span
-                    class="hero-social-proof__stars"
-                    style="--hero-star-color: {{ block.settings.star_color }}; --hero-star-pct: {{ star_pct }}%;"
-                    role="img"
-                    aria-label="{{ block.settings.rating }} {{ 'accessibility.star_reviews_info' | t: rating_max: 5 | default: 'out of 5 stars' }}"
-                  >
-                    <span class="hero-social-proof__stars-row hero-social-proof__stars-row--track" aria-hidden="true">
-                      {{- star_row -}}
-                    </span>
-                    <span class="hero-social-proof__stars-row hero-social-proof__stars-row--fill" aria-hidden="true">
-                      {{- star_row -}}
-                    </span>
-                  </span>
-                {%- endif -%}
-                {%- if block.settings.rating_text != blank -%}
-                  <span class="hero-social-proof__proof-text">{{ block.settings.rating_text }}</span>
-                {%- endif -%}
-              </div>
-            {%- endif -%}
+      {%- comment -%}
+        Fixed render order — headline, then social proof, then buttons, then the
+        badge row — so the hero always reads the same way regardless of how the
+        blocks happen to be dragged around in the theme editor.
+      {%- endcomment -%}
 
-          {%- when 'heading' -%}
-            {%- if block.settings.heading != blank -%}
-              <h2
-                class="hero-social-proof__heading {{ block.settings.heading_size }}"
-                {{ block.shopify_attributes }}
-              >
-                {{ block.settings.heading }}
-              </h2>
-            {%- endif -%}
-        {%- endcase -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'heading' -%}
+          {%- if block.settings.heading != blank or block.settings.subheading != blank -%}
+            <div class="hero-social-proof__text" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <h2 class="hero-social-proof__heading {{ block.settings.heading_size }}">
+                  {{ block.settings.heading }}
+                </h2>
+              {%- endif -%}
+              {%- if block.settings.subheading != blank -%}
+                <p class="hero-social-proof__subheading">{{ block.settings.subheading }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'rating' -%}
+          {%- comment -%}
+            Requires the text: stars on their own would imply a rating with
+            nothing to back it up. Fill the social proof line and they appear.
+          {%- endcomment -%}
+          {%- if block.settings.rating_text != blank -%}
+            {%- liquid
+              assign star_pct = block.settings.rating | times: 20
+              capture star_row
+                for i in (1..5)
+                  echo '<svg class="hero-social-proof__star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.27l-6.18 3.23L7 13.63l-5-4.87 6.91-1z"/></svg>'
+                endfor
+              endcapture
+            -%}
+            <div class="hero-social-proof__proof" {{ block.shopify_attributes }}>
+              {%- if block.settings.show_stars -%}
+                <span
+                  class="hero-social-proof__stars"
+                  style="--hero-star-color: {{ block.settings.star_color }}; --hero-star-pct: {{ star_pct }}%;"
+                  role="img"
+                  aria-label="{{ block.settings.rating }} {{ 'accessibility.star_reviews_info' | t: rating_max: 5 | default: 'out of 5 stars' }}"
+                >
+                  <span class="hero-social-proof__stars-row hero-social-proof__stars-row--track" aria-hidden="true">
+                    {{- star_row -}}
+                  </span>
+                  <span class="hero-social-proof__stars-row hero-social-proof__stars-row--fill" aria-hidden="true">
+                    {{- star_row -}}
+                  </span>
+                </span>
+              {%- endif -%}
+              <span class="hero-social-proof__proof-text">{{ block.settings.rating_text }}</span>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
       {%- endfor -%}
 
       {%- if has_cta -%}
@@ -188,28 +178,42 @@
     },
     {
       "type": "select",
-      "id": "hero_height",
+      "id": "image_ratio_mobile",
       "options": [
-        { "value": "adapt", "label": "Adapt to image" },
-        { "value": "small", "label": "Small" },
-        { "value": "medium", "label": "Medium" },
-        { "value": "large", "label": "Large" },
-        { "value": "full", "label": "Full screen" }
+        { "value": "natural", "label": "Natural (no cropping)" },
+        { "value": "landscape", "label": "Landscape (16:9)" },
+        { "value": "wide", "label": "Wide (3:2)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (4:5)" }
       ],
-      "default": "medium",
-      "label": "Hero height"
+      "default": "square",
+      "label": "Image shape — mobile",
+      "info": "'Natural' shows the whole photo but on a tall photo it pushes the button below the fold. Square keeps the button on screen."
     },
     {
       "type": "select",
-      "id": "text_panel",
+      "id": "desktop_layout",
       "options": [
-        { "value": "light", "label": "Light panel behind text" },
-        { "value": "dark", "label": "Dark panel behind text" },
-        { "value": "none", "label": "No panel (text straight on photo)" }
+        { "value": "side_by_side", "label": "Photo beside the text" },
+        { "value": "stacked", "label": "Photo above the text" }
       ],
-      "default": "light",
-      "label": "Text background",
-      "info": "A panel keeps the text readable on any photo. 'No panel' only works on dark, simple images — pale or busy photos make the text very hard to read."
+      "default": "side_by_side",
+      "label": "Desktop layout",
+      "info": "A desktop screen is wide and short. Stacking a full-width photo above the text pushes the button off screen, so side-by-side keeps the whole hero visible at once."
+    },
+    {
+      "type": "select",
+      "id": "image_ratio_desktop",
+      "options": [
+        { "value": "natural", "label": "Natural (no cropping)" },
+        { "value": "cinematic", "label": "Cinematic (21:9)" },
+        { "value": "landscape", "label": "Landscape (16:9)" },
+        { "value": "wide", "label": "Wide (3:2)" },
+        { "value": "square", "label": "Square (1:1)" }
+      ],
+      "default": "cinematic",
+      "label": "Image shape — desktop",
+      "info": "Only applies when the desktop layout is 'Photo above the text'. Side-by-side sizes the photo to the screen automatically."
     },
     {
       "type": "select",
@@ -221,38 +225,53 @@
       ],
       "default": "center",
       "label": "Image focal point",
-      "info": "Which part of the photo stays visible when it gets cropped. Tall portrait photos crop a lot on desktop — use this to keep the face in frame."
+      "info": "Which part of the photo stays visible when it gets cropped. Has no effect on 'Natural'."
     },
     {
-      "type": "select",
-      "id": "content_position",
-      "options": [
-        { "value": "bottom", "label": "Bottom" },
-        { "value": "middle", "label": "Middle" }
-      ],
-      "default": "bottom",
-      "label": "Content position"
-    },
-    {
-      "type": "range",
-      "id": "image_overlay_opacity",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "%",
-      "label": "Image overlay darkness",
-      "info": "Darkens the whole image. Raise this if the text is hard to read.",
-      "default": 0
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-2",
+      "label": "Colour scheme",
+      "info": "Sets the background and text colour under the photo. The headline needs a dark text scheme to be readable."
     },
     {
       "type": "checkbox",
-      "id": "show_scrim",
+      "id": "full_width",
       "default": true,
-      "label": "Fade bottom of image",
-      "info": "Adds a soft dark fade behind the text so it stays readable."
+      "label": "Full-width image",
+      "info": "Untick to inset the image with a margin on either side."
     }
   ],
   "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            { "value": "h2", "label": "Small" },
+            { "value": "h1", "label": "Medium" },
+            { "value": "h0", "label": "Large" }
+          ],
+          "default": "h1",
+          "label": "Heading size"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "subheading",
+          "label": "Subheading",
+          "info": "One line under the headline saying what the product actually does. Leave blank to hide."
+        }
+      ]
+    },
     {
       "type": "rating",
       "name": "Stars & social proof",
@@ -277,7 +296,7 @@
         {
           "type": "color",
           "id": "star_color",
-          "default": "#f5d5e6",
+          "default": "#b9648a",
           "label": "Star colour"
         },
         {
@@ -285,29 +304,6 @@
           "id": "rating_text",
           "label": "Social proof line",
           "info": "e.g. Loved by <b>3,000+</b> happy customers. Use bold on the number. Leave blank to hide the whole line."
-        }
-      ]
-    },
-    {
-      "type": "heading",
-      "name": "Heading",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "inline_richtext",
-          "id": "heading",
-          "label": "Heading"
-        },
-        {
-          "type": "select",
-          "id": "heading_size",
-          "options": [
-            { "value": "h2", "label": "Small" },
-            { "value": "h1", "label": "Medium" },
-            { "value": "h0", "label": "Large" }
-          ],
-          "default": "h1",
-          "label": "Heading size"
         }
       ]
     },
@@ -350,7 +346,7 @@
           "type": "richtext",
           "id": "text",
           "label": "Text",
-          "info": "e.g. a press mention or award line. Leave blank to hide."
+          "info": "e.g. free shipping, guarantee, or a press mention. Leave blank to hide."
         },
         {
           "type": "image_picker",
@@ -364,9 +360,8 @@
     {
       "name": "Hero (social proof)",
       "blocks": [
-        { "type": "rating" },
         { "type": "heading" },
-        { "type": "cta_button" },
+        { "type": "rating" },
         { "type": "cta_button" },
         { "type": "trust_badge" }
       ]

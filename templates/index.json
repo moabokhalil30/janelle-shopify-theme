@@ -25,7 +25,8 @@
           "type": "heading",
           "settings": {
             "heading": "The premium finish your lips deserve.",
-            "heading_size": "h1"
+            "heading_size": "h1",
+            "subheading": "Everyday beauty with a premium finish — made for everyone."
           }
         },
         "cta_hero01": {
@@ -33,7 +34,7 @@
           "settings": {
             "label": "Shop all",
             "link": "shopify://collections/all",
-            "style_secondary": true
+            "style_secondary": false
           }
         },
         "cta_hero02": {
@@ -52,8 +53,8 @@
         }
       },
       "block_order": [
-        "rating_hero01",
         "heading_hero01",
+        "rating_hero01",
         "cta_hero01",
         "cta_hero02",
         "badge_hero01"
@@ -61,12 +62,12 @@
       "name": "Hero (social proof)",
       "settings": {
         "image": "shopify://shop_images/1.jpg",
-        "hero_height": "medium",
-        "text_panel": "light",
+        "image_ratio_mobile": "wide",
+        "image_ratio_desktop": "cinematic",
         "focal_point": "center",
-        "content_position": "bottom",
-        "image_overlay_opacity": 0,
-        "show_scrim": false
+        "full_width": true,
+        "color_scheme": "scheme-2",
+        "desktop_layout": "side_by_side"
       }
     },
     "slideshow_xwqYtR": {

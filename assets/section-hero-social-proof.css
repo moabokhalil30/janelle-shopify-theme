@@ -1,121 +1,137 @@
+/* Stacked hero: photo on top, copy underneath on the page background.
+   Nothing is laid over the image — no scrim, no panel — so the photo stays
+   fully visible and the text sits at full contrast on the theme background. */
 .hero-social-proof {
-  position: relative;
   display: block;
-  overflow: hidden;
   width: 100%;
 }
 
-/* Heights are viewport-based so the hero never becomes a giant empty box. */
-.hero-social-proof--small {
-  min-height: 45vh;
-}
-
-.hero-social-proof--medium {
-  min-height: 60vh;
-}
-
-.hero-social-proof--large {
-  min-height: 75vh;
-}
-
-.hero-social-proof--full {
-  min-height: 100vh;
-}
-
-/* "Adapt to image" gets its aspect-ratio inline from the section;
-   this floor keeps the text from overflowing on very wide images. */
-.hero-social-proof--adapt {
-  min-height: 45vh;
+.hero-social-proof--inset {
+  padding: 0 1.5rem;
 }
 
 @media screen and (min-width: 750px) {
-  .hero-social-proof--small {
-    min-height: 50vh;
-  }
-
-  .hero-social-proof--medium {
-    min-height: 70vh;
-  }
-
-  .hero-social-proof--large {
-    min-height: 85vh;
+  .hero-social-proof--inset {
+    padding: 0 5rem;
   }
 }
 
+/* ---- Image ---- */
 .hero-social-proof__media {
-  position: absolute;
-  inset: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
 }
 
 .hero-social-proof__media img,
 .hero-social-proof__media svg {
   width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Fixed shapes crop; "natural" shows the whole photo uncropped.
+   Mobile and desktop get their own shape: the same ratio that frames the photo
+   nicely at 390px produces an enormous image at 1440px. */
+.hero-social-proof__media img {
+  object-position: var(--hero-focal, center);
+}
+
+.hero-social-proof--m-cinematic .hero-social-proof__media {
+  aspect-ratio: 21 / 9;
+}
+
+.hero-social-proof--m-landscape .hero-social-proof__media {
+  aspect-ratio: 16 / 9;
+}
+
+.hero-social-proof--m-wide .hero-social-proof__media {
+  aspect-ratio: 3 / 2;
+}
+
+.hero-social-proof--m-square .hero-social-proof__media {
+  aspect-ratio: 1 / 1;
+}
+
+.hero-social-proof--m-portrait .hero-social-proof__media {
+  aspect-ratio: 4 / 5;
+}
+
+.hero-social-proof:not(.hero-social-proof--m-natural) .hero-social-proof__media img {
   height: 100%;
   object-fit: cover;
-  object-position: var(--hero-focal, center);
-  display: block;
+}
+
+@media screen and (min-width: 750px) {
+  .hero-social-proof--d-natural .hero-social-proof__media {
+    aspect-ratio: auto;
+  }
+
+  .hero-social-proof--d-natural .hero-social-proof__media img {
+    height: auto;
+    object-fit: fill;
+  }
+
+  .hero-social-proof--d-cinematic .hero-social-proof__media {
+    aspect-ratio: 21 / 9;
+  }
+
+  .hero-social-proof--d-landscape .hero-social-proof__media {
+    aspect-ratio: 16 / 9;
+  }
+
+  .hero-social-proof--d-wide .hero-social-proof__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .hero-social-proof--d-square .hero-social-proof__media {
+    aspect-ratio: 1 / 1;
+  }
+
+  .hero-social-proof:not(.hero-social-proof--d-natural) .hero-social-proof__media img {
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ---- Desktop: photo beside the text ----
+   A desktop viewport is wide and short. A full-width photo above the copy is
+   ~810px tall at 1440px, which pushes the headline and button off screen
+   entirely. Splitting the row keeps the whole hero — photo, headline, proof,
+   CTA — inside one screen, and lets the photo keep a portrait-ish crop. */
+@media screen and (min-width: 990px) {
+  .hero-social-proof--desktop-side_by_side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__media {
+    aspect-ratio: auto;
+    height: min(72vh, 76rem);
+  }
+
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__media img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__content {
+    padding: 4rem 4.8rem;
+  }
 }
 
 .hero-social-proof__media--placeholder {
   background: rgba(var(--color-foreground), 0.04);
 }
 
-.hero-social-proof__overlay,
-.hero-social-proof__scrim {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.hero-social-proof__overlay {
-  background: #000;
-}
-
-/* Strong enough to keep white text readable over light imagery
-   (Janelle's photography is pale pink/beige, so a weak scrim disappears). */
-.hero-social-proof__scrim {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.2) 18%,
-    rgba(0, 0, 0, 0.55) 45%,
-    rgba(0, 0, 0, 0.7) 70%,
-    rgba(0, 0, 0, 0.85) 100%
-  );
-}
-
-.hero-social-proof--align-middle .hero-social-proof__scrim {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.15) 100%
-  );
-}
-
+/* ---- Copy ---- */
+/* Kept tight on mobile on purpose: the CTA has to stay above the fold on a
+   390 x 844 screen, and every rem here pushes it down. */
 .hero-social-proof__content {
-  position: relative;
-  z-index: 1;
   display: flex;
   justify-content: center;
-  min-height: inherit;
-  padding: 2.4rem 2.8rem 3.2rem;
-  color: #fff;
-}
-
-.hero-social-proof--align-bottom .hero-social-proof__content {
-  align-items: flex-end;
-}
-
-.hero-social-proof--align-middle .hero-social-proof__content {
-  align-items: center;
-}
-
-/* Adapt mode: the wrapper is aspect-ratio sized, so the content layer
-   must be absolutely positioned to avoid forcing it taller. */
-.hero-social-proof--adapt .hero-social-proof__content {
-  position: absolute;
-  inset: 0;
+  padding: 2.2rem 2.4rem 2.8rem;
 }
 
 .hero-social-proof__inner {
@@ -124,74 +140,35 @@
   align-items: center;
   text-align: center;
   width: 100%;
-  max-width: 46rem;
+  max-width: 52rem;
+  color: rgb(var(--color-foreground));
 }
 
-/* ---- Text panels ----
-   Measured on Janelle's own hero photo, white text straight on the image scored
-   1.9:1 average and 1.0:1 at worst (pure-white pixels sit behind the text), well
-   under the 4.5:1 needed. A panel is the only reliable fix on pale/busy imagery. */
-.hero-social-proof--panel-light .hero-social-proof__inner,
-.hero-social-proof--panel-dark .hero-social-proof__inner {
-  padding: 2.4rem 2rem 2.6rem;
-  border-radius: var(--text-boxes-radius, 0);
+@media screen and (min-width: 750px) {
+  .hero-social-proof__content {
+    padding: 3.6rem 2.4rem 4.4rem;
+  }
 }
 
-.hero-social-proof--panel-light .hero-social-proof__inner {
-  background: rgba(255, 255, 255, 0.94);
-  color: #121212;
+/* The theme's h1/h2 rules colour headings pale pink, which is a decorative
+   colour — far too low-contrast for the one line that has to carry the offer.
+   Force the foreground colour here, same as the reference layout. */
+.hero-social-proof__heading {
+  color: rgb(var(--color-foreground));
+  margin: 0;
+  text-wrap: balance;
 }
 
-.hero-social-proof--panel-dark .hero-social-proof__inner {
-  background: rgba(18, 18, 18, 0.62);
+.hero-social-proof__subheading {
+  margin: 1rem 0 0;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  opacity: 0.8;
+  text-wrap: pretty;
 }
 
-/* On a light panel, kill the shadows (meant for text-on-photo) and use the
-   theme's own foreground/button colours. */
-.hero-social-proof--panel-light .hero-social-proof__heading {
-  color: #121212;
-  text-shadow: none;
-}
-
-.hero-social-proof--panel-light .hero-social-proof__proof-text {
-  color: #121212;
-  text-shadow: none;
-}
-
-.hero-social-proof--panel-light .hero-social-proof__badge {
-  color: #121212;
-  text-shadow: none;
-}
-
-.hero-social-proof--panel-light .hero-social-proof__stars-row--track {
-  color: rgba(18, 18, 18, 0.18);
-}
-
-.hero-social-proof--panel-light .hero-social-proof__star {
-  filter: none;
-}
-
-/* White-on-white would vanish, so use the theme's button colours instead. */
-.hero-social-proof--panel-light .hero-social-proof__cta {
-  background: #121212;
-  color: #ffffff;
-}
-
-/* Outlined secondary, so two buttons don't read as two heavy blocks. */
-.hero-social-proof__cta--secondary {
-  background: transparent;
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1px currentColor;
-}
-
-.hero-social-proof--panel-light .hero-social-proof__cta--secondary {
-  background: transparent;
-  color: #121212;
-  box-shadow: inset 0 0 0 1px rgba(18, 18, 18, 0.45);
-}
-
-.hero-social-proof--panel-light .hero-social-proof__cta--secondary:hover {
-  box-shadow: inset 0 0 0 1px #121212, 0 4px 16px rgba(0, 0, 0, 0.14);
+.hero-social-proof__text {
+  margin-bottom: 1.6rem;
 }
 
 /* ---- Stars + social proof line ---- */
@@ -201,7 +178,9 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 0.3rem 0.8rem;
-  margin-bottom: 1.2rem;
+  /* Sits between the headline and the buttons; the larger gap goes below,
+     separating the message from the action. */
+  margin: 0 0 2rem;
 }
 
 .hero-social-proof__stars {
@@ -218,7 +197,7 @@
 }
 
 .hero-social-proof__stars-row--track {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(var(--color-foreground), 0.18);
 }
 
 /* Clipped overlay gives part-filled stars (e.g. 4.8 of 5). */
@@ -229,22 +208,20 @@
   height: 100%;
   width: var(--hero-star-pct, 100%);
   overflow: hidden;
-  color: var(--hero-star-color, #f5d5e6);
+  color: var(--hero-star-color, #b9648a);
 }
 
 .hero-social-proof__star {
   width: 1.5rem;
   height: 1.5rem;
   flex: 0 0 auto;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
 }
 
 /* Sentence case, not uppercase: this theme is Times New Roman, and uppercase
    + letter-spacing is too wide to sit inline with the stars at 390px. */
 .hero-social-proof__proof-text {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 }
 
 .hero-social-proof__proof-text strong,
@@ -252,18 +229,13 @@
   font-weight: 700;
 }
 
-.hero-social-proof__heading {
-  color: #fff;
-  margin: 0 0 1.8rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 16px rgba(0, 0, 0, 0.45);
-  text-wrap: balance;
-}
-
+/* ---- Buttons ---- */
 .hero-social-proof__ctas {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
   width: 100%;
+  max-width: 38rem;
 }
 
 .hero-social-proof__cta {
@@ -271,8 +243,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background: #fff;
-  color: #121212; /* theme's foreground dark */
+  /* Solid on the page background, so it reads as the primary action. */
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
   text-decoration: none;
   padding: 1.1rem 1.2rem 1.1rem 1.8rem;
   /* Follow the theme's button radius setting (0 on this theme) instead of hardcoding. */
@@ -288,7 +261,18 @@
 
 .hero-social-proof__cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 4px 16px rgba(var(--color-foreground), 0.22);
+}
+
+/* Outlined secondary, so two buttons don't read as two heavy blocks. */
+.hero-social-proof__cta--secondary {
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  box-shadow: inset 0 0 0 1px rgba(var(--color-foreground), 0.45);
+}
+
+.hero-social-proof__cta--secondary:hover {
+  box-shadow: inset 0 0 0 1px rgb(var(--color-foreground)), 0 4px 16px rgba(var(--color-foreground), 0.14);
 }
 
 .hero-social-proof__cta-label {
@@ -323,13 +307,14 @@
   display: block;
 }
 
+/* ---- Trust / press line ---- */
 .hero-social-proof__badge {
-  margin-top: 1.6rem;
+  margin-top: 1.8rem;
   font-size: 1.1rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.6;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+  opacity: 0.75;
 }
 
 .hero-social-proof__badge p {
