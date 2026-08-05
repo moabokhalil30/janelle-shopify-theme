@@ -1,4 +1,4 @@
-/* v2 — 2026-08-05
+/* v3 — 2026-08-05 (hash bumped to replace a CDN object that was serving 504)
    Stacked hero: photo on top, copy underneath on the page background.
    Nothing is laid over the image — no scrim, no panel — so the photo stays
    fully visible and the text sits at full contrast on the theme background. */

@@ -1,5 +1,17 @@
 {{ 'section-hero-social-proof.css' | asset_url | stylesheet_tag }}
 
+{%- comment -%}
+  Critical fallback. On 2026-08-05 the stylesheet above 504'd from the CDN and the
+  hero image rendered at its natural 3703x5097, giving a 9892px-tall homepage with
+  horizontal overflow. These three declarations are the only ones that stand between
+  a missing stylesheet and a broken page, so they are inlined and cannot fail to load.
+  Everything else stays in the stylesheet.
+{%- endcomment -%}
+<style>
+  .hero-social-proof__media { overflow: hidden; }
+  .hero-social-proof__media img { width: 100%; max-width: 100%; height: auto; display: block; }
+</style>
+
 {%- liquid
   assign fetch_priority = 'auto'
   if section.index == 1
