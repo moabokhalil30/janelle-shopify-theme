@@ -1,0 +1,376 @@
+/* v3 — 2026-08-05 (hash bumped to replace a CDN object that was serving 504)
+   Stacked hero: photo on top, copy underneath on the page background.
+   Nothing is laid over the image — no scrim, no panel — so the photo stays
+   fully visible and the text sits at full contrast on the theme background. */
+.hero-social-proof {
+  display: block;
+  width: 100%;
+}
+
+.hero-social-proof--inset {
+  padding: 0 1.5rem;
+}
+
+@media screen and (min-width: 750px) {
+  .hero-social-proof--inset {
+    padding: 0 5rem;
+  }
+}
+
+/* ---- Image ---- */
+.hero-social-proof__media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+/* The reference works because the photo's studio backdrop is the same colour as
+   the page, so image and copy read as one block. This photo has its own colours,
+   so fade its bottom edge out into the section background instead — same effect,
+   no hard seam. Reaches solid background well before the copy starts. */
+.hero-social-proof__media::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 12rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--color-background), 0) 0%,
+    rgba(var(--color-background), 0.6) 45%,
+    rgb(var(--color-background)) 78%,
+    rgb(var(--color-background)) 100%
+  );
+}
+
+.hero-social-proof__media img,
+.hero-social-proof__media svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Fixed shapes crop; "natural" shows the whole photo uncropped.
+   Mobile and desktop get their own shape: the same ratio that frames the photo
+   nicely at 390px produces an enormous image at 1440px. */
+.hero-social-proof__media img {
+  object-position: var(--hero-focal, center);
+}
+
+.hero-social-proof--m-cinematic .hero-social-proof__media {
+  aspect-ratio: 21 / 9;
+}
+
+.hero-social-proof--m-landscape .hero-social-proof__media {
+  aspect-ratio: 16 / 9;
+}
+
+.hero-social-proof--m-wide .hero-social-proof__media {
+  aspect-ratio: 3 / 2;
+}
+
+.hero-social-proof--m-square .hero-social-proof__media {
+  aspect-ratio: 1 / 1;
+}
+
+.hero-social-proof--m-portrait .hero-social-proof__media {
+  aspect-ratio: 4 / 5;
+}
+
+.hero-social-proof:not(.hero-social-proof--m-natural) .hero-social-proof__media img {
+  height: 100%;
+  object-fit: cover;
+}
+
+@media screen and (min-width: 750px) {
+  .hero-social-proof--d-natural .hero-social-proof__media {
+    aspect-ratio: auto;
+  }
+
+  .hero-social-proof--d-natural .hero-social-proof__media img {
+    height: auto;
+    object-fit: fill;
+  }
+
+  .hero-social-proof--d-cinematic .hero-social-proof__media {
+    aspect-ratio: 21 / 9;
+  }
+
+  .hero-social-proof--d-landscape .hero-social-proof__media {
+    aspect-ratio: 16 / 9;
+  }
+
+  .hero-social-proof--d-wide .hero-social-proof__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .hero-social-proof--d-square .hero-social-proof__media {
+    aspect-ratio: 1 / 1;
+  }
+
+  .hero-social-proof:not(.hero-social-proof--d-natural) .hero-social-proof__media img {
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ---- Desktop: photo beside the text ----
+   A desktop viewport is wide and short. A full-width photo above the copy is
+   ~810px tall at 1440px, which pushes the headline and button off screen
+   entirely. Splitting the row keeps the whole hero — photo, headline, proof,
+   CTA — inside one screen, and lets the photo keep a portrait-ish crop. */
+@media screen and (min-width: 990px) {
+  .hero-social-proof--desktop-side_by_side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__media {
+    aspect-ratio: auto;
+    height: min(72vh, 76rem);
+  }
+
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__media img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Side by side, the seam is the vertical edge between the two columns —
+     fade that instead of the bottom, same idea. */
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__media::after {
+    inset: 0 -1px 0 auto;
+    width: 14rem;
+    height: auto;
+    background: linear-gradient(
+      to right,
+      rgba(var(--color-background), 0) 0%,
+      rgba(var(--color-background), 0.6) 45%,
+      rgb(var(--color-background)) 88%,
+      rgb(var(--color-background)) 100%
+    );
+  }
+
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__content {
+    margin-top: 0;
+    margin-left: -6rem;
+    padding: 4rem 4.8rem;
+  }
+}
+
+.hero-social-proof__media--placeholder {
+  background: rgba(var(--color-foreground), 0.04);
+}
+
+/* ---- Copy ---- */
+/* Kept tight on mobile on purpose: the CTA has to stay above the fold on a
+   390 x 844 screen, and every rem here pushes it down. */
+.hero-social-proof__content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  /* Pulled up into the fade so the copy overlaps the photo rather than sitting
+     in a separate block below it. */
+  margin-top: -2.5rem;
+  padding: 2.2rem 2.4rem 2.8rem;
+}
+
+.hero-social-proof__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 52rem;
+  color: rgb(var(--color-foreground));
+}
+
+@media screen and (min-width: 750px) {
+  .hero-social-proof__content {
+    padding: 3.6rem 2.4rem 4.4rem;
+  }
+}
+
+/* The theme's h1/h2 rules colour headings pale pink, which is a decorative
+   colour — far too low-contrast for the one line that has to carry the offer.
+   Force the foreground colour here, same as the reference layout. */
+.hero-social-proof__heading {
+  color: rgb(var(--color-foreground));
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hero-social-proof__subheading {
+  margin: 1rem 0 0;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  opacity: 0.8;
+  text-wrap: pretty;
+}
+
+.hero-social-proof__text {
+  margin-bottom: 1.6rem;
+}
+
+/* ---- Stars + social proof line ---- */
+.hero-social-proof__proof {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  /* Sits between the headline and the buttons; the larger gap goes below,
+     separating the message from the action. */
+  margin: 0 0 2rem;
+}
+
+.hero-social-proof__stars {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  flex: 0 0 auto;
+}
+
+.hero-social-proof__stars-row {
+  display: inline-flex;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.hero-social-proof__stars-row--track {
+  color: rgba(var(--color-foreground), 0.18);
+}
+
+/* Clipped overlay gives part-filled stars (e.g. 4.8 of 5). */
+.hero-social-proof__stars-row--fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--hero-star-pct, 100%);
+  overflow: hidden;
+  color: var(--hero-star-color, #b9648a);
+}
+
+.hero-social-proof__star {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+}
+
+/* Sentence case, not uppercase: this theme is Times New Roman, and uppercase
+   + letter-spacing is too wide to sit inline with the stars at 390px. */
+.hero-social-proof__proof-text {
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+}
+
+.hero-social-proof__proof-text strong,
+.hero-social-proof__proof-text b {
+  font-weight: 700;
+}
+
+/* ---- Buttons ---- */
+.hero-social-proof__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 38rem;
+}
+
+.hero-social-proof__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  /* Solid on the page background, so it reads as the primary action. */
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  text-decoration: none;
+  padding: 1.1rem 1.2rem 1.1rem 1.8rem;
+  /* Follow the theme's button radius setting (0 on this theme) instead of hardcoding. */
+  border-radius: var(--buttons-radius, 0);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 5.4rem;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero-social-proof__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(var(--color-foreground), 0.22);
+}
+
+/* Outlined secondary, so two buttons don't read as two heavy blocks. */
+.hero-social-proof__cta--secondary {
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  box-shadow: inset 0 0 0 1px rgba(var(--color-foreground), 0.45);
+}
+
+.hero-social-proof__cta--secondary:hover {
+  box-shadow: inset 0 0 0 1px rgb(var(--color-foreground)), 0 4px 16px rgba(var(--color-foreground), 0.14);
+}
+
+.hero-social-proof__cta-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.hero-social-proof__cta-caret {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hero-social-proof__cta-caret svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  transform: rotate(-90deg);
+}
+
+.hero-social-proof__cta-thumb {
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: var(--media-radius, 0);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hero-social-proof__cta-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Trust / press line ---- */
+.hero-social-proof__badge {
+  margin-top: 1.8rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+.hero-social-proof__badge p {
+  margin: 0;
+}
+
+.hero-social-proof__badge-logo {
+  display: block;
+  max-width: 11rem;
+  max-height: 3.2rem;
+  width: auto;
+  height: auto;
+  margin: 0.8rem auto 0;
+  object-fit: contain;
+}
