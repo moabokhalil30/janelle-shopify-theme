@@ -1,4 +1,9 @@
-{{ 'section-hero-social-proof.css' | asset_url | stylesheet_tag }}
+{%- comment -%}
+  Filename carries -v3 deliberately. The previous filename's CDN object began
+  serving 504/502 on 2026-08-05 and Shopify's content digest for it stopped
+  updating, so re-pushing could not replace it. Renaming claims a fresh URL.
+{%- endcomment -%}
+{{ 'section-hero-social-proof-v3.css' | asset_url | stylesheet_tag }}
 
 {%- comment -%}
   Critical fallback. On 2026-08-05 the stylesheet above 504'd from the CDN and the
