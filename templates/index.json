@@ -15,9 +15,9 @@
         "heading_hero01": {
           "type": "heading",
           "settings": {
-            "heading": "The premium finish your lips deserve.",
+            "heading": "Your every day essential beauty bag",
             "heading_size": "h1",
-            "subheading": "Everyday beauty with a premium finish — made for everyone."
+            "subheading": ""
           }
         },
         "rating_hero01": {
@@ -26,21 +26,21 @@
             "show_stars": true,
             "rating": 5,
             "star_color": "#b9648a",
-            "rating_text": "Loved by <b>3,000+</b> happy customers"
+            "rating_text": "Loved by <strong>30,000+</strong> happy customers"
           }
         },
         "cta_hero01": {
           "type": "cta_button",
           "settings": {
-            "label": "Shop all",
-            "link": "shopify://collections/all",
-            "style_secondary": false
+            "label": "Shop the Beauty Bag",
+            "link": "shopify://products/the-beauty-bag",
+            "style_secondary": true
           }
         },
         "cta_hero02": {
           "type": "cta_button",
           "settings": {
-            "label": "Iconic lip trio",
+            "label": "",
             "link": "shopify://products/iconic-lip-trio",
             "style_secondary": true
           }
