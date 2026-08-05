@@ -18,7 +18,7 @@
             "show_stars": true,
             "rating": 5,
             "star_color": "#b9648a",
-            "rating_text": ""
+            "rating_text": "Loved by <b>3,000+</b> happy customers"
           }
         },
         "heading_hero01": {
@@ -33,8 +33,7 @@
           "settings": {
             "label": "Shop all",
             "link": "shopify://collections/all",
-            "thumbnail": "",
-            "style_secondary": false
+            "style_secondary": true
           }
         },
         "cta_hero02": {
@@ -42,15 +41,13 @@
           "settings": {
             "label": "Iconic lip trio",
             "link": "shopify://products/iconic-lip-trio",
-            "thumbnail": "",
             "style_secondary": true
           }
         },
         "badge_hero01": {
           "type": "trust_badge",
           "settings": {
-            "text": "",
-            "logo": ""
+            "text": ""
           }
         }
       },
@@ -65,16 +62,15 @@
       "settings": {
         "image": "shopify://shop_images/1.jpg",
         "hero_height": "medium",
+        "text_panel": "light",
         "focal_point": "center",
         "content_position": "bottom",
         "image_overlay_opacity": 0,
-        "show_scrim": false,
-        "text_panel": "light"
+        "show_scrim": false
       }
     },
     "slideshow_xwqYtR": {
       "type": "slideshow",
-      "disabled": true,
       "blocks": {
         "slide_c6hxMg": {
           "type": "slide",
@@ -175,6 +171,7 @@
         "slide_zFfbAJ",
         "slide_KxCrLV"
       ],
+      "disabled": true,
       "custom_css": [],
       "name": "t:sections.slideshow.presets.name",
       "settings": {
@@ -786,7 +783,7 @@
       ],
       "disabled": true,
       "custom_css": [
-        ".image-with-text__media {overflow: hidden; /* \u2b05\ufe0f This clips anything outside the border-radius */ border-radius: 24px; margin-bottom: 0; padding-bottom: 0;}",
+        ".image-with-text__media {overflow: hidden; /* ⬅️ This clips anything outside the border-radius */ border-radius: 24px; margin-bottom: 0; padding-bottom: 0;}",
         ".image-with-text__media img {display: block; width: 100%; margin-bottom: 0;}"
       ],
       "name": "t:sections.multirow.presets.name",
@@ -840,7 +837,7 @@
         "text_jQyUkW": {
           "type": "text",
           "settings": {
-            "text": "<h3><strong>Janelle cosmetics is a premium affordable Beauty Brand\u00a0</strong></h3><p>\u201cOur main goal is to provide an everyday high-quality formulated beauty products that provides premium finish and are accessible to everyone.<br/>With love, Enjy & Samar\ud83e\ude77</p><p></p>",
+            "text": "<h3><strong>Janelle cosmetics is a premium affordable Beauty Brand </strong></h3><p>“Our main goal is to provide an everyday high-quality formulated beauty products that provides premium finish and are accessible to everyone.<br/>With love, Enjy & Samar🩷</p><p></p>",
             "text_style": "body"
           }
         }
