@@ -18,9 +18,31 @@
 
 /* ---- Image ---- */
 .hero-social-proof__media {
+  position: relative;
   width: 100%;
   overflow: hidden;
   line-height: 0;
+}
+
+/* The reference works because the photo's studio backdrop is the same colour as
+   the page, so image and copy read as one block. This photo has its own colours,
+   so fade its bottom edge out into the section background instead — same effect,
+   no hard seam. Reaches solid background well before the copy starts. */
+.hero-social-proof__media::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 12rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--color-background), 0) 0%,
+    rgba(var(--color-background), 0.6) 45%,
+    rgb(var(--color-background)) 78%,
+    rgb(var(--color-background)) 100%
+  );
 }
 
 .hero-social-proof__media img,
@@ -116,7 +138,24 @@
     object-fit: cover;
   }
 
+  /* Side by side, the seam is the vertical edge between the two columns —
+     fade that instead of the bottom, same idea. */
+  .hero-social-proof--desktop-side_by_side .hero-social-proof__media::after {
+    inset: 0 -1px 0 auto;
+    width: 14rem;
+    height: auto;
+    background: linear-gradient(
+      to right,
+      rgba(var(--color-background), 0) 0%,
+      rgba(var(--color-background), 0.6) 45%,
+      rgb(var(--color-background)) 88%,
+      rgb(var(--color-background)) 100%
+    );
+  }
+
   .hero-social-proof--desktop-side_by_side .hero-social-proof__content {
+    margin-top: 0;
+    margin-left: -6rem;
     padding: 4rem 4.8rem;
   }
 }
@@ -129,8 +168,12 @@
 /* Kept tight on mobile on purpose: the CTA has to stay above the fold on a
    390 x 844 screen, and every rem here pushes it down. */
 .hero-social-proof__content {
+  position: relative;
   display: flex;
   justify-content: center;
+  /* Pulled up into the fade so the copy overlaps the photo rather than sitting
+     in a separate block below it. */
+  margin-top: -2.5rem;
   padding: 2.2rem 2.4rem 2.8rem;
 }
 
