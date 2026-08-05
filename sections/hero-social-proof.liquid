@@ -31,7 +31,7 @@
 
 <div
   id="HeroSP-{{ section.id }}"
-  class="hero-social-proof hero-social-proof--{{ section.settings.hero_height }} hero-social-proof--align-{{ section.settings.content_position }}"
+  class="hero-social-proof hero-social-proof--{{ section.settings.hero_height }} hero-social-proof--align-{{ section.settings.content_position }} hero-social-proof--panel-{{ section.settings.text_panel }}"
   style="--hero-focal: {{ section.settings.focal_point }};"
 >
   <div class="hero-social-proof__media{% unless has_image %} hero-social-proof__media--placeholder{% endunless %}">
@@ -67,9 +67,38 @@
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'rating' -%}
+            {%- comment -%}
+              Requires the text: stars on their own would imply a rating with
+              nothing to back it up. Fill the social proof line and they appear.
+            {%- endcomment -%}
             {%- if block.settings.rating_text != blank -%}
-              <div class="hero-social-proof__rating" {{ block.shopify_attributes }}>
-                {{ block.settings.rating_text }}
+              {%- liquid
+                assign star_pct = block.settings.rating | times: 20
+                capture star_row
+                  for i in (1..5)
+                    echo '<svg class="hero-social-proof__star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.27l-6.18 3.23L7 13.63l-5-4.87 6.91-1z"/></svg>'
+                  endfor
+                endcapture
+              -%}
+              <div class="hero-social-proof__proof" {{ block.shopify_attributes }}>
+                {%- if block.settings.show_stars -%}
+                  <span
+                    class="hero-social-proof__stars"
+                    style="--hero-star-color: {{ block.settings.star_color }}; --hero-star-pct: {{ star_pct }}%;"
+                    role="img"
+                    aria-label="{{ block.settings.rating }} {{ 'accessibility.star_reviews_info' | t: rating_max: 5 | default: 'out of 5 stars' }}"
+                  >
+                    <span class="hero-social-proof__stars-row hero-social-proof__stars-row--track" aria-hidden="true">
+                      {{- star_row -}}
+                    </span>
+                    <span class="hero-social-proof__stars-row hero-social-proof__stars-row--fill" aria-hidden="true">
+                      {{- star_row -}}
+                    </span>
+                  </span>
+                {%- endif -%}
+                {%- if block.settings.rating_text != blank -%}
+                  <span class="hero-social-proof__proof-text">{{ block.settings.rating_text }}</span>
+                {%- endif -%}
               </div>
             {%- endif -%}
 
@@ -95,7 +124,7 @@
                 {% else %}
                   href="{{ block.settings.link }}"
                 {% endif %}
-                class="hero-social-proof__cta"
+                class="hero-social-proof__cta{% if block.settings.style_secondary %} hero-social-proof__cta--secondary{% endif %}"
                 {{ block.shopify_attributes }}
               >
                 <span class="hero-social-proof__cta-label">
@@ -172,6 +201,18 @@
     },
     {
       "type": "select",
+      "id": "text_panel",
+      "options": [
+        { "value": "light", "label": "Light panel behind text" },
+        { "value": "dark", "label": "Dark panel behind text" },
+        { "value": "none", "label": "No panel (text straight on photo)" }
+      ],
+      "default": "light",
+      "label": "Text background",
+      "info": "A panel keeps the text readable on any photo. 'No panel' only works on dark, simple images — pale or busy photos make the text very hard to read."
+    },
+    {
+      "type": "select",
       "id": "focal_point",
       "options": [
         { "value": "center top", "label": "Top" },
@@ -214,14 +255,36 @@
   "blocks": [
     {
       "type": "rating",
-      "name": "Rating & reviews",
+      "name": "Stars & social proof",
       "limit": 1,
       "settings": [
         {
-          "type": "text",
+          "type": "checkbox",
+          "id": "show_stars",
+          "default": true,
+          "label": "Show stars"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 0,
+          "max": 5,
+          "step": 0.1,
+          "default": 5,
+          "label": "Stars filled",
+          "info": "Supports part-filled stars, e.g. 4.8."
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "default": "#f5d5e6",
+          "label": "Star colour"
+        },
+        {
+          "type": "inline_richtext",
           "id": "rating_text",
-          "label": "Rating line",
-          "info": "Type it exactly as you want it shown, e.g. 4.8 ★ 1,204 Reviews. Leave blank to hide."
+          "label": "Social proof line",
+          "info": "e.g. Loved by <b>3,000+</b> happy customers. Use bold on the number. Leave blank to hide the whole line."
         }
       ]
     },
@@ -262,6 +325,13 @@
           "type": "url",
           "id": "link",
           "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "style_secondary",
+          "default": false,
+          "label": "Use outlined style",
+          "info": "Tick this on your second button so the main one stands out."
         },
         {
           "type": "image_picker",

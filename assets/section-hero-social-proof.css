@@ -76,10 +76,11 @@
 .hero-social-proof__scrim {
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0) 10%,
-    rgba(0, 0, 0, 0.2) 35%,
-    rgba(0, 0, 0, 0.5) 60%,
-    rgba(0, 0, 0, 0.78) 100%
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.2) 18%,
+    rgba(0, 0, 0, 0.55) 45%,
+    rgba(0, 0, 0, 0.7) 70%,
+    rgba(0, 0, 0, 0.85) 100%
   );
 }
 
@@ -98,7 +99,7 @@
   display: flex;
   justify-content: center;
   min-height: inherit;
-  padding: 2.4rem 2rem 3.2rem;
+  padding: 2.4rem 2.8rem 3.2rem;
   color: #fff;
 }
 
@@ -126,16 +127,129 @@
   max-width: 46rem;
 }
 
-.hero-social-proof__rating {
+/* ---- Text panels ----
+   Measured on Janelle's own hero photo, white text straight on the image scored
+   1.9:1 average and 1.0:1 at worst (pure-white pixels sit behind the text), well
+   under the 4.5:1 needed. A panel is the only reliable fix on pale/busy imagery. */
+.hero-social-proof--panel-light .hero-social-proof__inner,
+.hero-social-proof--panel-dark .hero-social-proof__inner {
+  padding: 2.4rem 2rem 2.6rem;
+  border-radius: var(--text-boxes-radius, 0);
+}
+
+.hero-social-proof--panel-light .hero-social-proof__inner {
+  background: rgba(255, 255, 255, 0.94);
+  color: #121212;
+}
+
+.hero-social-proof--panel-dark .hero-social-proof__inner {
+  background: rgba(18, 18, 18, 0.62);
+}
+
+/* On a light panel, kill the shadows (meant for text-on-photo) and use the
+   theme's own foreground/button colours. */
+.hero-social-proof--panel-light .hero-social-proof__heading {
+  color: #121212;
+  text-shadow: none;
+}
+
+.hero-social-proof--panel-light .hero-social-proof__proof-text {
+  color: #121212;
+  text-shadow: none;
+}
+
+.hero-social-proof--panel-light .hero-social-proof__badge {
+  color: #121212;
+  text-shadow: none;
+}
+
+.hero-social-proof--panel-light .hero-social-proof__stars-row--track {
+  color: rgba(18, 18, 18, 0.18);
+}
+
+.hero-social-proof--panel-light .hero-social-proof__star {
+  filter: none;
+}
+
+/* White-on-white would vanish, so use the theme's button colours instead. */
+.hero-social-proof--panel-light .hero-social-proof__cta {
+  background: #121212;
+  color: #ffffff;
+}
+
+/* Outlined secondary, so two buttons don't read as two heavy blocks. */
+.hero-social-proof__cta--secondary {
+  background: transparent;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.hero-social-proof--panel-light .hero-social-proof__cta--secondary {
+  background: transparent;
+  color: #121212;
+  box-shadow: inset 0 0 0 1px rgba(18, 18, 18, 0.45);
+}
+
+.hero-social-proof--panel-light .hero-social-proof__cta--secondary:hover {
+  box-shadow: inset 0 0 0 1px #121212, 0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+/* ---- Stars + social proof line ---- */
+.hero-social-proof__proof {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.hero-social-proof__stars {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  flex: 0 0 auto;
+}
+
+.hero-social-proof__stars-row {
+  display: inline-flex;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.hero-social-proof__stars-row--track {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Clipped overlay gives part-filled stars (e.g. 4.8 of 5). */
+.hero-social-proof__stars-row--fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--hero-star-pct, 100%);
+  overflow: hidden;
+  color: var(--hero-star-color, #f5d5e6);
+}
+
+.hero-social-proof__star {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* Sentence case, not uppercase: this theme is Times New Roman, and uppercase
+   + letter-spacing is too wide to sit inline with the stars at 390px. */
+.hero-social-proof__proof-text {
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.hero-social-proof__proof-text strong,
+.hero-social-proof__proof-text b {
+  font-weight: 700;
 }
 
 .hero-social-proof__heading {
@@ -158,10 +272,11 @@
   justify-content: space-between;
   gap: 1rem;
   background: #fff;
-  color: #1a1a1a;
+  color: #121212; /* theme's foreground dark */
   text-decoration: none;
   padding: 1.1rem 1.2rem 1.1rem 1.8rem;
-  border-radius: 0.4rem;
+  /* Follow the theme's button radius setting (0 on this theme) instead of hardcoding. */
+  border-radius: var(--buttons-radius, 0);
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -196,7 +311,7 @@
 .hero-social-proof__cta-thumb {
   width: 3.8rem;
   height: 3.8rem;
-  border-radius: 0.3rem;
+  border-radius: var(--media-radius, 0);
   overflow: hidden;
   flex-shrink: 0;
 }
