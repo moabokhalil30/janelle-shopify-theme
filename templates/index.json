@@ -12,6 +12,14 @@
     "hero_social_proof": {
       "type": "hero-social-proof",
       "blocks": {
+        "heading_hero01": {
+          "type": "heading",
+          "settings": {
+            "heading": "The premium finish your lips deserve.",
+            "heading_size": "h1",
+            "subheading": "Everyday beauty with a premium finish — made for everyone."
+          }
+        },
         "rating_hero01": {
           "type": "rating",
           "settings": {
@@ -19,14 +27,6 @@
             "rating": 5,
             "star_color": "#b9648a",
             "rating_text": "Loved by <b>3,000+</b> happy customers"
-          }
-        },
-        "heading_hero01": {
-          "type": "heading",
-          "settings": {
-            "heading": "The premium finish your lips deserve.",
-            "heading_size": "h1",
-            "subheading": "Everyday beauty with a premium finish — made for everyone."
           }
         },
         "cta_hero01": {
@@ -62,12 +62,12 @@
       "name": "Hero (social proof)",
       "settings": {
         "image": "shopify://shop_images/1.jpg",
-        "image_ratio_mobile": "wide",
-        "image_ratio_desktop": "cinematic",
-        "focal_point": "center",
-        "full_width": true,
+        "image_ratio_mobile": "portrait",
+        "desktop_layout": "side_by_side",
+        "image_ratio_desktop": "wide",
+        "focal_point": "center top",
         "color_scheme": "scheme-2",
-        "desktop_layout": "side_by_side"
+        "full_width": true
       }
     },
     "slideshow_xwqYtR": {
