@@ -132,6 +132,12 @@
     background-color: {{ block.settings.button_hover_bg_color }};
     border-color: {{ block.settings.button_hover_border_color }};
   }
+  
+   .ai-category-showcase__link-{{ ai_gen_id }} {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
 
   @media screen and (max-width: 768px) {
     .ai-category-showcase__item-{{ ai_gen_id }},
@@ -175,6 +181,9 @@
 
       {% if enabled %}
         <div class="ai-category-showcase__item-{{ ai_gen_id }} {% if is_reverse == 0 %}ai-category-showcase__item--reverse-{{ ai_gen_id }}{% endif %}">
+         {% if button_link != blank %}
+            <a href="{{ button_link }}" class="ai-category-showcase__link-{{ ai_gen_id }}" aria-label="{{ title | escape }}">
+          {% endif %}
           <div class="ai-category-showcase__image-wrapper-{{ ai_gen_id }}">
             {% if image %}
               <img
@@ -197,10 +206,19 @@
               </div>
             {% endif %}
           </div>
+           {% if button_link != blank %}
+            </a>
+          {% endif %}
 
           <div class="ai-category-showcase__content-{{ ai_gen_id }}">
             {% if title != blank %}
-              <h3 class="ai-category-showcase__title-{{ ai_gen_id }}">{{ title }}</h3>
+               {% if button_link != blank %}
+                <a href="{{ button_link }}" class="ai-category-showcase__link-{{ ai_gen_id }}">
+                  <h3 class="ai-category-showcase__title-{{ ai_gen_id }}">{{ title }}</h3>
+                </a>
+              {% else %}
+                <h3 class="ai-category-showcase__title-{{ ai_gen_id }}">{{ title }}</h3>
+              {% endif %}
             {% endif %}
 
             <div class="ai-category-showcase__price-wrapper-{{ ai_gen_id }}">
