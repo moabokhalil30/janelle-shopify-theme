@@ -73,20 +73,95 @@
   {%- endif -%}
 
   {%- liquid
+    comment
+      Builds hidden_variant_images: the media srcs the gallery should suppress
+      for the currently selected variant. Both snippets that render media
+      (product-media-gallery and product-media-modal) already consume this
+      list, so the contract is unchanged and neither snippet needs editing.
+
+      Two strategies:
+
+      1. variant_media_grouping OFF (default, and what every builder template
+         uses) - the stock Dawn rule. Hide images attached to OTHER variants;
+         every unattached image stays visible on all variants.
+
+      2. variant_media_grouping ON - positional grouping. Each variant's
+         attached image opens that variant's group, and every following media
+         item belongs to that group until the next variant's attached image.
+         Only the selected variant's group survives.
+
+      Strategy 2 is opt-in per template so enabling it on the default product
+      template cannot alter how the builder templates render.
+    endcomment
+
     assign selected_variant = product.selected_or_first_available_variant
     assign variant_attached_images = product.images | where: 'attached_to_variant?', true
     assign hidden_variant_images = ''
-    for img in variant_attached_images
-      assign belongs_to_selected_variant = false
-      for img_variant in img.variants
-        if img_variant.id == selected_variant.id
-          assign belongs_to_selected_variant = true
+
+    assign use_media_grouping = false
+    if section.settings.variant_media_grouping and variant_attached_images.size > 0
+      if selected_variant.featured_image.src != blank
+        assign use_media_grouping = true
+      endif
+    endif
+
+    if use_media_grouping
+      comment
+        Group boundaries are the variant-attached image srcs, in product media
+        order. Media with no src (video, 3D) never opens a group and simply
+        stays with the group it sits inside.
+      endcomment
+      assign group_start_srcs = ''
+      for img in variant_attached_images
+        assign group_start_srcs = group_start_srcs | append: img.src | append: '|'
+      endfor
+      assign group_start_srcs = group_start_srcs | split: '|'
+
+      assign inside_selected_group = false
+      assign selected_group_size = 0
+
+      for media in product.media
+        if media.src != blank and group_start_srcs contains media.src
+          if media.src == selected_variant.featured_image.src
+            assign inside_selected_group = true
+          else
+            assign inside_selected_group = false
+          endif
+        endif
+
+        unless inside_selected_group
+          if media.src != blank
+            assign hidden_variant_images = hidden_variant_images | append: media.src | append: '|'
+          endif
+        endunless
+
+        if inside_selected_group
+          assign selected_group_size = selected_group_size | plus: 1
         endif
       endfor
-      unless belongs_to_selected_variant
-        assign hidden_variant_images = hidden_variant_images | append: img.src | append: '|'
-      endunless
-    endfor
+
+      comment
+        Safety net: if grouping resolved to an empty gallery (media ordered so
+        that the selected variant's image never opens a group, for instance),
+        fall back to showing everything rather than rendering nothing.
+      endcomment
+      if selected_group_size == 0
+        assign hidden_variant_images = ''
+      endif
+    else
+      for img in variant_attached_images
+        assign belongs_to_selected_variant = false
+        for img_variant in img.variants
+          if img_variant.id == selected_variant.id
+            assign belongs_to_selected_variant = true
+          endif
+        endfor
+        unless belongs_to_selected_variant
+          assign hidden_variant_images = hidden_variant_images | append: img.src | append: '|'
+        endunless
+      endfor
+    endif
+
     assign hidden_variant_images = hidden_variant_images | split: '|'
   -%}
   <div class="page-width">
@@ -2509,6 +2584,13 @@
       "id": "hide_variants",
       "default": false,
       "label": "t:sections.main-product.settings.hide_variants.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "variant_media_grouping",
+      "default": false,
+      "label": "Group media by variant",
+      "info": "Requires 'Hide other variants' media'. Shows only the selected variant's media: its assigned image plus every following image up to the next variant's assigned image."
     },
     {
       "type": "checkbox",

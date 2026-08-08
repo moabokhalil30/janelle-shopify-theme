@@ -50,6 +50,14 @@
   {% endif %}
   aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
   data-desktop-layout="{{ section.settings.gallery_layout }}"
+  {%- comment -%}
+    Exposes the variant media grouping setting to product-info.js. Only when
+    this is present does the thumbnail list get re-synced on variant change,
+    so templates without the setting keep stock Dawn behaviour untouched.
+  {%- endcomment -%}
+  {% if section.settings.variant_media_grouping %}
+    data-variant-media-grouping="true"
+  {% endif %}
 >
   <div id="GalleryStatus-{{ section.id }}" class="visually-hidden" role="status"></div>
   <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">

@@ -282,6 +282,8 @@ if (!customElements.get('product-info')) {
           if (shouldRefresh) refreshSourceData();
         }
 
+        this.updateThumbnails(html);
+
         // set featured media as active in the media gallery
         this.querySelector(`media-gallery`)?.setActiveMedia?.(
           `${this.dataset.section}-${variantFeaturedMediaId}`,
@@ -292,6 +294,48 @@ if (!customElements.get('product-info')) {
         const modalContent = this.productModal?.querySelector(`.product-media-modal__content`);
         const newModalContent = html.querySelector(`product-modal .product-media-modal__content`);
         if (modalContent && newModalContent) modalContent.innerHTML = newModalContent.innerHTML;
+      }
+
+      /**
+       * Re-syncs the thumbnail list with the fetched variant HTML.
+       *
+       * updateMedia() above diffs `media-gallery ul`, but querySelector returns
+       * only the FIRST ul - the main viewer (#Slider-Gallery-*). The thumbnails
+       * are a second ul (#Slider-Thumbnails-*) in a separate slider-component,
+       * so nothing ever updated them and they kept the first variant's group.
+       *
+       * Thumbnail <li> ids are positional (Slide-Thumbnails-<section>-<index>),
+       * not media-based, so diffing by id is unreliable - the list is replaced
+       * wholesale instead, which also guarantees the group's original order.
+       *
+       * Gated on data-variant-media-grouping so every other product template
+       * keeps stock Dawn behaviour.
+       */
+      updateThumbnails(html) {
+        const gallery = this.querySelector('media-gallery');
+        if (gallery?.dataset.variantMediaGrouping !== 'true') return;
+
+        const thumbSlider = this.querySelector('[id^="GalleryThumbnails"]');
+        const currentList = thumbSlider?.querySelector('ul.thumbnail-list');
+        const incomingList = html.querySelector('[id^="GalleryThumbnails"] ul.thumbnail-list');
+        if (!currentList || !incomingList) return;
+
+        // Replacing innerHTML keeps the <ul> and its slider-component wrapper
+        // alive, so the cached element references inside MediaGallery and
+        // SliderComponent stay valid.
+        currentList.innerHTML = incomingList.innerHTML;
+
+        // MediaGallery binds thumbnail clicks once on connect, so the freshly
+        // injected buttons would otherwise be inert.
+        currentList.querySelectorAll('[data-target]').forEach((thumbnail) => {
+          thumbnail
+            .querySelector('button')
+            ?.addEventListener('click', gallery.setActiveMedia.bind(gallery, thumbnail.dataset.target, false));
+        });
+
+        // SliderComponent caches sliderItems on connect; refresh so arrow
+        // visibility, page count and scroll bounds match the new thumbnails.
+        thumbSlider?.resetPages?.();
       }
 
       setQuantityBoundries() {
