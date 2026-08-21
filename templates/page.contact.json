@@ -65,6 +65,7 @@
         },
         "ai_gen_block_b97853d_4rh3th": {
           "type": "ai_gen_block_b97853d",
+          "disabled": true,
           "settings": {
             "image_1": "shopify://shop_images/IMG_4527.webp",
             "image_1_width": 30,
