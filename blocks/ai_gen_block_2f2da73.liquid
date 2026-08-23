@@ -79,6 +79,18 @@
     margin: 0;
   }
 
+  .ai-contact-form-contact-info-{{ ai_gen_id }} {
+    font-size: {{ block.settings.body_size }}px;
+    color: {{ block.settings.body_color }};
+    margin: 12px 0 0 0;
+  }
+
+  .ai-contact-form-contact-info-{{ ai_gen_id }} a {
+    color: {{ block.settings.title_color }};
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
   .ai-contact-form-form-wrapper-{{ ai_gen_id }} {
     flex: 1;
   }
@@ -205,6 +217,12 @@
         {% if block.settings.body != blank %}
           <div class="ai-contact-form-body-{{ ai_gen_id }}">{{ block.settings.body }}</div>
         {% endif %}
+        {% if block.settings.show_contact_email and block.settings.contact_email != blank %}
+          <p class="ai-contact-form-contact-info-{{ ai_gen_id }}">
+            {{ block.settings.contact_email_intro }}
+            <a href="mailto:{{ block.settings.contact_email }}">{{ block.settings.contact_email }}</a>
+          </p>
+        {% endif %}
       </div>
 
       <div class="ai-contact-form-form-wrapper-{{ ai_gen_id }}">
@@ -251,6 +269,23 @@
               required
             >
           </div>
+
+          {% if block.settings.show_phone_field %}
+            <div class="ai-contact-form-field-{{ ai_gen_id }}">
+              <label for="contact-phone-{{ ai_gen_id }}" class="ai-contact-form-label-{{ ai_gen_id }}">
+                {{ block.settings.phone_label }}
+              </label>
+              <input
+                type="tel"
+                id="contact-phone-{{ ai_gen_id }}"
+                name="contact[Phone]"
+                class="ai-contact-form-input-{{ ai_gen_id }}"
+                value="{% if form.phone %}{{ form.phone }}{% endif %}"
+                placeholder="{{ block.settings.phone_placeholder }}"
+                autocomplete="tel"
+              >
+            </div>
+          {% endif %}
 
           <div class="ai-contact-form-field-{{ ai_gen_id }}">
             <label for="contact-message-{{ ai_gen_id }}" class="ai-contact-form-label-{{ ai_gen_id }}">
@@ -382,6 +417,24 @@
       "default": "#121212"
     },
     {
+      "type": "checkbox",
+      "id": "show_contact_email",
+      "label": "Show direct contact email",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_email_intro",
+      "label": "Contact email intro text",
+      "default": "Prefer email? Reach us directly at"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact email address",
+      "default": "info@janelle-eg.com"
+    },
+    {
       "type": "header",
       "content": "Form fields"
     },
@@ -408,6 +461,24 @@
       "id": "email_placeholder",
       "label": "Email placeholder",
       "default": "your@email.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone_field",
+      "label": "Show phone field",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Phone label",
+      "default": "Phone (optional)"
+    },
+    {
+      "type": "text",
+      "id": "phone_placeholder",
+      "label": "Phone placeholder",
+      "default": "Your phone number"
     },
     {
       "type": "text",

@@ -1,0 +1,554 @@
+{% doc %}
+  Single-column contact form modeled on a clean reference layout: bold
+  heading with a divider, required-field asterisks, a Subject dropdown,
+  and a full-width submit button. Uses Shopify's native `contact` form so
+  submissions actually deliver to the store's notification email - no
+  file attachment field, since Shopify's contact form endpoint is
+  text-only and can't receive uploads.
+{% enddoc %}
+{% assign form_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* padding-top/bottom only (never the shorthand): a shorthand `padding`
+     here would tie with .page-width's own `padding: 0 1.5rem` on specificity
+     and win on source order, silently zeroing the side gutters again. */
+  .contact-simple-{{ form_id }} {
+    padding-top: {{ block.settings.section_padding }}px;
+    padding-bottom: {{ block.settings.section_padding }}px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* The visible card. Its own side padding is independent of .page-width,
+     so edge spacing holds even if that class's CSS changes elsewhere. */
+  .contact-simple-inner-{{ form_id }} {
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    background-color: {{ block.settings.card_bg_color }};
+    border: 1px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    box-sizing: border-box;
+  }
+
+  @media screen and (max-width: 749px) {
+    .contact-simple-inner-{{ form_id }} {
+      padding: {{ block.settings.card_padding | times: 0.6 | round: 0 }}px;
+    }
+  }
+
+  .contact-simple-heading-{{ form_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    font-weight: 700;
+    margin: 0 0 16px 0;
+  }
+
+  .contact-simple-divider-{{ form_id }} {
+    border: none;
+    border-top: 1px solid {{ block.settings.divider_color }};
+    margin: 0 0 24px 0;
+  }
+
+  .contact-simple-intro-{{ form_id }} {
+    font-size: 16px;
+    color: {{ block.settings.label_color }};
+    margin: 0 0 24px 0;
+  }
+
+  .contact-simple-intro-{{ form_id }} a {
+    color: {{ block.settings.heading_color }};
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .contact-simple-field-{{ form_id }} {
+    margin-bottom: 22px;
+  }
+
+  .contact-simple-label-{{ form_id }} {
+    display: block;
+    font-size: 15px;
+    color: {{ block.settings.label_color }};
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .contact-simple-required-{{ form_id }} {
+    color: {{ block.settings.required_color }};
+  }
+
+  .contact-simple-input-{{ form_id }},
+  .contact-simple-select-{{ form_id }},
+  .contact-simple-textarea-{{ form_id }} {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: {{ block.settings.input_text_color }};
+    background-color: {{ block.settings.input_bg_color }};
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    font-family: inherit;
+  }
+
+  .contact-simple-select-{{ form_id }} {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+
+  .contact-simple-input-{{ form_id }}:focus,
+  .contact-simple-select-{{ form_id }}:focus,
+  .contact-simple-textarea-{{ form_id }}:focus {
+    outline: 2px solid {{ block.settings.input_focus_color }};
+    outline-offset: 2px;
+  }
+
+  .contact-simple-textarea-{{ form_id }} {
+    min-height: {{ block.settings.textarea_height }}px;
+    resize: vertical;
+  }
+
+  .contact-simple-submit-{{ form_id }} {
+    width: 100%;
+    padding: 16px 32px;
+    font-size: 16px;
+    color: {{ block.settings.button_text_color }};
+    background-color: {{ block.settings.button_bg_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+
+  .contact-simple-submit-{{ form_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+  }
+
+  .contact-simple-message-{{ form_id }} {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .contact-simple-success-{{ form_id }} {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .contact-simple-error-{{ form_id }} {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+{% endstyle %}
+
+<div class="contact-simple-{{ form_id }} page-width page-width--narrow" {{ block.shopify_attributes }}>
+  <div class="contact-simple-inner-{{ form_id }}">
+  {% if block.settings.heading != blank %}
+    <h2 class="contact-simple-heading-{{ form_id }}">{{ block.settings.heading }}</h2>
+  {% endif %}
+
+  {% if block.settings.show_divider %}
+    <hr class="contact-simple-divider-{{ form_id }}">
+  {% endif %}
+
+  {% if block.settings.show_contact_email and block.settings.contact_email != blank %}
+    <p class="contact-simple-intro-{{ form_id }}">
+      {{ block.settings.contact_email_intro }}
+      <a href="mailto:{{ block.settings.contact_email }}">{{ block.settings.contact_email }}</a>
+    </p>
+  {% endif %}
+
+  {%- form 'contact', id: 'ContactFormSimple' -%}
+    {% if form.posted_successfully? %}
+      <div class="contact-simple-message-{{ form_id }} contact-simple-success-{{ form_id }}">
+        {{ block.settings.success_message }}
+      </div>
+    {% endif %}
+
+    {% if form.errors %}
+      <div class="contact-simple-message-{{ form_id }} contact-simple-error-{{ form_id }}">
+        {{ form.errors | default_errors }}
+      </div>
+    {% endif %}
+
+    <div class="contact-simple-field-{{ form_id }}">
+      <label for="ContactFormSimple-name-{{ form_id }}" class="contact-simple-label-{{ form_id }}">
+        {{ block.settings.name_label }} <span class="contact-simple-required-{{ form_id }}">*</span>
+      </label>
+      <input
+        type="text"
+        id="ContactFormSimple-name-{{ form_id }}"
+        name="contact[name]"
+        class="contact-simple-input-{{ form_id }}"
+        value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+        autocomplete="name"
+        required
+      >
+    </div>
+
+    <div class="contact-simple-field-{{ form_id }}">
+      <label for="ContactFormSimple-email-{{ form_id }}" class="contact-simple-label-{{ form_id }}">
+        {{ block.settings.email_label }} <span class="contact-simple-required-{{ form_id }}">*</span>
+      </label>
+      <input
+        type="email"
+        id="ContactFormSimple-email-{{ form_id }}"
+        name="contact[email]"
+        class="contact-simple-input-{{ form_id }}"
+        value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+        placeholder="{{ block.settings.email_placeholder }}"
+        autocomplete="email"
+        required
+      >
+    </div>
+
+    {% if block.settings.show_subject_field %}
+      <div class="contact-simple-field-{{ form_id }}">
+        <label for="ContactFormSimple-subject-{{ form_id }}" class="contact-simple-label-{{ form_id }}">
+          {{ block.settings.subject_label }} <span class="contact-simple-required-{{ form_id }}">*</span>
+        </label>
+        <select
+          id="ContactFormSimple-subject-{{ form_id }}"
+          name="contact[Subject]"
+          class="contact-simple-select-{{ form_id }}"
+          required
+        >
+          <option value="" selected disabled hidden>{{ block.settings.subject_placeholder }}</option>
+          <option value="{{ block.settings.subject_option_1 }}">{{ block.settings.subject_option_1 }}</option>
+          <option value="{{ block.settings.subject_option_2 }}">{{ block.settings.subject_option_2 }}</option>
+          <option value="{{ block.settings.subject_option_3 }}">{{ block.settings.subject_option_3 }}</option>
+          <option value="{{ block.settings.subject_option_4 }}">{{ block.settings.subject_option_4 }}</option>
+        </select>
+      </div>
+    {% endif %}
+
+    <div class="contact-simple-field-{{ form_id }}">
+      <label for="ContactFormSimple-message-{{ form_id }}" class="contact-simple-label-{{ form_id }}">
+        {{ block.settings.message_label }} <span class="contact-simple-required-{{ form_id }}">*</span>
+      </label>
+      <textarea
+        rows="6"
+        id="ContactFormSimple-message-{{ form_id }}"
+        name="contact[body]"
+        class="contact-simple-textarea-{{ form_id }}"
+        required
+      >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+    </div>
+
+    <button type="submit" class="contact-simple-submit-{{ form_id }}">
+      {{ block.settings.button_text }}
+    </button>
+  {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact form (simple)",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Contact us"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#d585a6"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider line under heading",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "header",
+      "content": "Direct contact line"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_email",
+      "label": "Show direct contact email",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_email_intro",
+      "label": "Contact email intro text",
+      "default": "Prefer email? Reach us directly at"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact email address",
+      "default": "info@janelle-eg.com"
+    },
+    {
+      "type": "header",
+      "content": "Form fields"
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Name label",
+      "default": "Full name"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "your@email.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subject_field",
+      "label": "Show subject dropdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subject_label",
+      "label": "Subject label",
+      "default": "Subject"
+    },
+    {
+      "type": "text",
+      "id": "subject_placeholder",
+      "label": "Subject placeholder (first, unselectable option)",
+      "default": "Select a subject"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_1",
+      "label": "Subject option 1",
+      "default": "General inquiry"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_2",
+      "label": "Subject option 2",
+      "default": "Product question"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_3",
+      "label": "Subject option 3",
+      "default": "Order support"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_4",
+      "label": "Subject option 4",
+      "default": "Other"
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Message label",
+      "default": "Message"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Send"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for contacting us! We'll get back to you soon."
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "required_color",
+      "label": "Required asterisk color",
+      "default": "#d585a6"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "input_bg_color",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_color",
+      "label": "Input focus color",
+      "default": "#d585a6"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Input border radius",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "textarea_height",
+      "min": 80,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "label": "Message area height",
+      "default": 140
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#d585a6"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#b9648a"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 400,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Container"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Container background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Container border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Container corner radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Container inner padding",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact form (simple)"
+    }
+  ]
+}
+{% endschema %}

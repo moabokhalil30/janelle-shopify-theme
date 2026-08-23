@@ -21,6 +21,7 @@
       "blocks": {
         "ai_gen_block_2f2da73_ENPDMK": {
           "type": "ai_gen_block_2f2da73",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/nmnmnmnmnm.png",
             "image_width": 55,
@@ -77,11 +78,16 @@
             "image_spacing": 28
           },
           "blocks": {}
+        },
+        "contact_form_simple_main": {
+          "type": "contact-form-simple",
+          "settings": {}
         }
       },
       "block_order": [
         "ai_gen_block_2f2da73_ENPDMK",
-        "ai_gen_block_b97853d_4rh3th"
+        "ai_gen_block_b97853d_4rh3th",
+        "contact_form_simple_main"
       ],
       "settings": {}
     }
