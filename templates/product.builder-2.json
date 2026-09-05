@@ -39,6 +39,7 @@
         "t2",
         "t3"
       ],
+      "disabled": true,
       "settings": {
         "alignment": "center",
         "gap": 34,
@@ -240,6 +241,7 @@
         "media_position": "left",
         "image_zoom": "lightbox",
         "hide_variants": true,
+        "variant_media_grouping": false,
         "enable_video_looping": false,
         "padding_top": 36,
         "padding_bottom": 12
