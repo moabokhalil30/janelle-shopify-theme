@@ -47,6 +47,7 @@
         "t2",
         "t3"
       ],
+      "disabled": true,
       "settings": {
         "alignment": "center",
         "gap": 34,
