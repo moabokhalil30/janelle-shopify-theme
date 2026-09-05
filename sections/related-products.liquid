@@ -18,6 +18,21 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  /* Product name reads bigger than price and star rating in this section
+     only (card__heading/.price/.rating are shared with every other product
+     grid on the site, so this is scoped to .related-products and doesn't
+     touch collection pages, search, or the homepage). */
+  .related-products .card__heading {
+    font-size: calc(var(--font-heading-scale) * 2.2rem);
+    font-weight: 600;
+  }
+
+  @media screen and (min-width: 750px) {
+    .related-products .card__heading {
+      font-size: calc(var(--font-heading-scale) * 2.6rem);
+    }
+  }
 {%- endstyle -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
