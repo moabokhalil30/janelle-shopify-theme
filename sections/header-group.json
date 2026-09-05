@@ -54,6 +54,59 @@
         "padding_bottom": 20
       }
     },
+    "pdp_trust_bar_r8mhYp": {
+      "type": "pdp-trust-bar",
+      "blocks": {
+        "item_D7xdaA": {
+          "type": "item",
+          "settings": {
+            "icon": "🚚",
+            "label": "Free shipping over 999LE"
+          }
+        },
+        "item_TtVp6f": {
+          "type": "item",
+          "settings": {
+            "icon": "⭐",
+            "label": "Happiness guaranteed"
+          }
+        },
+        "item_Y9ryUx": {
+          "type": "item",
+          "settings": {
+            "icon": "💕",
+            "label": "Just Dropped: Mini Beauty Bag"
+          }
+        },
+        "item_LYHTTV": {
+          "type": "item",
+          "settings": {
+            "icon": "📦",
+            "label": "Shipping takes 2-5 days"
+          }
+        }
+      },
+      "block_order": [
+        "item_D7xdaA",
+        "item_TtVp6f",
+        "item_Y9ryUx",
+        "item_LYHTTV"
+      ],
+      "name": "PDP trust bar",
+      "settings": {
+        "alignment": "center",
+        "gap": 34,
+        "padding_y": 10,
+        "max_width": 1200,
+        "font_size": 13,
+        "enable_marquee": true,
+        "marquee_speed": 26,
+        "repeat_count": 4,
+        "bg_color": "#ffffff",
+        "text_color": "#121212",
+        "divider_color": "#e9dde4"
+      }
+    },
     "blocks_3zeakw": {
       "type": "_blocks",
       "name": "Three column layout",
@@ -90,6 +143,7 @@
   "order": [
     "announcement-bar",
     "header",
+    "pdp_trust_bar_r8mhYp",
     "blocks_3zeakw",
     "blocks_ihKUPP",
     "blocks_tU73WE",
