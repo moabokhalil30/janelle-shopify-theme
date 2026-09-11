@@ -57,6 +57,13 @@
     "pdp_trust_bar_r8mhYp": {
       "type": "pdp-trust-bar",
       "blocks": {
+        "item_Qhtm9F": {
+          "type": "item",
+          "settings": {
+            "icon": "🔥",
+            "label": "20% off on selected items"
+          }
+        },
         "item_D7xdaA": {
           "type": "item",
           "settings": {
@@ -87,6 +94,7 @@
         }
       },
       "block_order": [
+        "item_Qhtm9F",
         "item_D7xdaA",
         "item_TtVp6f",
         "item_Y9ryUx",
