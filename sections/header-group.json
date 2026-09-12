@@ -66,6 +66,7 @@
         },
         "item_D7xdaA": {
           "type": "item",
+          "disabled": true,
           "settings": {
             "icon": "🚚",
             "label": "Free shipping over 999LE"
@@ -73,6 +74,7 @@
         },
         "item_TtVp6f": {
           "type": "item",
+          "disabled": true,
           "settings": {
             "icon": "⭐",
             "label": "Happiness guaranteed"
@@ -80,6 +82,7 @@
         },
         "item_Y9ryUx": {
           "type": "item",
+          "disabled": true,
           "settings": {
             "icon": "💕",
             "label": "Just Dropped: Mini Beauty Bag"
@@ -87,6 +90,7 @@
         },
         "item_LYHTTV": {
           "type": "item",
+          "disabled": true,
           "settings": {
             "icon": "📦",
             "label": "Shipping takes 2-5 days"
@@ -111,7 +115,7 @@
         "marquee_speed": 26,
         "repeat_count": 4,
         "bg_color": "#ffffff",
-        "text_color": "#121212",
+        "text_color": "#C07496",
         "divider_color": "#e9dde4"
       }
     },
