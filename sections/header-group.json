@@ -114,8 +114,8 @@
         "enable_marquee": true,
         "marquee_speed": 26,
         "repeat_count": 4,
-        "bg_color": "#ffffff",
-        "text_color": "#C07496",
+        "bg_color": "#F5D5E6",
+        "text_color": "#121212",
         "divider_color": "#e9dde4"
       }
     },
