@@ -138,6 +138,7 @@
         },
         "social": {
           "type": "social_proof",
+          "disabled": true,
           "settings": {
             "icon": "🔥",
             "text": "Bought 247 times in the last 30 days",
