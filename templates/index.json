@@ -204,199 +204,15 @@
       "settings": {
         "desktop_content_position": "center",
         "content_alignment": "center",
-        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "color_scheme": "scheme-section-bg-custom",
         "full_width": true,
         "padding_top": 40,
         "padding_bottom": 0
       }
     },
-    "featured_product_W6Yern": {
-      "type": "featured-product",
-      "blocks": {
-        "text_9JhTDX": {
-          "type": "text",
-          "settings": {
-            "text": "{{ section.settings.product.vendor }}",
-            "text_style": "uppercase"
-          }
-        },
-        "title_j9DMBy": {
-          "type": "title",
-          "settings": {
-            "heading_size": "h1"
-          }
-        },
-        "price_zXemde": {
-          "type": "price",
-          "settings": {}
-        },
-        "variant_picker_mmhyL6": {
-          "type": "variant_picker",
-          "settings": {
-            "picker_type": "button",
-            "swatch_shape": "circle"
-          }
-        },
-        "quantity_selector_zzCftA": {
-          "type": "quantity_selector",
-          "settings": {}
-        },
-        "buy_buttons_9DXJec": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
-          }
-        },
-        "share_WiBEhw": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
-          }
-        }
-      },
-      "block_order": [
-        "text_9JhTDX",
-        "title_j9DMBy",
-        "price_zXemde",
-        "variant_picker_mmhyL6",
-        "quantity_selector_zzCftA",
-        "buy_buttons_9DXJec",
-        "share_WiBEhw"
-      ],
-      "disabled": true,
-      "name": "t:sections.featured-product.presets.name",
-      "settings": {
-        "product": "",
-        "color_scheme": "",
-        "secondary_background": false,
-        "media_size": "medium",
-        "constrain_to_viewport": true,
-        "media_fit": "contain",
-        "media_position": "left",
-        "image_zoom": "lightbox",
-        "hide_variants": false,
-        "enable_video_looping": false,
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "17841988363791fe2d": {
-      "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_c4616e1_rJKKJG": {
-          "type": "ai_gen_block_c4616e1",
-          "disabled": true,
-          "settings": {
-            "collection": "all-products",
-            "product_limit": 12,
-            "desktop_width_percent": 100,
-            "box_background_color": "#f9f9f9",
-            "box_border_color": "#e0e0e0",
-            "box_border_thickness": 1,
-            "box_border_radius": 8,
-            "box_padding": 30,
-            "grid_gap": 20,
-            "card_background_color": "#ffffff",
-            "card_border_radius": 4,
-            "card_padding": 15,
-            "show_price": true,
-            "text_alignment": "left",
-            "title_color": "#121212",
-            "title_font_size": 16,
-            "price_color": "#666666",
-            "price_font_size": 14
-          },
-          "blocks": {}
-        },
-        "ai_gen_block_9ea8f37_iCr6rf": {
-          "type": "ai_gen_block_9ea8f37",
-          "disabled": true,
-          "settings": {
-            "selected_products": [
-              "lip-kit-bundle"
-            ],
-            "show_price": true,
-            "show_vendor": false,
-            "max_images": 4,
-            "transition_speed": 0.5,
-            "image_aspect_ratio": "1 / 1",
-            "grid_gap": 24,
-            "desktop_width_percent": 100,
-            "section_padding": 40,
-            "card_background": "#ffffff",
-            "card_border_radius": 8,
-            "card_padding": 20,
-            "card_shadow_opacity": 0.1,
-            "title_font_size": 18,
-            "title_color": "#121212",
-            "title_hover_color": "#b9648a",
-            "price_font_size": 16,
-            "price_color": "#121212",
-            "vendor_font_size": 12,
-            "vendor_color": "#666666"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_c4616e1_rJKKJG",
-        "ai_gen_block_9ea8f37_iCr6rf"
-      ],
-      "settings": {}
-    },
     "17665770919d9b6881": {
       "type": "_blocks",
       "blocks": {
-        "ai_gen_block_1a90452_8Ktiqw": {
-          "type": "ai_gen_block_1a90452",
-          "name": "Category boxes",
-          "disabled": true,
-          "settings": {
-            "box_spacing": 40,
-            "content_spacing": 30,
-            "text_spacing": 15,
-            "image_border_radius": 8,
-            "title_size": 28,
-            "title_color": "#121212",
-            "price_size": 20,
-            "price_color": "#666666",
-            "button_text_size": 16,
-            "button_bg_color": "#121212",
-            "button_hover_bg_color": "#333333",
-            "button_text_color": "#ffffff",
-            "button_border_radius": 4,
-            "category_1_title": "Category 1",
-            "category_1_price": "EGP 299",
-            "category_1_button_text": "Shop now",
-            "category_1_button_link": "",
-            "category_2_title": "Category 2",
-            "category_2_price": "EGP 399",
-            "category_2_button_text": "Shop now",
-            "category_2_button_link": "",
-            "category_3_title": "Category 3",
-            "category_3_price": "EGP 499",
-            "category_3_button_text": "Shop now",
-            "category_3_button_link": "",
-            "category_4_title": "Category 4",
-            "category_4_price": "EGP 599",
-            "category_4_button_text": "Shop now",
-            "category_4_button_link": "",
-            "category_5_title": "Category 5",
-            "category_5_price": "EGP 699",
-            "category_5_button_text": "Shop now",
-            "category_5_button_link": "",
-            "category_6_title": "Category 6",
-            "category_6_price": "EGP 799",
-            "category_6_button_text": "Shop now",
-            "category_6_button_link": "",
-            "category_7_title": "Category 7",
-            "category_7_price": "EGP 899",
-            "category_7_button_text": "Shop now",
-            "category_7_button_link": ""
-          },
-          "blocks": {}
-        },
         "ai_gen_block_5b0a543_JwXe3e": {
           "type": "ai_gen_block_5b0a543",
           "settings": {
@@ -407,9 +223,9 @@
             "content_gap": 5,
             "image_border_radius": 10,
             "title_font_size": 22,
-            "title_color": "#e4b6d5",
+            "title_color": "#C07496",
             "price_font_size": 20,
-            "price_color": "#e4b6d5",
+            "price_color": "#C07496",
             "compare_price_font_size": 18,
             "compare_price_color": "#999999",
             "sale_tag_position": 15,
@@ -424,9 +240,9 @@
             "button_border_width": 1,
             "button_border_color": "#f5d5e6",
             "button_hover_border_color": "#333333",
-            "button_bg_color": "#f5d5e6",
+            "button_bg_color": "#C07496",
             "button_text_color": "#ffffff",
-            "button_hover_bg_color": "#d585a6",
+            "button_hover_bg_color": "#ECCCE2",
             "category_1_enabled": true,
             "category_1_image": "shopify://shop_images/29.png",
             "category_1_title": "Mini beauty bag",
@@ -501,118 +317,10 @@
             "category_8_sale_text": "SALE"
           },
           "blocks": {}
-        },
-        "ai_gen_block_5b0a543_fkMxPm": {
-          "type": "ai_gen_block_5b0a543",
-          "disabled": true,
-          "settings": {
-            "background_color": "#ffffff",
-            "section_padding": 50,
-            "item_spacing": 30,
-            "item_gap": 30,
-            "content_gap": 5,
-            "image_border_radius": 10,
-            "title_font_size": 28,
-            "title_color": "#e4b6d5",
-            "price_font_size": 24,
-            "price_color": "#e4b6d5",
-            "compare_price_font_size": 18,
-            "compare_price_color": "#999999",
-            "sale_tag_position": 15,
-            "sale_tag_font_size": 16,
-            "sale_tag_radius": 4,
-            "sale_tag_bg_color": "#ff0000",
-            "sale_tag_text_color": "#ffffff",
-            "button_font_size": 18,
-            "button_padding_vertical": 10,
-            "button_padding_horizontal": 30,
-            "button_border_radius": 4,
-            "button_border_width": 1,
-            "button_border_color": "#f5d5e6",
-            "button_hover_border_color": "#333333",
-            "button_bg_color": "#f5d5e6",
-            "button_text_color": "#ffffff",
-            "button_hover_bg_color": "#d585a6",
-            "category_1_enabled": true,
-            "category_1_image": "shopify://shop_images/Untitleddesign.webp",
-            "category_1_title": "The Lip Kit",
-            "category_1_price": "800 EGP",
-            "category_1_compare_price": "",
-            "category_1_button_text": "Choose your shades now",
-            "category_1_button_link": "shopify://products/lip-kit",
-            "category_1_show_sale": false,
-            "category_1_sale_text": "SALE",
-            "category_2_enabled": true,
-            "category_2_image": "shopify://shop_images/pink_matcha_shade.jpg",
-            "category_2_title": "Lip Gloss Pink Matcha",
-            "category_2_price": "350 EGP",
-            "category_2_compare_price": "400 EGP",
-            "category_2_button_text": "Choose your shades now",
-            "category_2_button_link": "shopify://products/lip-gloss-pink-matcha",
-            "category_2_show_sale": true,
-            "category_2_sale_text": "SALE",
-            "category_3_enabled": true,
-            "category_3_image": "shopify://shop_images/DSC01482_e7990a94-0a6e-47cd-8076-139877c5c20d.jpg",
-            "category_3_title": "Key Chain",
-            "category_3_price": "300 EGP",
-            "category_3_compare_price": "",
-            "category_3_button_text": "Choose your chain now",
-            "category_3_button_link": "shopify://products/keychain",
-            "category_3_show_sale": false,
-            "category_3_sale_text": "SALE",
-            "category_4_enabled": true,
-            "category_4_image": "shopify://shop_images/trio.webp",
-            "category_4_title": "Iconic Lip Trio",
-            "category_4_price": "800 EGP",
-            "category_4_compare_price": "990 EGP",
-            "category_4_button_text": "Choose your shades now",
-            "category_4_button_link": "shopify://products/trio-bundle",
-            "category_4_show_sale": true,
-            "category_4_sale_text": "SALE",
-            "category_5_enabled": true,
-            "category_5_image": "shopify://shop_images/IMG_8906_JPEG_9305f35d-a382-4b92-9ec5-c0d188e1ec14.jpg",
-            "category_5_title": "The Minis",
-            "category_5_price": "750 EGP",
-            "category_5_compare_price": "810 EGP",
-            "category_5_button_text": "Choose your shades now",
-            "category_5_button_link": "shopify://products/the-minis",
-            "category_5_show_sale": true,
-            "category_5_sale_text": "SALE",
-            "category_6_enabled": true,
-            "category_6_image": "shopify://shop_images/lip_liners.webp",
-            "category_6_title": "Lip Liners",
-            "category_6_price": "270 EGP",
-            "category_6_compare_price": "210 EGP",
-            "category_6_button_text": "Choose your shades now",
-            "category_6_button_link": "shopify://products/lip-liner-07-chocolate",
-            "category_6_show_sale": true,
-            "category_6_sale_text": "SALE",
-            "category_7_enabled": true,
-            "category_7_image": "shopify://shop_images/squeeze.webp",
-            "category_7_title": "Lip Gloss (squeeze tube)",
-            "category_7_price": "280 EGP",
-            "category_7_compare_price": "330 EGP",
-            "category_7_button_text": "Choose your shades now",
-            "category_7_button_link": "shopify://products/lip-gloss-squeeze-tube",
-            "category_7_show_sale": true,
-            "category_7_sale_text": "SALE",
-            "category_8_enabled": true,
-            "category_8_image": "shopify://shop_images/brush.webp",
-            "category_8_title": "Lip Gloss (brush tube)",
-            "category_8_price": "300 EGP",
-            "category_8_compare_price": "350 EGP",
-            "category_8_button_text": "Choose your shades now",
-            "category_8_button_link": "shopify://products/lip-gloss-brush-tube",
-            "category_8_show_sale": true,
-            "category_8_sale_text": "SALE"
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "ai_gen_block_1a90452_8Ktiqw",
-        "ai_gen_block_5b0a543_JwXe3e",
-        "ai_gen_block_5b0a543_fkMxPm"
+        "ai_gen_block_5b0a543_JwXe3e"
       ],
       "settings": {}
     },
@@ -979,8 +687,6 @@
     "hero_social_proof",
     "slideshow_xwqYtR",
     "rich_text_AYfVGY",
-    "featured_product_W6Yern",
-    "17841988363791fe2d",
     "17665770919d9b6881",
     "176657518343664f32",
     "multirow_3mGFbd",
