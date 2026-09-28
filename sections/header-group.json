@@ -44,7 +44,7 @@
         "menu_type_desktop": "dropdown",
         "sticky_header_type": "on-scroll-up",
         "show_line_separator": true,
-        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "color_scheme": "scheme-section-bg-custom",
         "menu_color_scheme": "scheme-1",
         "enable_country_selector": true,
         "enable_language_selector": true,
