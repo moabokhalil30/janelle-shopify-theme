@@ -14,7 +14,7 @@
     "favicon": "shopify://shop_images/favicon-32x32.png",
     "type_header_font": "bebas_neue_n4",
     "heading_scale": 100,
-    "type_body_font": "times_new_roman_n7",
+    "type_body_font": "sans_serif_n7",
     "body_scale": 125,
     "page_width": 1200,
     "spacing_sections": 0,
