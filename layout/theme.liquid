@@ -376,7 +376,9 @@
     <script>
 	window.$zoho = window.$zoho || {};
 	$zoho.salesiq = $zoho.salesiq || {
-		ready: function(){}
+		ready: function(){
+			$zoho.salesiq.floatbutton.visible('hide');
+		}
 	}
 </script>
 <script id = "zsiqscript" src = "https://salesiq.zoho.com/widget?wc=siq409531e914ea4476943549c1c0ec271b28bc9a3de29ffbb49d5da4d71351350d" defer >
