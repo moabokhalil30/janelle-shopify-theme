@@ -78,7 +78,7 @@
     padding: 8px 16px;
     border-radius: {{ block.settings.sale_tag_radius }}px;
     font-size: {{ block.settings.sale_tag_font_size }}px;
-    font-weight: 500;
+    font-weight: 700;
     z-index: 2;
   }
 
@@ -94,7 +94,8 @@
     font-size: {{ block.settings.title_font_size }}px;
     color: {{ block.settings.title_color }};
     margin: 0;
-    font-weight: 500;
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
   }
 
   .ai-category-showcase__price-wrapper-{{ ai_gen_id }} {
@@ -107,13 +108,14 @@
   .ai-category-showcase__price-{{ ai_gen_id }} {
     font-size: {{ block.settings.price_font_size }}px;
     color: {{ block.settings.price_color }};
-    font-weight: 500;
+    font-weight: 700;
   }
 
   .ai-category-showcase__compare-price-{{ ai_gen_id }} {
     font-size: {{ block.settings.compare_price_font_size }}px;
     color: {{ block.settings.compare_price_color }};
     text-decoration: line-through;
+    font-weight: 700;
   }
 
   .ai-category-showcase__button-{{ ai_gen_id }} {
