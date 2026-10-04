@@ -324,10 +324,7 @@
         "complementary",
         "share"
       ],
-      "custom_css": [
-        ".product__title h1 {font-size: calc(var(--font-heading-scale) * 2.8rem); }",
-        "@media screen and (min-width: 750px) {.product__title h1 {font-size: calc(var(--font-heading-scale) * 3.8rem); }}"
-      ],
+      "custom_css": [],
       "settings": {
         "enable_sticky_info": true,
         "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
