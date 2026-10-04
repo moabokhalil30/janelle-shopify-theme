@@ -120,7 +120,7 @@
             "bullet_3": "",
             "bullet_4": "",
             "icon_color": "#b9648a",
-            "text_color": "#C07496"
+            "text_color": "#c07496"
           }
         },
         "benefit_bullets_kUFkxA": {
@@ -324,7 +324,10 @@
         "complementary",
         "share"
       ],
-      "custom_css": [],
+      "custom_css": [
+        ".product__title h1 {font-size: calc(var(--font-heading-scale) * 2.8rem); }",
+        "@media screen and (min-width: 750px) {.product__title h1 {font-size: calc(var(--font-heading-scale) * 3.8rem); }}"
+      ],
       "settings": {
         "enable_sticky_info": true,
         "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
