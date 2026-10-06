@@ -1451,5 +1451,50 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "Loading screen",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "page_loader_enable",
+        "label": "Show loading screen",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "page_loader_on_navigation",
+        "label": "Show when moving between pages",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "page_loader_logo",
+        "label": "Logo",
+        "info": "Leave empty to use your store logo. A small square logo or icon works best."
+      },
+      {
+        "type": "range",
+        "id": "page_loader_size",
+        "label": "Size",
+        "min": 60,
+        "max": 160,
+        "step": 5,
+        "unit": "px",
+        "default": 90
+      },
+      {
+        "type": "color",
+        "id": "page_loader_color",
+        "label": "Ring color",
+        "default": "#c07496"
+      },
+      {
+        "type": "color",
+        "id": "page_loader_background",
+        "label": "Background color",
+        "default": "#ffffff"
+      }
+    ]
   }
 ]
