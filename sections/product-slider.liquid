@@ -311,6 +311,25 @@
       {%- for product in collection.products limit: section.settings.products_to_show -%}
         {%- liquid
           assign current_variant = product.selected_or_first_available_variant
+
+          # Cards can show shades in a separate order (e.g. best sellers first) saved in the
+          # product metafield custom.bestseller_shades; shades missing from it follow in product order.
+          assign shade_list = product.variants
+          assign shade_order = product.metafields.custom.bestseller_shades.value
+          if shade_order != blank
+            assign ordered_ids = shade_order | map: "id" | join: ","
+            assign ordered_ids = "," | append: ordered_ids | append: ","
+            assign shade_list = shade_order
+            for variant in product.variants
+              assign variant_key = "," | append: variant.id | append: ","
+              unless ordered_ids contains variant_key
+                assign missing_variant = product.variants | where: "id", variant.id
+                assign shade_list = shade_list | concat: missing_variant
+              endunless
+            endfor
+            assign first_available = shade_list | where: "available" | first
+            assign current_variant = first_available | default: shade_list.first
+          endif
           assign current_image = current_variant.featured_image | default: product.featured_media.preview_image
           assign single_option = false
           if product.options.size == 1
@@ -422,10 +441,10 @@
 
               {%- if show_shades -%}
                 <div class="product-slider__shades">
-                  {%- for variant in product.variants -%}
-                    {%- if forloop.index == shade_limit and product.variants.size > shade_limit -%}
+                  {%- for variant in shade_list -%}
+                    {%- if forloop.index == shade_limit and shade_list.size > shade_limit -%}
                       <button type="button" class="product-slider__shade-more" data-card-more>
-                        +{{ product.variants.size | minus: shade_limit | plus: 1 }}
+                        +{{ shade_list.size | minus: shade_limit | plus: 1 }}
                       </button>
                       <span class="product-slider__shade-extra" hidden>
                     {%- endif -%}
@@ -441,7 +460,7 @@
                         data-sold-out="true"
                       {% endunless %}
                     ></button>
-                    {%- if forloop.last and product.variants.size > shade_limit -%}
+                    {%- if forloop.last and shade_list.size > shade_limit -%}
                       </span>
                     {%- endif -%}
                   {%- endfor -%}
