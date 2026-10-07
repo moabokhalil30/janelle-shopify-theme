@@ -1,0 +1,43 @@
+.wishlist-heart path {
+  fill: transparent;
+  transition: fill 0.2s ease;
+}
+
+[data-wishlist-toggle].is-active .wishlist-heart path {
+  fill: currentColor;
+}
+
+.wishlist-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 2.4rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  max-width: calc(100% - 3.2rem);
+  padding: 1.2rem 2rem;
+  border-radius: 999px;
+  background: #121212;
+  color: #ffffff;
+  font-size: 1.4rem;
+  box-shadow: 0 0.4rem 1.6rem rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 1rem);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+}
+
+.wishlist-toast.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.wishlist-toast a {
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+  white-space: nowrap;
+}
