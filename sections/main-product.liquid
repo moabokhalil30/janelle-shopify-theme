@@ -298,6 +298,39 @@
                   <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
                   {{- product.selected_or_first_available_variant.sku -}}
                 </p>
+              {%- when 'shade_description' -%}
+                {%- assign shade_description = product.selected_or_first_available_variant.metafields.custom.shade_description.value -%}
+                <p
+                  class="product__shade-description{% if shade_description == blank %} hidden{% endif %}"
+                  id="ShadeDescription-{{ section.id }}"
+                  role="status"
+                  {{ block.shopify_attributes }}
+                >
+                  {{- shade_description | escape | newline_to_br -}}
+                </p>
+                <style>
+                  .product__shade-description {
+                    margin: -0.6rem 0 1.2rem;
+                    font-size: 1.15rem;
+                    line-height: 1.4;
+                    font-style: italic;
+                    color: rgba(var(--color-foreground), 0.75);
+                  }
+                </style>
+                <script>
+                  // Swap in the picked shade's description when the variant changes.
+                  document.addEventListener('DOMContentLoaded', () => {
+                    if (typeof subscribe !== 'function' || typeof PUB_SUB_EVENTS === 'undefined') return;
+                    subscribe(PUB_SUB_EVENTS.variantChange, ({ data }) => {
+                      if (!data || data.sectionId !== '{{ section.id }}') return;
+                      const source = data.html.getElementById('ShadeDescription-{{ section.id }}');
+                      const destination = document.getElementById('ShadeDescription-{{ section.id }}');
+                      if (!source || !destination) return;
+                      destination.innerHTML = source.innerHTML;
+                      destination.classList.toggle('hidden', source.classList.contains('hidden'));
+                    });
+                  });
+                </script>
               {%- when 'custom_liquid' -%}
                 {{ block.settings.custom_liquid }}
               {%- when 'collapsible_tab' -%}
@@ -1001,6 +1034,17 @@
       "type": "price",
       "name": "t:sections.main-product.blocks.price.name",
       "limit": 1
+    },
+    {
+      "type": "shade_description",
+      "name": "Shade description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows the selected shade's text from the variant field Shade description (custom.shade_description). Updates when a customer picks another shade."
+        }
+      ]
     },
     {
       "type": "sku",

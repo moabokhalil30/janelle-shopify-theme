@@ -297,6 +297,10 @@
           "settings": {
             "share_label": "Share"
           }
+        },
+        "shade_description": {
+          "type": "shade_description",
+          "settings": {}
         }
       },
       "block_order": [
@@ -311,6 +315,7 @@
         "social",
         "bundle_builder_NtdFm9",
         "variant_picker",
+        "shade_description",
         "quantity_selector",
         "buy_buttons",
         "guarantee",
