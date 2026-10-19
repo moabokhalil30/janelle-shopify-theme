@@ -70,6 +70,141 @@
         "full_width": true
       }
     },
+    "shop_by_collection": {
+      "type": "collection-slider",
+      "blocks": {
+        "collection_bundles": {
+          "type": "collection",
+          "settings": {
+            "collection": "bundles",
+            "image": "shopify://shop_images/Untitled-design-1.png"
+          }
+        },
+        "collection_lip_glosses": {
+          "type": "collection",
+          "settings": {
+            "collection": "lip-glosses",
+            "image": "shopify://shop_images/IMG_1782.jpg"
+          }
+        },
+        "collection_lip_liners": {
+          "type": "collection",
+          "settings": {
+            "collection": "lip-liners",
+            "image": "shopify://shop_images/lip_liners.webp"
+          }
+        },
+        "collection_bags": {
+          "type": "collection",
+          "settings": {
+            "collection": "bags",
+            "image": "shopify://shop_images/IMG_47513.png"
+          }
+        },
+        "collection_accessories": {
+          "type": "collection",
+          "settings": {
+            "collection": "accessories",
+            "image": "shopify://shop_images/DSC01482.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "collection_bundles",
+        "collection_lip_glosses",
+        "collection_lip_liners",
+        "collection_bags",
+        "collection_accessories"
+      ],
+      "name": "Shop by collection",
+      "settings": {
+        "title": "Shop by collection",
+        "heading_size": "h1",
+        "image_ratio": "portrait",
+        "image_radius": 0,
+        "title_size": 18,
+        "show_count": true,
+        "cards_desktop": 4,
+        "cards_mobile": "1.5",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "mini_bag_banner": {
+      "type": "image-banner",
+      "blocks": {
+        "heading_mini": {
+          "type": "heading",
+          "settings": {
+            "heading": "Mini Beauty Bag",
+            "heading_size": "h1"
+          }
+        },
+        "buttons_mini": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "BUY NOW",
+            "button_link_1": "shopify://products/mini-beauty-bag",
+            "button_style_secondary_1": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_mini",
+        "buttons_mini"
+      ],
+      "custom_css": [
+        ".banner__buttons .button {--color-button: 192, 116, 150; --color-button-text: 255, 255, 255; --border-opacity: 0;}",
+        "@media screen and (max-width: 749px) {.banner__content {min-height: 0 !important; aspect-ratio: 2 / 3; align-items: flex-end; padding: 0 1.5rem 3.2rem; } .banner__box {padding: 0; } .banner__heading {font-size: 3rem; } .banner__buttons {margin-top: 1.2rem; }}"
+      ],
+      "name": "Mini beauty bag banner",
+      "settings": {
+        "image": "shopify://shop_images/29.png",
+        "image_overlay_opacity": 20,
+        "image_height": "medium",
+        "image_behavior": "none",
+        "desktop_content_position": "bottom-center",
+        "desktop_content_alignment": "center",
+        "show_text_box": false,
+        "color_scheme": "scheme-4",
+        "stack_images_on_mobile": false,
+        "mobile_content_alignment": "center",
+        "show_text_below": false
+      }
+    },
+    "lip_gloss_slider": {
+      "type": "product-slider",
+      "name": "Best sellers",
+      "settings": {
+        "title": "Best Sellers",
+        "heading_size": "h1",
+        "collection": "all-products",
+        "products_to_show": 5,
+        "link_label": "Shop more",
+        "link": "",
+        "image_ratio": "square",
+        "image_radius": 16,
+        "title_size": 16,
+        "show_badges": true,
+        "show_quick_add": true,
+        "show_wishlist": true,
+        "wishlist_page": "",
+        "icon_color": "#c07496",
+        "icon_background": "#ffffff",
+        "show_shades": true,
+        "shade_photo": "second",
+        "shades_to_show": 6,
+        "cards_desktop": 3,
+        "cards_mobile": "1.5",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "slideshow_xwqYtR": {
       "type": "slideshow",
       "blocks": {
@@ -200,6 +335,7 @@
       "block_order": [
         "heading_pktJ47"
       ],
+      "disabled": true,
       "name": "t:sections.rich-text.presets.name",
       "settings": {
         "desktop_content_position": "center",
@@ -208,8 +344,7 @@
         "full_width": true,
         "padding_top": 40,
         "padding_bottom": 0
-      },
-      "disabled": true
+      }
     },
     "17665770919d9b6881": {
       "type": "_blocks",
@@ -323,8 +458,8 @@
       "block_order": [
         "ai_gen_block_5b0a543_JwXe3e"
       ],
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {}
     },
     "176657518343664f32": {
       "type": "_blocks",
@@ -537,15 +672,15 @@
             "reviews_shown": 4,
             "show_reviewer_name": true,
             "show_product_name": true,
-            "hide_arrows_mobile": true,
+            "hide_arrows_mobile": false,
             "arrows_position": "sides",
             "max_width": 1100,
             "corner_styling": "soft",
-            "header_text_color": "#eccce2",
+            "header_text_color": "#C07496",
             "text_color": "#c07496",
             "card_color": "#f9f9f9",
             "stars_color": "",
-            "arrows_color": "#000000",
+            "arrows_color": "#C07496",
             "transition_speed": 5,
             "header_text": "Customers are saying",
             "show_average_rating": true,
@@ -683,137 +818,6 @@
         "ai_gen_block_7863291_xBEFff"
       ],
       "settings": {}
-    },
-    "shop_by_collection": {
-      "type": "collection-slider",
-      "blocks": {
-        "collection_bundles": {
-          "type": "collection",
-          "settings": {
-            "collection": "bundles",
-            "image": "shopify://shop_images/Untitled-design-1.png"
-          }
-        },
-        "collection_lip_glosses": {
-          "type": "collection",
-          "settings": {
-            "collection": "lip-glosses",
-            "image": "shopify://shop_images/IMG_1782.jpg"
-          }
-        },
-        "collection_lip_liners": {
-          "type": "collection",
-          "settings": {
-            "collection": "lip-liners",
-            "image": "shopify://shop_images/lip_liners.webp"
-          }
-        },
-        "collection_bags": {
-          "type": "collection",
-          "settings": {
-            "collection": "bags",
-            "image": "shopify://shop_images/IMG_47513.png"
-          }
-        },
-        "collection_accessories": {
-          "type": "collection",
-          "settings": {
-            "collection": "accessories",
-            "image": "shopify://shop_images/DSC01482.jpg"
-          }
-        }
-      },
-      "block_order": [
-        "collection_bundles",
-        "collection_lip_glosses",
-        "collection_lip_liners",
-        "collection_bags",
-        "collection_accessories"
-      ],
-      "name": "Shop by collection",
-      "settings": {
-        "title": "Shop by collection",
-        "heading_size": "h1",
-        "image_ratio": "portrait",
-        "image_radius": 0,
-        "title_size": 18,
-        "show_count": true,
-        "cards_desktop": 4,
-        "cards_mobile": "1.5",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "mini_bag_banner": {
-      "type": "image-banner",
-      "name": "Mini beauty bag banner",
-      "blocks": {
-        "heading_mini": {
-          "type": "heading",
-          "settings": {
-            "heading": "Mini Beauty Bag",
-            "heading_size": "h1"
-          }
-        },
-        "buttons_mini": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "BUY NOW",
-            "button_link_1": "shopify://products/mini-beauty-bag",
-            "button_style_secondary_1": false,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading_mini",
-        "buttons_mini"
-      ],
-      "settings": {
-        "image": "shopify://shop_images/29.png",
-        "image_overlay_opacity": 20,
-        "image_height": "medium",
-        "image_behavior": "none",
-        "desktop_content_position": "bottom-center",
-        "desktop_content_alignment": "center",
-        "show_text_box": false,
-        "color_scheme": "scheme-4",
-        "stack_images_on_mobile": false,
-        "mobile_content_alignment": "center",
-        "show_text_below": false
-      },
-      "custom_css": [
-        ".banner__buttons .button {--color-button: 192, 116, 150; --color-button-text: 255, 255, 255; --border-opacity: 0;}",
-        "@media screen and (max-width: 749px) {.banner__content {min-height: 0 !important; aspect-ratio: 2 / 3; align-items: flex-end; padding: 0 1.5rem 3.2rem;} .banner__box {padding: 0;} .banner__heading {font-size: 3rem;} .banner__buttons {margin-top: 1.2rem;}}"
-      ]
-    },
-    "lip_gloss_slider": {
-      "type": "product-slider",
-      "name": "Best sellers",
-      "settings": {
-        "title": "Best Sellers",
-        "heading_size": "h1",
-        "collection": "all-products",
-        "products_to_show": 5,
-        "link_label": "Shop more",
-        "link": "",
-        "image_ratio": "square",
-        "image_radius": 16,
-        "title_size": 16,
-        "show_badges": true,
-        "show_quick_add": true,
-        "show_shades": true,
-        "shades_to_show": 6,
-        "cards_desktop": 3,
-        "cards_mobile": "1.5",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36,
-        "show_wishlist": true
-      }
     }
   },
   "order": [
