@@ -126,7 +126,7 @@
         "show_count": true,
         "cards_desktop": 4,
         "cards_mobile": "1.5",
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-cf67ad97-1e2c-46ef-a350-a97b2a03c94c",
         "padding_top": 36,
         "padding_bottom": 36
       }
@@ -200,7 +200,7 @@
         "shades_to_show": 6,
         "cards_desktop": 3,
         "cards_mobile": "1.5",
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-cf67ad97-1e2c-46ef-a350-a97b2a03c94c",
         "padding_top": 36,
         "padding_bottom": 36
       }
