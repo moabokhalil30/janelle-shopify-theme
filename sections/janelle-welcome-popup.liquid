@@ -1,0 +1,435 @@
+{%- comment -%}
+  Welcome pop-up: email sign-up for a first-order discount.
+
+  Not rendered for logged-in customers who already ordered or are already
+  subscribed, or on cart/account/password pages. In the browser it waits
+  `delay` seconds, stays hidden for `snooze_days` after "No thanks" or ✕,
+  and never returns after a sign-up.
+
+  The email is saved as a subscriber in Customers (tagged welcome-popup).
+  The discount itself is created in Admin → Discounts; put its code below.
+{%- endcomment -%}
+
+{%- liquid
+  assign show_popup = section.settings.enabled
+  if customer
+    if customer.orders_count > 0 or customer.accepts_marketing
+      assign show_popup = false
+    endif
+  endif
+  if template.name == 'cart' or template.name == 'password' or template.name == 'gift_card' or template contains 'customers/'
+    assign show_popup = false
+  endif
+  if request.design_mode
+    assign show_popup = true
+  endif
+-%}
+
+{%- if show_popup -%}
+  {%- style -%}
+    .welcome-popup {
+      --wp-accent: {{ section.settings.accent_color }};
+      --wp-bg: {{ section.settings.background_color }};
+      --wp-text: {{ section.settings.text_color }};
+      --wp-highlight: {{ section.settings.highlight_color }};
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.6rem;
+      background: rgba(18, 18, 18, 0.45);
+    }
+    .welcome-popup.is-open {
+      display: flex;
+      animation: welcome-popup-fade 0.25s ease-out;
+    }
+    @keyframes welcome-popup-fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .welcome-popup__card {
+      position: relative;
+      width: 100%;
+      max-width: 42rem;
+      max-height: calc(100vh - 3.2rem);
+      overflow-y: auto;
+      padding: 3.6rem 2.8rem 2.4rem;
+      border-radius: 1.6rem;
+      background: var(--wp-bg);
+      color: var(--wp-text);
+      box-shadow: 0 1.2rem 4rem rgba(0, 0, 0, 0.18);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+    .welcome-popup__card p,
+    .welcome-popup__card input,
+    .welcome-popup__card button {
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+    .welcome-popup__close {
+      position: absolute;
+      top: 1.4rem;
+      right: 1.4rem;
+      display: grid;
+      place-items: center;
+      width: 3.4rem;
+      height: 3.4rem;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--wp-accent);
+      font-size: 1.6rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .welcome-popup__logo {
+      display: block;
+      width: {{ section.settings.logo_width }}px;
+      max-width: 60%;
+      height: auto;
+      margin-bottom: 2.4rem;
+      {%- if section.settings.white_logo %}
+      filter: brightness(0) invert(1);
+      {%- endif %}
+    }
+    .welcome-popup__brand {
+      margin: 0 0 2.4rem;
+      font-family: var(--font-heading-family);
+      font-size: 2.2rem;
+      letter-spacing: 0.1rem;
+    }
+    .welcome-popup__heading {
+      margin: 0 0 1.4rem;
+      font-family: var(--font-heading-family);
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.05rem;
+      text-transform: uppercase;
+      color: var(--wp-text);
+    }
+    .welcome-popup__heading span {
+      display: block;
+      color: var(--wp-highlight);
+    }
+    .welcome-popup__text {
+      margin: 0 0 2rem;
+      font-size: 1.4rem;
+      line-height: 1.55;
+      color: var(--wp-text);
+      opacity: 0.95;
+    }
+    .welcome-popup__input,
+    .welcome-popup__button {
+      display: block;
+      width: 100%;
+      min-height: 5rem;
+      padding: 0 2rem;
+      border-radius: 5rem;
+      font-family: inherit;
+      font-size: 1.5rem;
+    }
+    .welcome-popup__input {
+      margin-bottom: 1.2rem;
+      border: 1px solid color-mix(in srgb, var(--wp-accent) 35%, #fff);
+      background: #fff;
+      color: #121212;
+    }
+    .welcome-popup__input:focus {
+      outline: none;
+      border-color: var(--wp-accent);
+      box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--wp-accent) 20%, transparent);
+    }
+    .welcome-popup__card .welcome-popup__button,
+    .welcome-popup__card .welcome-popup__copy,
+    .welcome-popup__card .welcome-popup__code {
+      font-weight: 700;
+      letter-spacing: 0.15rem;
+    }
+    .welcome-popup__button {
+      border: 0.15rem solid var(--wp-accent);
+      background: var(--wp-accent);
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.15rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .welcome-popup__button:hover,
+    .welcome-popup__button:focus-visible {
+      filter: brightness(0.92);
+    }
+    .welcome-popup__button[aria-busy='true'] {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .welcome-popup__dismiss {
+      display: inline-block;
+      margin: 1.6rem 0 1.2rem;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--wp-text);
+      font-family: inherit;
+      font-size: 1.4rem;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .welcome-popup__fine {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.4;
+      color: var(--wp-text);
+      opacity: 0.8;
+    }
+    .welcome-popup__error {
+      margin: -0.4rem 0 1.2rem;
+      font-size: 1.3rem;
+      color: #c0392b;
+      font-weight: 700;
+    }
+    .welcome-popup__code {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 0 0 1.2rem;
+      padding: 0.8rem 0.8rem 0.8rem 2rem;
+      border: 0.15rem dashed var(--wp-accent);
+      border-radius: 5rem;
+      background: #fff;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2rem;
+    }
+    .welcome-popup__copy {
+      min-height: 3.6rem;
+      padding: 0 1.6rem;
+      border: 0;
+      border-radius: 5rem;
+      background: var(--wp-accent);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.1rem;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .welcome-popup [hidden] {
+      display: none !important;
+    }
+    @media screen and (max-width: 749px) {
+      .welcome-popup__card {
+        padding: 3.2rem 2.2rem 2.2rem;
+      }
+      .welcome-popup__heading {
+        font-size: 2.8rem;
+      }
+    }
+  {%- endstyle -%}
+
+  <div
+    class="welcome-popup"
+    id="WelcomePopup-{{ section.id }}"
+    data-delay="{{ section.settings.delay }}"
+    data-snooze-days="{{ section.settings.snooze_days }}"
+    data-code="{{ section.settings.discount_code | escape }}"
+    data-design-mode="{{ request.design_mode }}"
+    {{ section.shopify_attributes }}
+  >
+    <div
+      class="welcome-popup__card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="WelcomePopupHeading-{{ section.id }}"
+    >
+      <button type="button" class="welcome-popup__close" data-welcome-close aria-label="Close">✕</button>
+
+      {%- if section.settings.logo != blank -%}
+        {{
+          section.settings.logo
+          | image_url: width: 400
+          | image_tag: class: 'welcome-popup__logo', alt: shop.name, loading: 'lazy'
+        }}
+      {%- else -%}
+        <p class="welcome-popup__brand">{{ shop.name | upcase }}</p>
+      {%- endif -%}
+
+      {%- form 'customer', id: 'WelcomePopupForm', class: 'welcome-popup__form', novalidate: 'novalidate' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,welcome-popup">
+
+        <div data-welcome-step="signup"{% if form.posted_successfully? %} hidden{% endif %}>
+          <h2 class="welcome-popup__heading" id="WelcomePopupHeading-{{ section.id }}">
+            <span>{{ section.settings.heading_2 | escape }}</span>
+            {{ section.settings.heading_1 | escape }}
+          </h2>
+          <p class="welcome-popup__text">{{ section.settings.text | escape }}</p>
+
+          <label class="visually-hidden" for="WelcomePopupEmail-{{ section.id }}">Email</label>
+          <input
+            class="welcome-popup__input"
+            id="WelcomePopupEmail-{{ section.id }}"
+            type="email"
+            name="contact[email]"
+            placeholder="{{ section.settings.placeholder | escape }}"
+            autocomplete="email"
+            autocapitalize="off"
+            spellcheck="false"
+            required
+          >
+          <p class="welcome-popup__error" data-welcome-error{% unless form.errors %} hidden{% endunless %} role="alert">
+            {{ section.settings.error_text | escape }}
+          </p>
+          <button type="submit" class="welcome-popup__button">{{ section.settings.button_label | escape }}</button>
+          <button type="button" class="welcome-popup__dismiss" data-welcome-close>{{ section.settings.dismiss_label | escape }}</button>
+          <p class="welcome-popup__fine">{{ section.settings.fine_print | escape }}</p>
+        </div>
+
+        <div data-welcome-step="success"{% unless form.posted_successfully? %} hidden{% endunless %}>
+          <h2 class="welcome-popup__heading">
+            {{ section.settings.success_heading_1 | escape }}
+            <span>{{ section.settings.success_heading_2 | escape }}</span>
+          </h2>
+          <p class="welcome-popup__text">{{ section.settings.success_text | escape }}</p>
+          {%- if section.settings.discount_code != blank -%}
+            <div class="welcome-popup__code">
+              <span data-welcome-code>{{ section.settings.discount_code | escape }}</span>
+              <button type="button" class="welcome-popup__copy" data-welcome-copy>Copy</button>
+            </div>
+          {%- endif -%}
+          <button type="button" class="welcome-popup__button" data-welcome-close>{{ section.settings.shop_label | escape }}</button>
+          <p class="welcome-popup__fine" style="margin-top: 1.4rem;">{{ section.settings.fine_print | escape }}</p>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const popup = document.getElementById('WelcomePopup-{{ section.id }}');
+      if (!popup) return;
+      const KEY = 'janelleWelcomePopup';
+      const DAY = 24 * 60 * 60 * 1000;
+      const designMode = popup.dataset.designMode === 'true';
+      const form = popup.querySelector('form');
+      const steps = (name) => popup.querySelectorAll('[data-welcome-step]').forEach((el) => (el.hidden = el.dataset.welcomeStep !== name));
+      const code = popup.dataset.code;
+
+      const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
+      const write = (state) => { try { localStorage.setItem(KEY, JSON.stringify({ state, at: Date.now() })); } catch (e) {} };
+
+      let lastFocus = null;
+      const open = () => {
+        lastFocus = document.activeElement;
+        popup.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        (popup.querySelector('input[type="email"]:not([hidden])') || popup.querySelector('.welcome-popup__close')).focus({ preventScroll: true });
+      };
+      const close = () => {
+        popup.classList.remove('is-open');
+        document.body.style.overflow = '';
+        if (read().state !== 'subscribed') write('dismissed');
+        if (lastFocus) lastFocus.focus({ preventScroll: true });
+      };
+
+      // Applies the code to the cart cookie so checkout picks it up on its own.
+      const applyCode = () => { if (code) fetch('/discount/' + encodeURIComponent(code), { credentials: 'same-origin' }).catch(() => {}); };
+
+      popup.querySelectorAll('[data-welcome-close]').forEach((btn) => btn.addEventListener('click', close));
+      popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && popup.classList.contains('is-open')) close(); });
+
+      popup.querySelector('[data-welcome-copy]')?.addEventListener('click', (e) => {
+        navigator.clipboard?.writeText(code).then(() => { e.target.textContent = 'Copied'; });
+      });
+
+      // Normal page submit, so Shopify's spam check (hCaptcha) can run. The
+      // page reloads and the pop-up reopens on the code or on the error.
+      form.addEventListener('submit', (e) => {
+        const email = form.querySelector('input[type="email"]');
+        const error = popup.querySelector('[data-welcome-error]');
+        if (!email.value || !email.checkValidity()) {
+          e.preventDefault();
+          error.hidden = false;
+          email.focus();
+          return;
+        }
+        error.hidden = true;
+        form.querySelector('button[type="submit"]').setAttribute('aria-busy', 'true');
+      });
+
+      if (form.querySelector('[data-welcome-step="success"]:not([hidden])')) {
+        write('subscribed');
+        applyCode();
+        open();
+        return;
+      }
+      if (form.querySelector('[data-welcome-error]:not([hidden])')) {
+        open();
+        return;
+      }
+
+      if (designMode) {
+        document.addEventListener('shopify:section:select', (e) => { if (e.detail.sectionId === '{{ section.id }}') open(); });
+        document.addEventListener('shopify:section:deselect', (e) => { if (e.detail.sectionId === '{{ section.id }}') popup.classList.remove('is-open'); });
+        return;
+      }
+
+      // Test link: add ?welcome_popup=1 to any page URL to see it straight away.
+      if (new URLSearchParams(location.search).has('welcome_popup')) { open(); return; }
+
+      const saved = read();
+      if (saved.state === 'subscribed') return;
+      if (saved.state === 'dismissed' && Date.now() - saved.at < Number(popup.dataset.snoozeDays) * DAY) return;
+      setTimeout(open, Number(popup.dataset.delay) * 1000);
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Welcome pop-up",
+  "class": "section-welcome-popup",
+  "limit": 1,
+  "enabled_on": { "groups": ["footer"] },
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Show pop-up", "default": true },
+    {
+      "type": "paragraph",
+      "content": "Hidden for logged-in customers who already ordered or subscribed, and on cart and account pages. Create the discount in Admin → Discounts, then type its code below."
+    },
+    { "type": "text", "id": "discount_code", "label": "Discount code", "default": "WELCOME5" },
+    { "type": "range", "id": "delay", "label": "Show after", "min": 0, "max": 30, "step": 1, "unit": "s", "default": 6 },
+    { "type": "range", "id": "snooze_days", "label": "Hide after closing for", "min": 1, "max": 60, "step": 1, "unit": "d", "default": 14 },
+    { "type": "header", "content": "Design" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 60, "max": 240, "step": 10, "unit": "px", "default": 110 },
+    { "type": "checkbox", "id": "white_logo", "label": "Show logo in white", "default": false },
+    { "type": "color", "id": "background_color", "label": "Background colour", "default": "#ffe6f1" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#3b1f2b" },
+    { "type": "color", "id": "highlight_color", "label": "Heading highlight colour", "default": "#b9648a" },
+    { "type": "color", "id": "accent_color", "label": "Button colour", "default": "#b9648a" },
+    { "type": "header", "content": "Sign-up text" },
+    { "type": "text", "id": "heading_2", "label": "Heading top line (highlight colour)", "default": "5% off" },
+    { "type": "text", "id": "heading_1", "label": "Heading bottom line", "default": "Your first order" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "New here? Take 5% off your first purchase! Sign up below and your welcome code will land in your inbox." },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Your email address" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Claim my code" },
+    { "type": "text", "id": "dismiss_label", "label": "Dismiss link", "default": "No thanks" },
+    { "type": "text", "id": "error_text", "label": "Error message", "default": "Please enter a valid email address." },
+    { "type": "text", "id": "fine_print", "label": "Small print", "default": "One code per customer. Valid on your first order only. Cannot be combined with other offers." },
+    { "type": "header", "content": "After sign-up" },
+    { "type": "text", "id": "success_heading_1", "label": "Heading line 1", "default": "Welcome to" },
+    { "type": "text", "id": "success_heading_2", "label": "Heading line 2 (highlight colour)", "default": "the Janelle circle" },
+    { "type": "textarea", "id": "success_text", "label": "Text", "default": "Here's your 5% off. It's already applied to your cart, or use the code at checkout." },
+    { "type": "text", "id": "shop_label", "label": "Button", "default": "Start shopping" }
+  ]
+}
+{% endschema %}
