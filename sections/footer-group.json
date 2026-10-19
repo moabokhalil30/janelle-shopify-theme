@@ -32,7 +32,28 @@
       "type": "janelle-welcome-popup",
       "settings": {
         "enabled": true,
-        "logo": "shopify://shop_images/logo_janelle-removebg-preview.png"
+        "discount_code": "WELCOME5",
+        "delay": 0,
+        "snooze_days": 14,
+        "logo": "shopify://shop_images/logo_janelle-removebg-preview.png",
+        "logo_width": 110,
+        "white_logo": false,
+        "background_color": "#ffe6f1",
+        "text_color": "#3b1f2b",
+        "highlight_color": "#b9648a",
+        "accent_color": "#b9648a",
+        "heading_2": "5% off",
+        "heading_1": "Your first order",
+        "text": "New here? Take 5% off your first purchase! Sign up below and your welcome code will land in your inbox.",
+        "placeholder": "Your email address",
+        "button_label": "Claim my code",
+        "dismiss_label": "No thanks",
+        "error_text": "Please enter a valid email address.",
+        "fine_print": "One code per customer. Valid on your first order only. Cannot be combined with other offers.",
+        "success_heading_1": "Welcome to",
+        "success_heading_2": "the Janelle circle",
+        "success_text": "Here's your 5% off. It's already applied to your cart, or use the code at checkout.",
+        "shop_label": "Start shopping"
       }
     }
   },
