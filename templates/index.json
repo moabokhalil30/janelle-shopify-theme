@@ -730,7 +730,7 @@
         "text_jQyUkW": {
           "type": "text",
           "settings": {
-            "text": "<h3><strong>Janelle cosmetics is a premium affordable Beauty Brand </strong></h3><p>“Our main goal is to provide an everyday high-quality formulated beauty products that provides premium finish and are accessible to everyone.<br/>With love, Enjy & Samar🩷</p><p></p>",
+            "text": "<h3><strong>Janelle cosmetics is a premium affordable Beauty Brand&nbsp;</strong></h3><p>“Our main goal is to provide an everyday high-quality formulated beauty products that provides premium finish and are accessible to everyone.<br/>With love, Enjy & Samar🩷</p><p></p>",
             "text_style": "body"
           }
         }
@@ -751,7 +751,7 @@
         "desktop_content_alignment": "center",
         "mobile_content_alignment": "center",
         "section_color_scheme": "scheme-1",
-        "color_scheme": "scheme-9f26f649-ab00-4ac5-b7ad-c97168811288",
+        "color_scheme": "scheme-section-bg-custom",
         "padding_top": 36,
         "padding_bottom": 36
       }
