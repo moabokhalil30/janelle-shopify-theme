@@ -676,11 +676,11 @@
             "arrows_position": "sides",
             "max_width": 1100,
             "corner_styling": "soft",
-            "header_text_color": "#C07496",
+            "header_text_color": "#c07496",
             "text_color": "#c07496",
             "card_color": "#f9f9f9",
             "stars_color": "",
-            "arrows_color": "#C07496",
+            "arrows_color": "#c07496",
             "transition_speed": 5,
             "header_text": "Customers are saying",
             "show_average_rating": true,
@@ -759,13 +759,13 @@
     "17607925845f9a8f80": {
       "type": "apps",
       "blocks": {
-        "socialwidget_instafeed_base_widget_bPJKNq": {
+        "socialwidget_instafeed_base_widget_HAYrHW": {
           "type": "shopify://apps/socialwidget-instafeed/blocks/base-widget/508b8d5b-b176-4dc6-a0ba-2b222db6eb79",
           "settings": {}
         }
       },
       "block_order": [
-        "socialwidget_instafeed_base_widget_bPJKNq"
+        "socialwidget_instafeed_base_widget_HAYrHW"
       ],
       "settings": {
         "include_margins": true
