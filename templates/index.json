@@ -759,13 +759,13 @@
     "17607925845f9a8f80": {
       "type": "apps",
       "blocks": {
-        "socialwidget_instafeed_base_widget_HAYrHW": {
+        "socialwidget_instafeed_base_widget_CUGQhc": {
           "type": "shopify://apps/socialwidget-instafeed/blocks/base-widget/508b8d5b-b176-4dc6-a0ba-2b222db6eb79",
           "settings": {}
         }
       },
       "block_order": [
-        "socialwidget_instafeed_base_widget_HAYrHW"
+        "socialwidget_instafeed_base_widget_CUGQhc"
       ],
       "settings": {
         "include_margins": true
