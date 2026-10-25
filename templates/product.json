@@ -9,6 +9,12 @@
  */
 {
   "sections": {
+    "page_background": {
+      "type": "page-background",
+      "settings": {
+        "color": "#f7e3ea"
+      }
+    },
     "trust_bar": {
       "type": "pdp-trust-bar",
       "blocks": {
@@ -93,7 +99,7 @@
             "show_stars": true,
             "rating": 5,
             "corner_radius": 6,
-            "bg_color": "#f3e4ec",
+            "bg_color": "#FFFFFF",
             "accent_color": "#d585a6",
             "text_color": "#121212"
           }
@@ -178,6 +184,24 @@
             "picker_type": "button",
             "swatch_shape": "square"
           }
+        },
+        "shade_finder": {
+          "type": "shade_finder",
+          "settings": {
+            "swatch_size": 52,
+            "name_color": "#c07496",
+            "accent_color": "#b9648a",
+            "chip_color": "#f5d5e6",
+            "family_all": "All shades",
+            "family_nude": "Nudes & browns",
+            "family_pink": "Pinks & mauves",
+            "family_red": "Reds",
+            "family_sheer": "Sheer & glitter"
+          }
+        },
+        "shade_description": {
+          "type": "shade_description",
+          "settings": {}
         },
         "quantity_selector": {
           "type": "quantity_selector",
@@ -298,9 +322,21 @@
             "share_label": "Share"
           }
         },
-        "shade_description": {
-          "type": "shade_description",
+        "free_shipping_note": {
+          "type": "free_shipping_note",
           "settings": {}
+        },
+        "complete_look": {
+          "type": "complete_look",
+          "settings": {
+            "liner": "lip-liner-07-chocolate",
+            "gloss": "lip-gloss-brush-tube",
+            "label": "Complete the look: matching liner",
+            "pairs": "Creamy Latte=08 Nude|01 Brunette\nMilk Pink=05 Pink|02 Cashmere\nMolly=05 Pink|02 Cashmere\nVelvet Rose=03 Ruby|02 Cashmere\nPillow Talk=08 Nude|01 Brunette\nDolly=02 Cashmere\nRose Wood=02 Cashmere|07 Chocolate\nMocha=07 Chocolate|01 Brunette\nParadise=01 Brunette|08 Nude\nStardust=08 Nude|02 Cashmere\nBarbie Dreams=05 Pink|02 Cashmere\nPeach Cake=06 Blush|01 Brunette\nRuby=03 Ruby|06 Blush\nPower Pink=05 Pink|06 Blush\nPink Matcha=05 Pink|02 Cashmere",
+            "product_rules": "lip-kit-bundle=the-beauty-bag\niconic-lip-trio=the-beauty-bag\nthe-minis=mini-beauty-bag\nthe-beauty-bag=lip-kit-bundle\nmini-beauty-bag=the-minis\nkeychain=lip-gloss-squeeze-tube:Barbie Dreams",
+            "rule_label": "Complete the look:",
+            "build_label": "Build yours →"
+          }
         }
       },
       "block_order": [
@@ -315,9 +351,12 @@
         "social",
         "bundle_builder_NtdFm9",
         "variant_picker",
+        "shade_finder",
         "shade_description",
         "quantity_selector",
         "buy_buttons",
+        "free_shipping_note",
+        "complete_look",
         "guarantee",
         "trust",
         "trust_row_XmXGiG",
@@ -332,7 +371,7 @@
       "custom_css": [],
       "settings": {
         "enable_sticky_info": true,
-        "color_scheme": "scheme-section-bg-custom",
+        "color_scheme": "scheme-blush",
         "media_size": "medium",
         "constrain_to_viewport": true,
         "media_fit": "contain",
@@ -375,7 +414,7 @@
         "products_to_show": 5,
         "columns_desktop": 2,
         "columns_mobile": "2",
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-blush",
         "image_ratio": "square",
         "image_shape": "default",
         "show_secondary_image": true,
@@ -402,6 +441,7 @@
     }
   },
   "order": [
+    "page_background",
     "trust_bar",
     "main",
     "1758831124533b2a49",

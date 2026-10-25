@@ -1,0 +1,20 @@
+{% comment %}
+  Sets the background colour of the whole page for the template it's added to
+  (e.g. only product pages). Shows nothing itself.
+{% endcomment %}
+<style>
+  body,
+  body.gradient { background: {{ section.settings.color }} !important; }
+</style>
+
+{% schema %}
+{
+  "name": "Page background",
+  "tag": "div",
+  "settings": [
+    { "type": "color", "id": "color", "label": "Background colour", "default": "#f7e3ea" },
+    { "type": "paragraph", "content": "Colours the whole page behind every section on this template. Sections with their own colour scheme keep theirs." }
+  ],
+  "presets": [{ "name": "Page background" }]
+}
+{% endschema %}

@@ -1451,5 +1451,154 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "Loading screen",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "page_loader_enable",
+        "label": "Show loading screen",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "page_loader_on_navigation",
+        "label": "Show when moving between pages",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "page_loader_logo",
+        "label": "Logo",
+        "info": "Leave empty to use your store logo. A small square logo or icon works best."
+      },
+      {
+        "type": "range",
+        "id": "page_loader_size",
+        "label": "Size",
+        "min": 60,
+        "max": 160,
+        "step": 5,
+        "unit": "px",
+        "default": 90
+      },
+      {
+        "type": "color",
+        "id": "page_loader_color",
+        "label": "Ring color",
+        "default": "#c07496"
+      },
+      {
+        "type": "color",
+        "id": "page_loader_background",
+        "label": "Background color",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "Bundle stock check",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "bundle_check_enable",
+        "label": "Block checkout when a bundle shade is sold out",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "bundle_check_products",
+        "label": "Shade products used in bundles",
+        "info": "One product handle per line. Every shade a bundle can contain must come from one of these products.",
+        "default": "lip-gloss-brush-tube\nlip-gloss-squeeze-tube\nlip-gloss-squeeze-tube-copy\nlip-liner-07-chocolate"
+      },
+      {
+        "type": "text",
+        "id": "bundle_check_message",
+        "label": "Message above the cart",
+        "default": "A shade in one of your bundles has just sold out. Please remove that bundle and build it again before checking out."
+      }
+    ]
+  },
+  {
+    "name": "Free shipping bar",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shows how much is left until free shipping, on the cart page and in the side cart."
+      },
+      {
+        "type": "checkbox",
+        "id": "free_ship_enable",
+        "label": "Show free shipping bar",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_ship_threshold",
+        "label": "Free shipping from (LE)",
+        "default": 999,
+        "info": "Keep this the same as your free-shipping rate in Settings → Shipping."
+      },
+      {
+        "type": "text",
+        "id": "free_ship_away",
+        "label": "Message ([amount] = amount left)",
+        "default": "You're [amount] away from free shipping 💗"
+      },
+      {
+        "type": "text",
+        "id": "free_ship_done",
+        "label": "Unlocked message",
+        "default": "Yay! You've unlocked <strong>free shipping</strong> 🎉"
+      },
+      {
+        "type": "text",
+        "id": "free_ship_empty",
+        "label": "Message when the cart is empty (product pages; [threshold] = amount)",
+        "default": "🚚 Free shipping on orders over [threshold]"
+      },
+      {
+        "type": "color",
+        "id": "free_ship_bg",
+        "label": "Background",
+        "default": "#ffe6f1"
+      },
+      {
+        "type": "color",
+        "id": "free_ship_text",
+        "label": "Text",
+        "default": "#c07496"
+      },
+      {
+        "type": "color",
+        "id": "free_ship_accent",
+        "label": "Amount and bar end",
+        "default": "#b9648a"
+      },
+      {
+        "type": "color",
+        "id": "free_ship_fill_start",
+        "label": "Bar start",
+        "default": "#e4b6d5"
+      },
+      {
+        "type": "header",
+        "content": "Side cart buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "drawer_view_cart",
+        "label": "Show \"View cart\" button",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "drawer_continue",
+        "label": "Show \"Continue shopping\" link",
+        "default": true
+      }
+    ]
   }
 ]

@@ -1,0 +1,89 @@
+{% comment %}
+  Free-shipping progress bar: how much is left until free shipping, filling as the cart grows.
+  Settings live in Theme settings → Free shipping bar, so the cart page and the side cart agree.
+  The side cart re-renders itself on every change; elsewhere the bar repaints on cart updates.
+
+  Usage: {% render 'free-shipping-progress', compact: true %}
+  show_empty: true keeps it visible on an empty cart with the "empty" message (product pages).
+{% endcomment %}
+{%- if settings.free_ship_enable -%}
+  {%- liquid
+    assign threshold = settings.free_ship_threshold | times: 100
+    assign left = threshold | minus: cart.total_price
+    assign pct = cart.total_price | times: 100 | divided_by: threshold | at_most: 100
+  -%}
+  <div
+    class="free-ship-progress{% if compact %} free-ship-progress--compact{% endif %}{% if plain %} free-ship-progress--plain{% endif %}"
+    data-threshold="{{ threshold }}"
+    {% if show_empty %}data-show-empty{% endif %}
+    {% if cart.item_count == 0 %}
+      {% if show_empty %}data-empty{% else %}hidden{% endif %}
+    {% endif %}
+  >
+    <p class="free-ship-progress__msg" data-free-ship-msg>
+      {%- if cart.item_count == 0 and show_empty -%}
+        {%- assign threshold_money = threshold | money_without_trailing_zeros -%}
+        {{ settings.free_ship_empty | replace: '[threshold]', threshold_money }}
+      {%- elsif left > 0 -%}
+        {%- capture amount_html -%}<strong>{{ left | money }}</strong>{%- endcapture -%}
+        {{ settings.free_ship_away | replace: '[amount]', amount_html }}
+      {%- else -%}
+        {{ settings.free_ship_done }}
+      {%- endif -%}
+    </p>
+    <div class="free-ship-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}">
+      <div class="free-ship-progress__fill" data-free-ship-fill style="width: {{ pct }}%"></div>
+    </div>
+  </div>
+
+    <style>
+      .free-ship-progress { padding: 1.8rem 2.2rem; border-radius: 1.6rem; background: {{ settings.free_ship_bg }}; text-align: center; font-family: var(--font-body-family); }
+      .free-ship-progress[hidden] { display: none; }
+      .free-ship-progress--plain { padding: .9rem 1.2rem; border: 1px solid #efcbdb; border-radius: .8rem; background: #fff; }
+      .free-ship-progress--plain .free-ship-progress__msg { margin: 0; font-size: 1.3rem; }
+      .free-ship-progress--plain .free-ship-progress__track { display: none; }
+      .free-ship-progress[data-empty] .free-ship-progress__track { display: none; }
+      .free-ship-progress[data-empty] .free-ship-progress__msg { margin: 0; }
+      .free-ship-progress--compact { margin: 0 0 1.6rem; padding: 1.2rem 1.6rem; border-radius: 1.2rem; }
+      .free-ship-progress__msg { margin: 0 0 1rem; font-size: 1.5rem; line-height: 1.4; letter-spacing: .04rem; color: {{ settings.free_ship_text }}; }
+      .free-ship-progress--compact .free-ship-progress__msg { font-size: 1.35rem; margin-bottom: .8rem; }
+      .free-ship-progress__msg strong { font-weight: 700; color: {{ settings.free_ship_accent }}; }
+      .free-ship-progress__track { height: .9rem; overflow: hidden; border-radius: 999px; background: #fff; }
+      .free-ship-progress--compact .free-ship-progress__track { height: .7rem; }
+      .free-ship-progress__fill { display: block !important; height: 100%; border-radius: inherit; background: linear-gradient(90deg, {{ settings.free_ship_fill_start }}, {{ settings.free_ship_accent }}); transition: width .5s ease; }
+    </style>
+    <script>
+      (() => {
+        if (window.freeShipProgress) return;
+        const format = {{ shop.money_format | json }};
+        const away = {{ settings.free_ship_away | json }};
+        const done = {{ settings.free_ship_done | json }};
+        const empty = {{ settings.free_ship_empty | json }};
+        const money = (cents) => format.replace(/\{\{\s*amount[a-z_]*\s*\}\}/, (cents / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        const paint = (cart) => {
+          document.querySelectorAll('.free-ship-progress').forEach((bar) => {
+            if (bar.closest('cart-drawer')) return; // the side cart re-renders itself
+            const threshold = Number(bar.dataset.threshold);
+            const left = threshold - cart.total_price;
+            const pct = Math.min(100, (cart.total_price / threshold) * 100);
+            const isEmpty = cart.item_count === 0;
+            const showEmpty = bar.hasAttribute('data-show-empty');
+            bar.hidden = isEmpty && !showEmpty;
+            bar.toggleAttribute('data-empty', isEmpty && showEmpty);
+            bar.querySelector('[data-free-ship-msg]').innerHTML = isEmpty && showEmpty
+              ? empty.replace('[threshold]', money(threshold).replace(/\.00(?!\d)/, ''))
+              : left > 0 ? away.replace('[amount]', '<strong>' + money(left) + '</strong>') : done;
+            bar.querySelector('[data-free-ship-fill]').style.width = pct + '%';
+            bar.querySelector('[role=progressbar]').setAttribute('aria-valuenow', Math.round(pct));
+          });
+        };
+        window.freeShipProgress = { paint };
+        document.addEventListener('DOMContentLoaded', () => {
+          if (typeof subscribe !== 'function' || typeof PUB_SUB_EVENTS === 'undefined') return;
+          subscribe(PUB_SUB_EVENTS.cartUpdate, () => {
+            fetch('/cart.js', { headers: { Accept: 'application/json' } }).then((r) => r.json()).then(paint);
+          });
+        });
+      })();
+    </script>
+{%- endif -%}

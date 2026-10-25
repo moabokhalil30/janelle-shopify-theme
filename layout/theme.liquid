@@ -300,6 +300,7 @@
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
+    {% render 'page-loader' %}
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
@@ -383,5 +384,6 @@
 </script>
 <script id = "zsiqscript" src = "https://salesiq.zoho.com/widget?wc=siq409531e914ea4476943549c1c0ec271b28bc9a3de29ffbb49d5da4d71351350d" defer >
 </script>
+    {% render 'bundle-stock-check' %}
   </body>
 </html>

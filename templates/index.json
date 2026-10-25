@@ -818,6 +818,65 @@
         "ai_gen_block_7863291_xBEFff"
       ],
       "settings": {}
+    },
+    "shade_pairs": {
+      "type": "janelle-shade-pairs",
+      "blocks": {
+        "p1": {
+          "type": "pair",
+          "settings": {
+            "title": "Everyday nude",
+            "tag": "Most picked",
+            "product_a": "lip-liner-07-chocolate",
+            "shade_a": "08 Nude",
+            "product_b": "lip-gloss-brush-tube",
+            "shade_b": "Creamy Latte"
+          }
+        },
+        "p2": {
+          "type": "pair",
+          "settings": {
+            "title": "Soft mauve",
+            "product_a": "lip-liner-07-chocolate",
+            "shade_a": "02 Cashmere",
+            "product_b": "lip-gloss-brush-tube",
+            "shade_b": "Dolly",
+            "photo_offset": 3
+          }
+        },
+        "p3": {
+          "type": "pair",
+          "settings": {
+            "title": "Warm terracotta",
+            "product_a": "lip-liner-07-chocolate",
+            "shade_a": "01 Brunette",
+            "product_b": "lip-gloss-brush-tube",
+            "shade_b": "Paradise"
+          }
+        },
+        "p4": {
+          "type": "pair",
+          "settings": {
+            "title": "Peachy glow",
+            "product_a": "lip-liner-07-chocolate",
+            "shade_a": "06 Blush",
+            "product_b": "lip-gloss-brush-tube",
+            "shade_b": "Peach Cake",
+            "photo_offset": 4
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "settings": {
+        "more_link": "shopify://collections/bundles",
+        "bg": "#ffffff",
+        "hide_soldout": true
+      }
     }
   },
   "order": [
@@ -825,6 +884,7 @@
     "shop_by_collection",
     "mini_bag_banner",
     "lip_gloss_slider",
+    "shade_pairs",
     "slideshow_xwqYtR",
     "rich_text_AYfVGY",
     "17665770919d9b6881",

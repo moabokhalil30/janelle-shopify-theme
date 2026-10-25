@@ -60,6 +60,22 @@
           "settings": {
             "share_label": "Share"
           }
+        },
+        "free_shipping_note": {
+          "type": "free_shipping_note",
+          "settings": {}
+        },
+        "complete_look": {
+          "type": "complete_look",
+          "settings": {
+            "liner": "lip-liner-07-chocolate",
+            "gloss": "lip-gloss-brush-tube",
+            "label": "Complete the look: matching liner",
+            "pairs": "Creamy Latte=08 Nude|01 Brunette\nMilk Pink=05 Pink|02 Cashmere\nMolly=05 Pink|02 Cashmere\nVelvet Rose=03 Ruby|02 Cashmere\nPillow Talk=08 Nude|01 Brunette\nDolly=02 Cashmere\nRose Wood=02 Cashmere|07 Chocolate\nMocha=07 Chocolate|01 Brunette\nParadise=01 Brunette|08 Nude\nStardust=08 Nude|02 Cashmere\nBarbie Dreams=05 Pink|02 Cashmere\nPeach Cake=06 Blush|01 Brunette\nRuby=03 Ruby|06 Blush\nPower Pink=05 Pink|06 Blush\nPink Matcha=05 Pink|02 Cashmere",
+            "product_rules": "lip-kit-bundle=the-beauty-bag\niconic-lip-trio=the-beauty-bag\nthe-minis=mini-beauty-bag\nthe-beauty-bag=lip-kit-bundle\nmini-beauty-bag=the-minis\nkeychain=lip-gloss-squeeze-tube:Barbie Dreams",
+            "rule_label": "Complete the look:",
+            "build_label": "Build yours →"
+          }
         }
       },
       "block_order": [
@@ -69,6 +85,8 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
+        "free_shipping_note",
+        "complete_look",
         "description",
         "share"
       ],

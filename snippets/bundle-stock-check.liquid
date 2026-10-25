@@ -1,0 +1,247 @@
+{% comment %}
+  Bundle stock check.
+  Bundles from the shade picker go into the cart as one product, with the chosen shades stored in the
+  hidden "_Component variant IDs" property. Shopify's checkout only checks the bundle's own stock,
+  so an old cart can still buy a bundle whose shade has since sold out.
+  This checks every bundle shade against live stock; if one is sold out it marks the bundle in the
+  cart and blocks checkout until the customer removes or rebuilds it.
+  Controlled from Theme settings → Bundle stock check.
+{% endcomment %}
+{%- if settings.bundle_check_enable -%}
+  {%- liquid
+    assign handle_list = settings.bundle_check_products | newline_to_br | replace: '<br />', ',' | split: ','
+    assign handles = ''
+    for raw_handle in handle_list
+      assign clean_handle = raw_handle | strip
+      if clean_handle != blank
+        assign handles = handles | append: clean_handle | append: ','
+      endif
+    endfor
+    assign handles = handles | split: ','
+  -%}
+  <style>
+    .bundle-stock-warning {
+      margin: 0.8rem 0 0;
+      padding: 1rem 1.2rem;
+      border-radius: 0.6rem;
+      background: #fdecef;
+      color: #9b1c31;
+      font-size: 1.3rem;
+      line-height: 1.4;
+    }
+
+    .bundle-stock-warning strong {
+      font-weight: 700;
+    }
+
+    .bundle-stock-banner {
+      width: calc(100% - 3rem);
+      max-width: calc(var(--page-width) - 3rem);
+      margin: 1.6rem auto;
+      box-sizing: border-box;
+      padding: 1.2rem 1.6rem;
+      border-radius: 0.6rem;
+      background: #fdecef;
+      color: #9b1c31;
+      font-size: 1.4rem;
+      line-height: 1.4;
+    }
+
+    .bundle-stock-blocked {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+  </style>
+
+  <script>
+    (function () {
+      if (window.__bundleStockCheck) return;
+      window.__bundleStockCheck = true;
+
+      var rootUrl = {{ routes.root_url | json }};
+      if (rootUrl.slice(-1) !== '/') rootUrl += '/';
+      var shadeProducts = {{ handles | json }};
+      var bannerText = {{ settings.bundle_check_message | json }};
+      var componentKey = '_Component variant IDs';
+      var blocked = false;
+      var running = false;
+
+      function getJSON(url) {
+        return fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' }).then(function (response) {
+          if (!response.ok) throw new Error(url);
+          return response.json();
+        });
+      }
+
+      function loadShadeStock() {
+        return Promise.all(
+          shadeProducts.map(function (handle) {
+            return getJSON(rootUrl + 'products/' + encodeURIComponent(handle) + '.js').catch(function () {
+              return null;
+            });
+          })
+        ).then(function (products) {
+          var stock = {};
+          products.forEach(function (product) {
+            if (!product) return;
+            product.variants.forEach(function (variant) {
+              stock[String(variant.id)] = { available: variant.available, title: variant.title, product: product.title };
+            });
+          });
+          return stock;
+        });
+      }
+
+      function findRow(index) {
+        return document.querySelectorAll('#CartItem-' + index + ', #CartDrawer-Item-' + index);
+      }
+
+      function clearWarnings() {
+        document.querySelectorAll('.bundle-stock-warning, .bundle-stock-banner').forEach(function (el) {
+          el.remove();
+        });
+      }
+
+      function setBlocked(state) {
+        blocked = state;
+        document.querySelectorAll('[name="checkout"], .cart__dynamic-checkout-buttons, .additional-checkout-buttons').forEach(function (el) {
+          el.classList.toggle('bundle-stock-blocked', state);
+          if ('disabled' in el) el.disabled = state;
+        });
+      }
+
+      function showProblems(problems) {
+        clearWarnings();
+        if (!problems.length) {
+          setBlocked(false);
+          return;
+        }
+
+        problems.forEach(function (problem) {
+          findRow(problem.index).forEach(function (row) {
+            var cell = row.querySelector('.cart-item__details') || row.querySelector('td') || row;
+            var warning = document.createElement('p');
+            warning.className = 'bundle-stock-warning';
+            warning.setAttribute('role', 'alert');
+            var strong = document.createElement('strong');
+            strong.textContent = problem.shades.join(', ');
+            warning.append('Sold out: ', strong, '. Please remove this ' + problem.bundle + ' and build it again with available shades.');
+            cell.appendChild(warning);
+          });
+        });
+
+        var container = document.querySelector('cart-items .title-wrapper-with-link, cart-items, cart-drawer-items');
+        if (container) {
+          var banner = document.createElement('div');
+          banner.className = 'bundle-stock-banner';
+          banner.setAttribute('role', 'alert');
+          banner.textContent = bannerText;
+          container.parentNode.insertBefore(banner, container);
+        }
+
+        setBlocked(true);
+      }
+
+      function check() {
+        if (running) return;
+        running = true;
+        getJSON(rootUrl + 'cart.js')
+          .then(function (cart) {
+            var bundles = cart.items
+              .map(function (item, i) {
+                var ids = item.properties && item.properties[componentKey];
+                if (!ids) return null;
+                return { index: i + 1, bundle: item.product_title, ids: String(ids).split(',').map(function (s) { return s.trim(); }).filter(Boolean) };
+              })
+              .filter(Boolean);
+
+            if (!bundles.length) {
+              showProblems([]);
+              return;
+            }
+
+            return loadShadeStock().then(function (stock) {
+              var problems = [];
+              bundles.forEach(function (bundle) {
+                var soldOut = [];
+                bundle.ids.forEach(function (id) {
+                  var shade = stock[id];
+                  if (shade && !shade.available && soldOut.indexOf(shade.title) === -1) soldOut.push(shade.title);
+                });
+                if (soldOut.length) problems.push({ index: bundle.index, bundle: bundle.bundle, shades: soldOut });
+              });
+              showProblems(problems);
+            });
+          })
+          .catch(function () {
+            // If the check itself fails, never block a sale because of it.
+            showProblems([]);
+          })
+          .finally(function () {
+            running = false;
+          });
+      }
+
+      // Stop checkout attempts that slip past a disabled button (e.g. keyboard submit, /checkout links).
+      document.addEventListener(
+        'click',
+        function (event) {
+          if (!blocked) return;
+          var target = event.target.closest('[name="checkout"], a[href*="/checkout"], .cart__dynamic-checkout-buttons, .additional-checkout-buttons');
+          if (!target) return;
+          event.preventDefault();
+          event.stopPropagation();
+          var banner = document.querySelector('.bundle-stock-banner');
+          if (banner) banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+        true
+      );
+
+      document.addEventListener(
+        'submit',
+        function (event) {
+          if (!blocked) return;
+          var submitter = event.submitter;
+          if (submitter && submitter.name === 'checkout') event.preventDefault();
+        },
+        true
+      );
+
+      var timer;
+      function scheduleCheck() {
+        clearTimeout(timer);
+        timer = setTimeout(check, 400);
+      }
+
+      // Re-check whenever the cart contents on the page are re-rendered (quantity change, remove, drawer open).
+      function isOwnNode(node) {
+        return node.nodeType === 1 && /\bbundle-stock-(warning|banner)\b/.test(node.className);
+      }
+
+      var observer = new MutationObserver(function (mutations) {
+        var relevant = mutations.some(function (mutation) {
+          var node = mutation.target;
+          if (!(node.closest && node.closest('cart-items, cart-drawer-items, cart-notification, #cart-notification'))) return false;
+          var changed = Array.prototype.slice.call(mutation.addedNodes).concat(Array.prototype.slice.call(mutation.removedNodes));
+          // Our own warnings being added/removed must not trigger another check.
+          return changed.length === 0 || !changed.every(isOwnNode);
+        });
+        if (relevant) scheduleCheck();
+      });
+
+      function start() {
+        observer.observe(document.body, { childList: true, subtree: true });
+        check();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
+      }
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) check();
+      });
+    })();
+  </script>
+{%- endif -%}

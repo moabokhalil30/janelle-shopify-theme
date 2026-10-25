@@ -298,6 +298,337 @@
                   <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
                   {{- product.selected_or_first_available_variant.sku -}}
                 </p>
+              {%- when 'complete_look' -%}
+                {%- comment -%}
+                  One-line upsell under Add to cart: on a gloss it suggests the matching liner shade,
+                  on the liner the matching gloss (from the pairing list). One tap adds the suggestion.
+                  Ported from Concept 3 "c3-complete-look".
+                {%- endcomment -%}
+                  <style>
+                    .complete-look { margin: .8rem 0 0; }
+                    .complete-look__btn { text-decoration: none;
+                      
+                      display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1.1rem 1.4rem;
+                      border: 1px solid {{ block.settings.border_color }}; border-radius: .8rem; background: #fff;
+                      color: {{ block.settings.text_color }}; font-family: inherit; font-size: 1.35rem; text-align: left; cursor: pointer;
+                      transition: border-color .2s;
+                    }
+                    .complete-look__btn:hover { border-color: {{ block.settings.text_color }}; }
+                    .complete-look__btn[aria-busy='true'] { opacity: .6; pointer-events: none; }
+                    .complete-look__plus { font-size: 1.8rem; line-height: 1; font-weight: 700; }
+                    .complete-look__dot { flex: 0 0 auto; width: 2.6rem; height: 2.6rem; border-radius: 50%; background-size: cover; background-position: center; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+                    .complete-look__text { flex: 1; min-width: 0; line-height: 1.3; }
+                    .complete-look__text strong { font-weight: 700; }
+                    .complete-look__price { white-space: nowrap; font-weight: 700; }
+                  </style>
+                {%- liquid
+                  assign cl_liner = block.settings.liner
+                  assign cl_gloss = block.settings.gloss
+                  assign cl_suggest = blank
+                  assign cl_is_liner = false
+                  if cl_liner != blank and cl_gloss != blank and product.has_only_default_variant == false
+                    if product.id == cl_liner.id
+                      assign cl_suggest = cl_gloss
+                      assign cl_is_liner = true
+                    elsif product.options.first == 'Color'
+                      assign cl_suggest = cl_liner
+                    endif
+                  endif
+                -%}
+                {%- comment -%}
+                  Product rules (kits, bags, keychain): "page-handle=suggested-handle" or
+                  "page-handle=suggested-handle:Preferred shade". Kits built with the shade picker
+                  can't be added without their shades, so those open the kit page instead.
+                {%- endcomment -%}
+                {%- liquid
+                  assign pr_target = blank
+                  assign pr_shade = ''
+                  assign pr_lines = block.settings.product_rules | newline_to_br | split: '<br />'
+                  for pr_line in pr_lines
+                    assign pr_parts = pr_line | strip | split: '='
+                    if pr_parts.size == 2 and pr_parts[0] == product.handle
+                      assign pr_right = pr_parts[1] | split: ':'
+                      assign pr_target = all_products[pr_right[0]]
+                      if pr_right.size > 1
+                        assign pr_shade = pr_right[1] | strip
+                      endif
+                    endif
+                  endfor
+                -%}
+                {%- if pr_target != blank and pr_target.available -%}
+                  {%- liquid
+                    assign pr_variant = pr_target.first_available_variant
+                    for v in pr_target.variants
+                      if v.title == pr_shade and v.available
+                        assign pr_variant = v
+                      endif
+                    endfor
+                    assign pr_is_kit = false
+                    if pr_target.template_suffix contains 'builder' or pr_target.template_suffix contains 'aov'
+                      assign pr_is_kit = true
+                    endif
+                    assign pr_img = pr_variant.featured_image | default: pr_target.featured_image
+                  -%}
+                  <div class="complete-look" {{ block.shopify_attributes }}>
+                    {%- if pr_is_kit -%}
+                      <a class="complete-look__btn" href="{{ pr_target.url }}">
+                        <span class="complete-look__plus" aria-hidden="true">+</span>
+                        <span class="complete-look__dot" style="background-image:url('{{ pr_img | image_url: width: 80 }}')"></span>
+                        <span class="complete-look__text">{{ block.settings.rule_label }} <strong>{{ pr_target.title | downcase | capitalize }}</strong></span>
+                        <span class="complete-look__price">{{ block.settings.build_label }}</span>
+                      </a>
+                    {%- else -%}
+                      <button type="button" class="complete-look__btn" data-look-fixed="{{ pr_variant.id }}">
+                        <span class="complete-look__plus" aria-hidden="true">+</span>
+                        <span class="complete-look__dot" style="background-image:url('{{ pr_img | image_url: width: 80 }}')"></span>
+                        <span class="complete-look__text">
+                          {{ block.settings.rule_label }} <strong>{{ pr_target.title | downcase | capitalize }}</strong>
+                          {%- unless pr_target.has_only_default_variant %} · {{ pr_variant.title }}{% endunless -%}
+                        </span>
+                        <span class="complete-look__price">+{{ pr_variant.price | money_without_trailing_zeros }}</span>
+                      </button>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+                {%- if cl_suggest != blank -%}
+                  <div class="complete-look" id="CompleteLook-{{ section.id }}" {{ block.shopify_attributes }} hidden>
+                    <button type="button" class="complete-look__btn" data-look-add>
+                      <span class="complete-look__plus" aria-hidden="true">+</span>
+                      <span class="complete-look__dot" data-look-dot></span>
+                      <span class="complete-look__text">
+                        {% if cl_is_liner %}{{ block.settings.liner_label }}{% else %}{{ block.settings.label }}{% endif %}
+                        <strong data-look-name></strong>
+                      </span>
+                      <span class="complete-look__price" data-look-price></span>
+                    </button>
+                  </div>
+                  <script type="application/json" data-look-config="{{ section.id }}">
+                    {
+                      "isLinerPage": {{ cl_is_liner }},
+                      "variants": {
+                        {%- for v in product.variants -%}
+                          "{{ v.id }}": {{ v.title | json }}{% unless forloop.last %},{% endunless %}
+                        {%- endfor -%}
+                      },
+                      "start": {{ product.selected_or_first_available_variant.id | json }},
+                      "suggest": [
+                        {%- for v in cl_suggest.variants -%}
+                          { "id": {{ v.id }}, "name": {{ v.title | json }}, "price": {{ v.price }}, "available": {{ v.available }},
+                            "img": {{ v.featured_image | default: cl_suggest.featured_image | image_url: width: 80 | json }} }{% unless forloop.last %},{% endunless %}
+                        {%- endfor -%}
+                      ],
+                      "pairs": {{ block.settings.pairs | json }},
+                      "moneyFormat": {{ shop.money_format | json }},
+                      "added": {{ block.settings.added_label | json }}
+                    }
+                  </script>
+                  <script>
+                    (() => {
+                      const root = document.getElementById('CompleteLook-{{ section.id }}');
+                      const config = JSON.parse(document.querySelector('[data-look-config="{{ section.id }}"]').textContent);
+                      const pairs = {};
+                      config.pairs.split(/\n|;/).forEach((line) => {
+                        const p = line.split('=');
+                        if (p.length < 2) return;
+                        const gloss = p[0].trim();
+                        const liners = p[1].split('|').map((s) => s.trim());
+                        if (config.isLinerPage) liners.forEach((l) => (pairs[l] = pairs[l] || []).push(gloss));
+                        else pairs[gloss] = liners;
+                      });
+                      const money = (c) => config.moneyFormat.replace(/\{\{\s*amount[a-z_]*\s*\}\}/, (c / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')).replace(/\.00(?!\d)/, '');
+                      let pick = null;
+                      const render = (variantId) => {
+                        const title = config.variants[variantId];
+                        const wanted = pairs[title] || [];
+                        pick = wanted.map((n) => config.suggest.find((s) => s.name === n && s.available)).find(Boolean) || null;
+                        root.hidden = !pick;
+                        if (!pick) return;
+                        root.querySelector('[data-look-name]').textContent = pick.name;
+                        root.querySelector('[data-look-price]').textContent = '+' + money(pick.price);
+                        root.querySelector('[data-look-dot]').style.backgroundImage = 'url(' + pick.img + ')';
+                      };
+                      root.querySelector('[data-look-add]').addEventListener('click', async (e) => {
+                        if (!pick) return;
+                        const btn = e.currentTarget;
+                        btn.setAttribute('aria-busy', 'true');
+                        const cart = document.querySelector('cart-drawer') || document.querySelector('cart-notification');
+                        const body = { items: [{ id: pick.id, quantity: 1 }] };
+                        if (cart && cart.getSectionsToRender) {
+                          body.sections = cart.getSectionsToRender().map((s) => s.id);
+                          body.sections_url = window.location.pathname;
+                        }
+                        try {
+                          const res = await fetch(((window.routes && window.routes.cart_add_url) || '/cart/add') + '.js', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body),
+                          });
+                          const data = await res.json();
+                          if (!res.ok || data.status) throw new Error(data.description || 'Could not add');
+                          if (cart && cart.renderContents && data.sections) {
+                            cart.classList.contains('is-empty') && cart.classList.remove('is-empty');
+                            cart.renderContents(Object.assign({}, data.items ? data.items[0] : data, { sections: data.sections }));
+                          }
+                          if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') publish(PUB_SUB_EVENTS.cartUpdate, { source: 'complete-look' });
+                        } catch (err) {
+                          root.querySelector('[data-look-price]').textContent = err.message;
+                        } finally {
+                          btn.removeAttribute('aria-busy');
+                        }
+                      });
+                      document.addEventListener('DOMContentLoaded', () => {
+                        if (typeof subscribe === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
+                          subscribe(PUB_SUB_EVENTS.variantChange, (evt) => { const v = evt && evt.data && evt.data.variant; if (v) render(v.id); });
+                        }
+                      });
+                      render(config.start);
+                    })();
+                  </script>
+                {%- endif -%}
+                <script>
+                  (() => {
+                    document.querySelectorAll('#shopify-section-{{ section.id }} [data-look-fixed]').forEach((btn) => {
+                      if (btn.dataset.bound) return;
+                      btn.dataset.bound = '1';
+                      btn.addEventListener('click', async () => {
+                        btn.setAttribute('aria-busy', 'true');
+                        const cart = document.querySelector('cart-drawer') || document.querySelector('cart-notification');
+                        const body = { items: [{ id: Number(btn.dataset.lookFixed), quantity: 1 }] };
+                        if (cart && cart.getSectionsToRender) { body.sections = cart.getSectionsToRender().map((x) => x.id); body.sections_url = window.location.pathname; }
+                        try {
+                          const res = await fetch(((window.routes && window.routes.cart_add_url) || '/cart/add') + '.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+                          const data = await res.json();
+                          if (!res.ok || data.status) throw new Error(data.description || 'Could not add');
+                          if (cart && cart.renderContents && data.sections) { cart.classList.remove('is-empty'); cart.renderContents(Object.assign({}, data.items ? data.items[0] : data, { sections: data.sections })); }
+                          if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') publish(PUB_SUB_EVENTS.cartUpdate, { source: 'complete-look' });
+                        } catch (err) {
+                          btn.querySelector('.complete-look__price').textContent = err.message;
+                        } finally { btn.removeAttribute('aria-busy'); }
+                      });
+                    });
+                  })();
+                </script>
+              {%- when 'free_shipping_note' -%}
+                <div class="product__free-ship" {{ block.shopify_attributes }} style="margin: 1.2rem 0 .4rem;">
+                  {% render 'free-shipping-progress', compact: true, show_empty: true, plain: true %}
+                </div>
+              {%- when 'shade_finder' -%}
+                {%- comment -%}
+                  Turns the shade swatches into big round swatches with the name underneath,
+                  and adds shade-family chips (matched on shade name + shade description).
+                  The theme redraws the picker on every shade change, so the chips re-attach.
+                {%- endcomment -%}
+                {%- liquid
+                  assign sf_root = '#shopify-section-' | append: section.id
+                  assign sf_size = block.settings.swatch_size
+                -%}
+                <style>
+                  {{ sf_root }} .product-form__input--swatch { display: flex; flex-wrap: wrap; gap: 1.4rem .2rem; }
+                  {{ sf_root }} .product-form__input--swatch .form__label { width: 100%; margin-bottom: .4rem; }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__label {
+                    --swatch-input--size: {{ sf_size }}px;
+                    display: inline-flex; flex-direction: column; align-items: center; gap: .6rem;
+                    width: calc({{ sf_size }}px + 2.2rem); margin: 0 !important; padding: .4rem 0 0;
+                    border-radius: 0; outline: none !important; box-shadow: none !important;
+                  }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__label > .swatch {
+                    --swatch--border-radius: 50%; border-radius: 50%;
+                    outline: 2px solid transparent; outline-offset: 3px; transition: outline-color .2s, transform .2s;
+                  }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__label:hover > .swatch { transform: scale(1.05); }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__label::after {
+                    content: attr(title); font-size: 1.05rem; font-weight: 400; line-height: 1.2; letter-spacing: .02rem;
+                    text-align: center; color: {{ block.settings.name_color }};
+                  }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__input:checked + .swatch-input__label > .swatch { outline-color: {{ block.settings.accent_color }}; }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__input:checked + .swatch-input__label::after { font-weight: 700; color: {{ block.settings.accent_color }}; }
+                  /* Sold out: theme's own cross on the circle; name faded but not struck through. */
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__input.visually-disabled + .swatch-input__label::after,
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__input:disabled + .swatch-input__label::after { opacity: .55; text-decoration: none; }
+                  {{ sf_root }} .product-form__input--swatch .swatch-input__label.is-filtered-out { display: none; }
+                  {{ sf_root }} .shade-finder__chips { display: flex; flex-wrap: wrap; gap: .6rem; width: 100%; margin: .2rem 0 .8rem; }
+                  {{ sf_root }} .shade-finder__chip {
+                    padding: .8rem 1.4rem; border: 1px solid {{ block.settings.chip_color }}; border-radius: 999px;
+                    background: #fff; color: {{ block.settings.name_color }};
+                    font-family: inherit; font-size: 1.3rem; font-weight: 700; line-height: 1; letter-spacing: .04rem; cursor: pointer;
+                  }
+                  {{ sf_root }} .shade-finder__chip[aria-pressed='true'] { border-color: {{ block.settings.accent_color }}; background: {{ block.settings.chip_color }}; color: {{ block.settings.accent_color }}; }
+                  @media screen and (max-width: 749px) {
+                    {{ sf_root }} .product-form__input--swatch { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem .4rem; }
+                    {{ sf_root }} .product-form__input--swatch .form__label,
+                    {{ sf_root }} .shade-finder__chips { grid-column: 1 / -1; }
+                    {{ sf_root }} .product-form__input--swatch .swatch-input__label { --swatch-input--size: min({{ sf_size | times: 1.08 | round }}px, 16vw); width: auto; }
+                  }
+                </style>
+
+                {%- capture sf_descriptions -%}
+                  {
+                  {%- for v in product.variants -%}
+                    {{ v.option1 | json }}: {{ v.metafields.custom.shade_description.value | default: '' | json }}{% unless forloop.last %},{% endunless %}
+                  {%- endfor -%}
+                  }
+                {%- endcapture -%}
+                <script type="application/json" data-shade-finder="{{ section.id }}" {{ block.shopify_attributes }}>
+                  {
+                    "descriptions": {{ sf_descriptions }},
+                    "families": [
+                      { "label": {{ block.settings.family_nude | json }}, "test": "nude|brown|latte|mocha|chocolate|honey|terracotta|peach|caramel|espresso" },
+                      { "label": {{ block.settings.family_pink | json }}, "test": "pink|rose|mauve|blush" },
+                      { "label": {{ block.settings.family_red | json }}, "test": "red|ruby|berry|wine|maroon" },
+                      { "label": {{ block.settings.family_sheer | json }}, "test": "sheer|transparent|glitter|shimmer|clear" }
+                    ],
+                    "all": {{ block.settings.family_all | json }}
+                  }
+                </script>
+                <script>
+                  (() => {
+                    const root = document.getElementById('shopify-section-{{ section.id }}');
+                    const config = JSON.parse(document.querySelector('[data-shade-finder="{{ section.id }}"]').textContent);
+                    const families = config.families.map((f) => ({ label: f.label, test: new RegExp(f.test, 'i') }));
+                    let active = 0;
+
+                    const matches = (family, input) => !family || family.test.test(input.value + ' ' + (config.descriptions[input.value] || ''));
+
+                    const apply = (fieldset, chosen) => {
+                      fieldset.querySelectorAll('.swatch-input__input').forEach((input) => {
+                        input.nextElementSibling?.classList.toggle('is-filtered-out', !matches(chosen, input));
+                      });
+                    };
+
+                    const init = () => {
+                      const fieldset = root.querySelector('.product-form__input--swatch');
+                      if (!fieldset || fieldset.querySelector('.shade-finder__chips')) return;
+                      const inputs = [...fieldset.querySelectorAll('.swatch-input__input')];
+                      const used = families.filter((f) => inputs.some((i) => matches(f, i)));
+                      if (used.length < 2) return;
+                      const options = [null, ...used];
+                      if (active >= options.length) active = 0;
+
+                      const bar = document.createElement('div');
+                      bar.className = 'shade-finder__chips';
+                      bar.setAttribute('role', 'group');
+                      bar.setAttribute('aria-label', 'Shade family');
+                      options.forEach((family, i) => {
+                        const chip = document.createElement('button');
+                        chip.type = 'button';
+                        chip.className = 'shade-finder__chip';
+                        chip.textContent = family ? family.label : config.all;
+                        chip.setAttribute('aria-pressed', i === active ? 'true' : 'false');
+                        chip.addEventListener('click', () => {
+                          active = i;
+                          bar.querySelectorAll('.shade-finder__chip').forEach((c, j) => c.setAttribute('aria-pressed', j === i ? 'true' : 'false'));
+                          apply(fieldset, family);
+                        });
+                        bar.appendChild(chip);
+                      });
+                      const legend = fieldset.querySelector('legend');
+                      legend ? legend.after(bar) : fieldset.prepend(bar);
+                      apply(fieldset, options[active]);
+                    };
+
+                    init();
+                    // The picker is redrawn after each shade change; put the chips back.
+                    new MutationObserver(init).observe(root, { childList: true, subtree: true });
+                  })();
+                </script>
               {%- when 'shade_description' -%}
                 {%- assign shade_description = product.selected_or_first_available_variant.metafields.custom.shade_description.value -%}
                 <p
@@ -1036,6 +1367,171 @@
       "limit": 1
     },
     {
+      "type": "complete_look",
+      "name": "Complete the look",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "One line under Add to cart: on a gloss it suggests the matching liner shade, on the liner the matching gloss. One tap adds it."
+        },
+        {
+          "type": "product",
+          "id": "liner",
+          "label": "Liner product"
+        },
+        {
+          "type": "product",
+          "id": "gloss",
+          "label": "Gloss to suggest on the liner page"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Text on gloss pages",
+          "default": "Complete the look: matching shade"
+        },
+        {
+          "type": "text",
+          "id": "liner_label",
+          "label": "Text on the liner page",
+          "default": "Complete the look: matching gloss"
+        },
+        {
+          "type": "text",
+          "id": "added_label",
+          "label": "Added message",
+          "default": "Added ✓"
+        },
+        {
+          "type": "textarea",
+          "id": "pairs",
+          "label": "Shade pairings",
+          "info": "One per line: Gloss shade=Liner shade. Add a backup after | in case the first is sold out.",
+          "default": "Creamy Latte=08 Nude|01 Brunette"
+        },
+        {
+          "type": "header",
+          "content": "Kits, bags and other products"
+        },
+        {
+          "type": "textarea",
+          "id": "product_rules",
+          "label": "Product suggestions",
+          "info": "One per line: product-handle=suggested-handle. Add :Shade to pick a shade, e.g. keychain=lip-gloss-squeeze-tube:Barbie Dreams. Kits with a shade picker open their page instead of adding.",
+          "default": "lip-kit-bundle=the-beauty-bag\niconic-lip-trio=the-beauty-bag\nthe-minis=mini-beauty-bag\nthe-beauty-bag=lip-kit-bundle\nmini-beauty-bag=the-minis\nkeychain=lip-gloss-squeeze-tube:Barbie Dreams"
+        },
+        {
+          "type": "text",
+          "id": "rule_label",
+          "label": "Text for these suggestions",
+          "default": "Complete the look:"
+        },
+        {
+          "type": "text",
+          "id": "build_label",
+          "label": "Link text for kits",
+          "default": "Build yours →"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text colour",
+          "default": "#b9648a"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Border colour",
+          "default": "#efcbdb"
+        }
+      ]
+    },
+    {
+      "type": "free_shipping_note",
+      "name": "Free shipping message",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows how much more to add for free shipping. Text, amount and colours are in Theme settings → Free shipping bar."
+        }
+      ]
+    },
+    {
+      "type": "shade_finder",
+      "name": "Shade finder",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Big round shade swatches with names, plus shade-family filters. Families are matched on the shade name and its Shade description."
+        },
+        {
+          "type": "range",
+          "id": "swatch_size",
+          "label": "Swatch size",
+          "min": 40,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 56
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Shade name colour",
+          "default": "#c07496"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Selected colour",
+          "default": "#b9648a"
+        },
+        {
+          "type": "color",
+          "id": "chip_color",
+          "label": "Filter chip colour",
+          "default": "#f5d5e6"
+        },
+        {
+          "type": "header",
+          "content": "Filter names"
+        },
+        {
+          "type": "text",
+          "id": "family_all",
+          "label": "All",
+          "default": "All shades"
+        },
+        {
+          "type": "text",
+          "id": "family_nude",
+          "label": "Nudes",
+          "default": "Nudes & browns"
+        },
+        {
+          "type": "text",
+          "id": "family_pink",
+          "label": "Pinks",
+          "default": "Pinks & mauves"
+        },
+        {
+          "type": "text",
+          "id": "family_red",
+          "label": "Reds",
+          "default": "Reds"
+        },
+        {
+          "type": "text",
+          "id": "family_sheer",
+          "label": "Sheer",
+          "default": "Sheer & glitter"
+        }
+      ]
+    },
+    {
       "type": "shade_description",
       "name": "Shade description",
       "limit": 1,
@@ -1190,37 +1686,134 @@
       "name": "Bundle builder",
       "limit": 1,
       "settings": [
-        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Build your kit" },
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Choose your shades" },
-        { "type": "text", "id": "empty_text", "label": "Empty slot text", "default": "Not selected" },
-        { "type": "text", "id": "button_label", "label": "Button label", "default": "Add selected kit to cart" },
-        { "type": "text", "id": "incomplete_text", "label": "Incomplete status", "default": "Choose all 3 shades to continue" },
-        { "type": "text", "id": "complete_text", "label": "Complete status", "default": "Your kit is ready." },
-        { "type": "text", "id": "adding_text", "label": "Adding status", "default": "Adding your kit..." },
-        { "type": "text", "id": "error_text", "label": "Error status", "default": "Could not add your kit. Please try again." },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "Build your kit"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Choose your shades"
+        },
+        {
+          "type": "text",
+          "id": "empty_text",
+          "label": "Empty slot text",
+          "default": "Not selected"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Add selected kit to cart"
+        },
+        {
+          "type": "text",
+          "id": "incomplete_text",
+          "label": "Incomplete status",
+          "default": "Choose all 3 shades to continue"
+        },
+        {
+          "type": "text",
+          "id": "complete_text",
+          "label": "Complete status",
+          "default": "Your kit is ready."
+        },
+        {
+          "type": "text",
+          "id": "adding_text",
+          "label": "Adding status",
+          "default": "Adding your kit..."
+        },
+        {
+          "type": "text",
+          "id": "error_text",
+          "label": "Error status",
+          "default": "Could not add your kit. Please try again."
+        },
         {
           "type": "select",
           "id": "cart_mode",
           "label": "Cart pricing mode",
           "default": "bundle_product",
           "options": [
-            { "value": "bundle_product", "label": "Fixed bundle product price" },
-            { "value": "component_variants", "label": "Component variant prices" }
+            {
+              "value": "bundle_product",
+              "label": "Fixed bundle product price"
+            },
+            {
+              "value": "component_variants",
+              "label": "Component variant prices"
+            }
           ],
           "info": "Fixed bundle product price adds this product to cart with shade selections as properties. Component variant prices adds each selected variant as its own cart line."
         },
-        { "type": "header", "content": "Slot 1" },
-        { "type": "text", "id": "label_1", "label": "Label", "default": "Squeeze gloss" },
-        { "type": "text", "id": "source_handle_1", "label": "Fallback product handle", "info": "Only used if the source product picker is empty or unavailable." },
-        { "type": "product", "id": "source_product_1", "label": "Source product" },
-        { "type": "header", "content": "Slot 2" },
-        { "type": "text", "id": "label_2", "label": "Label", "default": "Brush gloss" },
-        { "type": "text", "id": "source_handle_2", "label": "Fallback product handle", "info": "Only used if the source product picker is empty or unavailable." },
-        { "type": "product", "id": "source_product_2", "label": "Source product" },
-        { "type": "header", "content": "Slot 3" },
-        { "type": "text", "id": "label_3", "label": "Label", "default": "Lip liner" },
-        { "type": "text", "id": "source_handle_3", "label": "Fallback product handle", "info": "Only used if the source product picker is empty or unavailable." },
-        { "type": "product", "id": "source_product_3", "label": "Source product" }
+        {
+          "type": "header",
+          "content": "Slot 1"
+        },
+        {
+          "type": "text",
+          "id": "label_1",
+          "label": "Label",
+          "default": "Squeeze gloss"
+        },
+        {
+          "type": "text",
+          "id": "source_handle_1",
+          "label": "Fallback product handle",
+          "info": "Only used if the source product picker is empty or unavailable."
+        },
+        {
+          "type": "product",
+          "id": "source_product_1",
+          "label": "Source product"
+        },
+        {
+          "type": "header",
+          "content": "Slot 2"
+        },
+        {
+          "type": "text",
+          "id": "label_2",
+          "label": "Label",
+          "default": "Brush gloss"
+        },
+        {
+          "type": "text",
+          "id": "source_handle_2",
+          "label": "Fallback product handle",
+          "info": "Only used if the source product picker is empty or unavailable."
+        },
+        {
+          "type": "product",
+          "id": "source_product_2",
+          "label": "Source product"
+        },
+        {
+          "type": "header",
+          "content": "Slot 3"
+        },
+        {
+          "type": "text",
+          "id": "label_3",
+          "label": "Label",
+          "default": "Lip liner"
+        },
+        {
+          "type": "text",
+          "id": "source_handle_3",
+          "label": "Fallback product handle",
+          "info": "Only used if the source product picker is empty or unavailable."
+        },
+        {
+          "type": "product",
+          "id": "source_product_3",
+          "label": "Source product"
+        }
       ]
     },
     {
@@ -2392,95 +2985,389 @@
       "type": "featured_review",
       "name": "Featured review",
       "settings": [
-        { "type": "text", "id": "label", "label": "Label", "default": "⭐ Featured review" },
-        { "type": "richtext", "id": "quote", "label": "Review quote", "default": "<p>The only liner that lasts through my whole shift without fading. Brunette is gorgeous.</p>" },
-        { "type": "text", "id": "author", "label": "Author", "default": "Mariam H., Verified buyer" },
-        { "type": "checkbox", "id": "show_stars", "label": "Show stars", "default": true },
-        { "type": "range", "id": "rating", "label": "Star rating", "min": 0, "max": 5, "step": 1, "default": 5 },
-        { "type": "range", "id": "corner_radius", "label": "Corner radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 6 },
-        { "type": "header", "content": "Colors" },
-        { "type": "color", "id": "bg_color", "label": "Background", "default": "#f3e4ec" },
-        { "type": "color", "id": "accent_color", "label": "Accent (border + stars)", "default": "#d585a6" },
-        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" }
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "⭐ Featured review"
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Review quote",
+          "default": "<p>The only liner that lasts through my whole shift without fading. Brunette is gorgeous.</p>"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Mariam H., Verified buyer"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_stars",
+          "label": "Show stars",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "range",
+          "id": "corner_radius",
+          "label": "Corner radius",
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "default": 6
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background",
+          "default": "#f3e4ec"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Accent (border + stars)",
+          "default": "#d585a6"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#121212"
+        }
       ]
     },
     {
       "type": "benefit_bullets",
       "name": "Benefit bullets",
       "settings": [
-        { "type": "text", "id": "icon", "label": "Bullet icon", "default": "✓" },
-        { "type": "inline_richtext", "id": "bullet_1", "label": "Bullet 1", "default": "<strong>Long-wearing colour</strong> that stays put through coffee & meals" },
-        { "type": "inline_richtext", "id": "bullet_2", "label": "Bullet 2", "default": "<strong>Creamy, non-drying</strong> formula — glides on, never tugs" },
-        { "type": "inline_richtext", "id": "bullet_3", "label": "Bullet 3", "default": "<strong>Cruelty-free</strong> & flavoured" },
-        { "type": "inline_richtext", "id": "bullet_4", "label": "Bullet 4" },
-        { "type": "header", "content": "Colors" },
-        { "type": "color", "id": "icon_color", "label": "Icon color", "default": "#b9648a" },
-        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" }
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Bullet icon",
+          "default": "✓"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "bullet_1",
+          "label": "Bullet 1",
+          "default": "<strong>Long-wearing colour</strong> that stays put through coffee & meals"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "bullet_2",
+          "label": "Bullet 2",
+          "default": "<strong>Creamy, non-drying</strong> formula — glides on, never tugs"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "bullet_3",
+          "label": "Bullet 3",
+          "default": "<strong>Cruelty-free</strong> & flavoured"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "bullet_4",
+          "label": "Bullet 4"
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color",
+          "default": "#b9648a"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#121212"
+        }
       ]
     },
     {
       "type": "social_proof",
       "name": "Social proof",
       "settings": [
-        { "type": "text", "id": "icon", "label": "Icon", "default": "🔥" },
-        { "type": "text", "id": "text", "label": "Text", "default": "Bought 247 times in the last 30 days" },
-        { "type": "checkbox", "id": "show_border", "label": "Show border", "default": true },
-        { "type": "header", "content": "Colors" },
-        { "type": "color", "id": "text_color", "label": "Text", "default": "#b9648a" },
-        { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
-        { "type": "color", "id": "border_color", "label": "Border", "default": "#e9dde4" }
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon",
+          "default": "🔥"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Bought 247 times in the last 30 days"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_border",
+          "label": "Show border",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#b9648a"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Border",
+          "default": "#e9dde4"
+        }
       ]
     },
     {
       "type": "trust_row",
       "name": "Trust row",
       "settings": [
-        { "type": "range", "id": "corner_radius", "label": "Corner radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 6 },
-        { "type": "header", "content": "Item 1" },
-        { "type": "text", "id": "icon_1", "label": "Icon", "default": "🐰" },
-        { "type": "text", "id": "label_1", "label": "Label", "default": "Cruelty-free" },
-        { "type": "header", "content": "Item 2" },
-        { "type": "text", "id": "icon_2", "label": "Icon", "default": "🚚" },
-        { "type": "text", "id": "label_2", "label": "Label", "default": "Free shipping over EGP 1,000" },
-        { "type": "header", "content": "Item 3" },
-        { "type": "text", "id": "icon_3", "label": "Icon", "default": "🔒" },
-        { "type": "text", "id": "label_3", "label": "Label", "default": "Secure checkout" },
-        { "type": "header", "content": "Colors" },
-        { "type": "color", "id": "bg_color", "label": "Background", "default": "#f3e4ec" },
-        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" }
+        {
+          "type": "range",
+          "id": "corner_radius",
+          "label": "Corner radius",
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "default": 6
+        },
+        {
+          "type": "header",
+          "content": "Item 1"
+        },
+        {
+          "type": "text",
+          "id": "icon_1",
+          "label": "Icon",
+          "default": "🐰"
+        },
+        {
+          "type": "text",
+          "id": "label_1",
+          "label": "Label",
+          "default": "Cruelty-free"
+        },
+        {
+          "type": "header",
+          "content": "Item 2"
+        },
+        {
+          "type": "text",
+          "id": "icon_2",
+          "label": "Icon",
+          "default": "🚚"
+        },
+        {
+          "type": "text",
+          "id": "label_2",
+          "label": "Label",
+          "default": "Free shipping over EGP 1,000"
+        },
+        {
+          "type": "header",
+          "content": "Item 3"
+        },
+        {
+          "type": "text",
+          "id": "icon_3",
+          "label": "Icon",
+          "default": "🔒"
+        },
+        {
+          "type": "text",
+          "id": "label_3",
+          "label": "Label",
+          "default": "Secure checkout"
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background",
+          "default": "#f3e4ec"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#121212"
+        }
       ]
     },
     {
       "type": "guarantee",
       "name": "Guarantee line",
       "settings": [
-        { "type": "text", "id": "icon", "label": "Icon", "default": "🛡️" },
-        { "type": "text", "id": "text", "label": "Text", "default": "Wrong or damaged order? We'll make it right" },
-        { "type": "select", "id": "alignment", "label": "Alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" } ], "default": "center" },
-        { "type": "color", "id": "text_color", "label": "Text", "default": "#6b6b6b" }
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon",
+          "default": "🛡️"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Wrong or damaged order? We'll make it right"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#6b6b6b"
+        }
       ]
     },
     {
       "type": "kit_contents",
       "name": "Kit contents (bundles)",
       "settings": [
-        { "type": "text", "id": "heading", "label": "Heading", "default": "What's in the kit" },
-        { "type": "header", "content": "Item 1" },
-        { "type": "image_picker", "id": "image_1", "label": "Image" },
-        { "type": "text", "id": "title_1", "label": "Title", "default": "Gloss" },
-        { "type": "text", "id": "role_1", "label": "Role", "default": "shine + colour" },
-        { "type": "header", "content": "Item 2" },
-        { "type": "image_picker", "id": "image_2", "label": "Image" },
-        { "type": "text", "id": "title_2", "label": "Title", "default": "Liner" },
-        { "type": "text", "id": "role_2", "label": "Role", "default": "define + fill" },
-        { "type": "header", "content": "Item 3" },
-        { "type": "image_picker", "id": "image_3", "label": "Image" },
-        { "type": "text", "id": "title_3", "label": "Title", "default": "Mini" },
-        { "type": "text", "id": "role_3", "label": "Role", "default": "on-the-go" },
-        { "type": "header", "content": "Colors" },
-        { "type": "color", "id": "text_color", "label": "Text", "default": "#121212" },
-        { "type": "color", "id": "accent_color", "label": "Role text", "default": "#b9648a" },
-        { "type": "color", "id": "placeholder_color", "label": "Image placeholder", "default": "#f3e4ec" }
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "What's in the kit"
+        },
+        {
+          "type": "header",
+          "content": "Item 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title_1",
+          "label": "Title",
+          "default": "Gloss"
+        },
+        {
+          "type": "text",
+          "id": "role_1",
+          "label": "Role",
+          "default": "shine + colour"
+        },
+        {
+          "type": "header",
+          "content": "Item 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title_2",
+          "label": "Title",
+          "default": "Liner"
+        },
+        {
+          "type": "text",
+          "id": "role_2",
+          "label": "Role",
+          "default": "define + fill"
+        },
+        {
+          "type": "header",
+          "content": "Item 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title_3",
+          "label": "Title",
+          "default": "Mini"
+        },
+        {
+          "type": "text",
+          "id": "role_3",
+          "label": "Role",
+          "default": "on-the-go"
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#121212"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Role text",
+          "default": "#b9648a"
+        },
+        {
+          "type": "color",
+          "id": "placeholder_color",
+          "label": "Image placeholder",
+          "default": "#f3e4ec"
+        }
       ]
     }
   ],
@@ -2668,6 +3555,4 @@
     }
   ]
 }
-
-
 {% endschema %}

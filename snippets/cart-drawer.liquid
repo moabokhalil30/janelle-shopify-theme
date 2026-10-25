@@ -74,6 +74,9 @@
           </span>
         </button>
       </div>
+      {%- if cart != empty -%}
+        <div class="cart-drawer__free-ship">{% render 'free-shipping-progress', compact: true %}</div>
+      {%- endif -%}
       <cart-drawer-items
         {% if cart == empty %}
           class=" is-empty"
@@ -574,7 +577,19 @@
           >
             {{ 'sections.cart.checkout' | t }}
           </button>
+          {%- if settings.drawer_view_cart -%}
+            <a href="{{ routes.cart_url }}" class="button button--secondary cart-drawer__view-cart">{{ 'general.cart.view' | t: count: cart.item_count }}</a>
+          {%- endif -%}
+          {%- if settings.drawer_continue -%}
+            <button type="button" class="link underlined-link cart-drawer__continue" onclick="this.closest('cart-drawer').close()">{{ 'general.continue_shopping' | t }}</button>
+          {%- endif -%}
         </div>
+        <style>
+          .cart-drawer__free-ship { padding: 0 var(--drawer-padding, 1.5rem) 0; }
+          cart-drawer .cart__ctas { display: flex; flex-direction: column; gap: 1rem; }
+          cart-drawer .cart__ctas .button { width: 100%; }
+          cart-drawer .cart-drawer__continue { align-self: center; margin-top: .4rem; padding: .4rem; border: 0; background: none; font: inherit; font-size: 1.5rem; color: rgb(var(--color-foreground)); cursor: pointer; }
+        </style>
       </div>
     </div>
   </div>

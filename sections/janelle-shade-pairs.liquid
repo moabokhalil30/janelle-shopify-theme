@@ -1,0 +1,253 @@
+{% comment %}
+  Shade pairs: a liner shade + a gloss shade added to the bag together in one tap.
+  Each block names the two products and the exact shade (variant title) to use.
+  Ported from the Concept 3 "c3-pairs" section; colours, fonts and the add-to-bag
+  helper are scoped to this section so the rest of the theme is untouched. Uses the theme's own fonts
+  and the Janelle pink palette.
+{% endcomment %}
+<style>
+  #shade-pairs-{{ section.id }} {
+    --sp-pink: {{ section.settings.text_color }};
+    --sp-deep: {{ section.settings.accent_color }};
+    --sp-soft: {{ section.settings.button_color }};
+    background: {{ section.settings.bg }};
+    padding: 6rem 0;
+    font-family: var(--font-body-family);
+    color: var(--sp-pink);
+  }
+  #shade-pairs-{{ section.id }} *, #shade-pairs-{{ section.id }} *::before, #shade-pairs-{{ section.id }} *::after { box-sizing: border-box; }
+  #shade-pairs-{{ section.id }} .sp-wrap { max-width: var(--page-width, 120rem); margin: 0 auto; padding: 0 1.5rem; }
+  #shade-pairs-{{ section.id }} .sp-head { margin-bottom: 3.2rem; }
+  #shade-pairs-{{ section.id }} .sp-eyebrow { display: inline-flex; align-items: center; gap: .8rem; margin: 0 0 1rem; font-size: 1.3rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--sp-deep); }
+  #shade-pairs-{{ section.id }} .sp-eyebrow::before { content: ''; width: 2.4rem; height: 1px; background: currentColor; }
+  #shade-pairs-{{ section.id }} .sp-h2 { margin: 0; font-family: var(--font-heading-family); font-weight: 400; font-size: clamp(3.6rem, 4vw, 4.8rem); line-height: 1; letter-spacing: .06rem; text-transform: uppercase; color: var(--sp-pink); }
+  #shade-pairs-{{ section.id }} .sp-h2 em { font-style: normal; color: var(--sp-deep); }
+  #shade-pairs-{{ section.id }} .sp-lead { margin: 1.2rem 0 0; max-width: 56ch; font-size: 1.6rem; line-height: 1.5; letter-spacing: .04rem; color: var(--sp-deep); }
+  #shade-pairs-{{ section.id }} .sp-grid { display: grid; gap: 2.4rem; grid-template-columns: 1fr; }
+  #shade-pairs-{{ section.id }} .sp-pair { display: flex; flex-direction: column; }
+  #shade-pairs-{{ section.id }} .sp-pair__img { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 1.6rem; background: var(--sp-soft); }
+  #shade-pairs-{{ section.id }} .sp-pair__img img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  #shade-pairs-{{ section.id }} .sp-pair__tag { position: absolute; top: 1.4rem; left: 1.4rem; padding: .7rem 1.6rem; border-radius: 999px; background: #fff; color: var(--sp-pink); font-size: 1.5rem; font-weight: 700; letter-spacing: .075rem; }
+  #shade-pairs-{{ section.id }} .sp-pair__body { display: flex; flex: 1; flex-direction: column; gap: 1.2rem; padding-top: 1.6rem; }
+  #shade-pairs-{{ section.id }} .sp-pair__title { margin: 0; font-family: var(--font-body-family); font-size: 1.6rem; font-weight: 700; line-height: 1.3; letter-spacing: .075rem; text-transform: uppercase; color: var(--sp-pink); }
+  #shade-pairs-{{ section.id }} .sp-pair__items { display: grid; gap: .8rem; margin: 0; padding: 0; list-style: none; }
+  #shade-pairs-{{ section.id }} .sp-pair__items li { display: flex; align-items: center; gap: 1rem; font-size: 1.4rem; letter-spacing: .04rem; }
+  #shade-pairs-{{ section.id }} .sp-pair__items li > span:nth-child(2) { flex: 1; min-width: 0; }
+  #shade-pairs-{{ section.id }} .sp-pair__items li > span:last-child { margin-left: auto; white-space: nowrap; font-weight: 700; color: var(--sp-pink); }
+  #shade-pairs-{{ section.id }} .sp-pair__items strong { display: block; font-weight: 700; color: var(--sp-deep); }
+  #shade-pairs-{{ section.id }} .sp-pair__items small { font-size: 1.2rem; color: var(--sp-pink); }
+  #shade-pairs-{{ section.id }} .sp-pair__dot { flex: 0 0 auto; width: 3rem; height: 3rem; border: 1px solid var(--sp-soft); border-radius: 50%; background-color: #fff; background-size: cover; background-position: center; }
+  #shade-pairs-{{ section.id }} .sp-pair__foot { display: flex; flex-direction: column; gap: 1.2rem; margin-top: auto; padding-top: 1.2rem; border-top: 1px solid var(--sp-soft); }
+  #shade-pairs-{{ section.id }} .sp-pair__total { display: flex; align-items: baseline; justify-content: space-between; font-size: 1.4rem; font-weight: 700; letter-spacing: .075rem; text-transform: uppercase; color: var(--sp-deep); }
+  #shade-pairs-{{ section.id }} .sp-price { font-size: 1.9rem; text-transform: none; color: var(--sp-pink); }
+  #shade-pairs-{{ section.id }} .sp-btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 5.2rem; padding: 0 2rem; border: 0; border-radius: 0; background: var(--sp-soft); color: #fff; font-family: var(--font-body-family); font-size: 1.7rem; font-weight: 700; letter-spacing: .125rem; cursor: pointer; transition: filter .2s, transform .2s; }
+  #shade-pairs-{{ section.id }} .sp-btn:hover { filter: brightness(.95); }
+  #shade-pairs-{{ section.id }} .sp-btn:active { transform: scale(.98); }
+  #shade-pairs-{{ section.id }} .sp-btn[disabled] { opacity: .5; cursor: not-allowed; }
+  #shade-pairs-{{ section.id }} .sp-btn.is-added { background: var(--sp-deep); }
+  #shade-pairs-{{ section.id }} .sp-more { margin-top: 3.2rem; text-align: center; }
+  #shade-pairs-{{ section.id }} .sp-link { padding-bottom: .2rem; border-bottom: 1px solid currentColor; color: var(--sp-pink); font-size: 1.6rem; font-weight: 700; letter-spacing: .075rem; text-decoration: none; }
+  #shade-pairs-{{ section.id }} .sp-link:hover { color: var(--sp-deep); }
+  @media (min-width: 750px) {
+    #shade-pairs-{{ section.id }} .sp-wrap { padding: 0 5rem; }
+    #shade-pairs-{{ section.id }} .sp-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1200px) {
+    #shade-pairs-{{ section.id }} { padding: 8rem 0; }
+    #shade-pairs-{{ section.id }} .sp-grid { grid-template-columns: repeat({{ section.blocks.size | at_most: 4 | at_least: 1 }}, 1fr); }
+  }
+  @media (max-width: 749px) {
+    #shade-pairs-{{ section.id }} { padding: 4.4rem 0; }
+    #shade-pairs-{{ section.id }} .sp-head { margin-bottom: 2.2rem; }
+    #shade-pairs-{{ section.id }} .sp-eyebrow { font-size: 1.1rem; margin-bottom: .8rem; }
+    #shade-pairs-{{ section.id }} .sp-h2 { font-size: 3.2rem; }
+    #shade-pairs-{{ section.id }} .sp-lead { font-size: 1.35rem; margin-top: .8rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__img { border-radius: 1.2rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__tag { top: 1rem; left: 1rem; padding: .5rem 1.1rem; font-size: 1.2rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__body { gap: 1rem; padding-top: 1.2rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__title { font-size: 1.35rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__items li { font-size: 1.25rem; gap: .8rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__items small { font-size: 1.1rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__dot { width: 2.6rem; height: 2.6rem; }
+    #shade-pairs-{{ section.id }} .sp-pair__total { font-size: 1.2rem; }
+    #shade-pairs-{{ section.id }} .sp-price { font-size: 1.6rem; }
+    #shade-pairs-{{ section.id }} .sp-btn { min-height: 4.4rem; font-size: 1.4rem; }
+    #shade-pairs-{{ section.id }} .sp-link { font-size: 1.4rem; }
+    #shade-pairs-{{ section.id }} .sp-grid { grid-auto-flow: column; grid-auto-columns: 64%; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 1.5rem; margin: 0 -1.5rem; padding: 0 1.5rem 1rem; scrollbar-width: none; }
+    #shade-pairs-{{ section.id }} .sp-pair { scroll-snap-align: start; }
+  }
+</style>
+
+<section id="shade-pairs-{{ section.id }}">
+  <div class="sp-wrap">
+    <div class="sp-head">
+      {%- if section.settings.eyebrow != blank -%}<p class="sp-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="sp-h2">{{ section.settings.heading }}{% if section.settings.heading_accent != blank %} <em>{{ section.settings.heading_accent }}</em>{% endif %}</h2>
+      {%- if section.settings.text != blank -%}<p class="sp-lead">{{ section.settings.text }}</p>{%- endif -%}
+    </div>
+
+    <div class="sp-grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign pa = block.settings.product_a
+          assign pb = block.settings.product_b
+          if pa == blank or pb == blank
+            continue
+          endif
+          assign va = pa.selected_or_first_available_variant
+          for v in pa.variants
+            if v.title == block.settings.shade_a
+              assign va = v
+            endif
+          endfor
+          assign vb = pb.selected_or_first_available_variant
+          for v in pb.variants
+            if v.title == block.settings.shade_b
+              assign vb = v
+            endif
+          endfor
+          if section.settings.hide_soldout
+            unless va.available and vb.available
+              continue
+            endunless
+          endif
+          assign total = va.price | plus: vb.price
+          assign pic = block.settings.image
+          if pic == blank
+            assign pic = vb.featured_image | default: pb.featured_image
+            comment
+              Use the Nth photo after the gloss shade's own image (block setting, default 2 = on-lips).
+            endcomment
+            for m in pb.media
+              if m.id == vb.featured_media.id
+                assign i2 = forloop.index0 | plus: block.settings.photo_offset
+                if pb.media[i2]
+                  assign pic = pb.media[i2].preview_image
+                endif
+                break
+              endif
+            endfor
+          endif
+        -%}
+        <article class="sp-pair" {{ block.shopify_attributes }}>
+          <div class="sp-pair__img">
+            {{ pic | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 50vw, 80vw', widths: '450, 700, 900', alt: block.settings.title }}
+            {%- if block.settings.tag != blank -%}<span class="sp-pair__tag">{{ block.settings.tag }}</span>{%- endif -%}
+          </div>
+          <div class="sp-pair__body">
+            <h3 class="sp-pair__title">{{ block.settings.title }}</h3>
+            <ul class="sp-pair__items">
+              <li>
+                <span class="sp-pair__dot" style="background-image:url('{{ va.featured_image | default: pa.featured_image | image_url: width: 80 }}')"></span>
+                <span><strong>{{ va.title }}</strong><small>{{ pa.title | downcase | capitalize }}</small></span>
+                <span>{{ va.price | money_without_trailing_zeros }}</span>
+              </li>
+              <li>
+                <span class="sp-pair__dot" style="background-image:url('{{ vb.featured_image | default: pb.featured_image | image_url: width: 80 }}')"></span>
+                <span><strong>{{ vb.title }}</strong><small>{{ pb.title | downcase | capitalize }}</small></span>
+                <span>{{ vb.price | money_without_trailing_zeros }}</span>
+              </li>
+            </ul>
+            <div class="sp-pair__foot">
+              <div class="sp-pair__total"><span>{{ section.settings.total_label }}</span><span class="sp-price">{{ total | money }}</span></div>
+              {%- if va.available and vb.available -%}
+                <button type="button" class="sp-btn" data-shade-pair="{{ va.id }},{{ vb.id }}">{{ section.settings.add_label }}</button>
+              {%- else -%}
+                <button type="button" class="sp-btn" disabled>{{ section.settings.soldout_label }}</button>
+              {%- endif -%}
+            </div>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.more_label != blank -%}
+      <p class="sp-more"><a class="sp-link" href="{{ section.settings.more_link | default: '/collections/bundles' }}">{{ section.settings.more_label }}</a></p>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (() => {
+    // Adds both shades, then shows the theme's cart notification (falls back to the cart page).
+    const addToBag = async (items, button) => {
+      const label = button.innerHTML;
+      button.disabled = true;
+      button.textContent = '…';
+      const notification = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+      const body = { items };
+      if (notification && notification.getSectionsToRender) {
+        body.sections = notification.getSectionsToRender().map((s) => s.id);
+        body.sections_url = window.location.pathname;
+      }
+      try {
+        const res = await fetch(((window.routes && window.routes.cart_add_url) || '/cart/add') + '.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok || data.status) throw new Error(data.description || data.message || 'Could not add');
+        if (notification && notification.renderContents && data.sections) {
+          const first = data.items ? data.items[0] : data;
+          notification.renderContents(Object.assign({}, first, { sections: data.sections }));
+        } else {
+          window.location.href = (window.routes && window.routes.cart_url) || '/cart';
+        }
+        button.classList.add('is-added');
+        button.textContent = 'Added ✓';
+        setTimeout(() => { button.classList.remove('is-added'); button.innerHTML = label; button.disabled = false; }, 1800);
+      } catch (e) {
+        button.textContent = e.message;
+        setTimeout(() => { button.innerHTML = label; button.disabled = false; }, 2400);
+      }
+    };
+
+    document.querySelectorAll('#shade-pairs-{{ section.id }} [data-shade-pair]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        addToBag(btn.dataset.shadePair.split(',').map((id) => ({ id: Number(id), quantity: 1 })), btn);
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Shade pairs",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small label", "default": "Liner + gloss" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Better" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "together" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Line, then gloss. Our favourite combinations — added to your bag in one tap." },
+    { "type": "text", "id": "total_label", "label": "Total label", "default": "The pair" },
+    { "type": "text", "id": "add_label", "label": "Button", "default": "Add the pair" },
+    { "type": "text", "id": "soldout_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "text", "id": "more_label", "label": "Bottom link", "default": "Prefer a ready-made set? Shop bundles" },
+    { "type": "url", "id": "more_link", "label": "Bottom link URL" },
+    { "type": "checkbox", "id": "hide_soldout", "label": "Hide a pair when one of its shades is sold out", "default": true },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Main pink (heading, names, prices)", "default": "#e4b6d5" },
+    { "type": "color", "id": "accent_color", "label": "Deep pink (label, shade names, highlight)", "default": "#c07496" },
+    { "type": "color", "id": "button_color", "label": "Button colour", "default": "#f5d5e6" }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "pair",
+      "name": "Pair",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Look name", "default": "Everyday nude" },
+        { "type": "text", "id": "tag", "label": "Tag on photo" },
+        { "type": "image_picker", "id": "image", "label": "Photo (defaults to the gloss shade)" },
+        { "type": "product", "id": "product_a", "label": "Product 1 (liner)" },
+        { "type": "text", "id": "shade_a", "label": "Product 1 shade (exact name)", "default": "08 Nude" },
+        { "type": "product", "id": "product_b", "label": "Product 2 (gloss)" },
+        { "type": "text", "id": "shade_b", "label": "Product 2 shade (exact name)", "default": "Creamy Latte" },
+        { "type": "range", "id": "photo_offset", "label": "Gloss photo to show", "min": 1, "max": 5, "step": 1, "default": 2, "info": "Used when no photo is picked: the Nth photo after the gloss shade's own picture. 2 = on lips; try 3 or 4 for a wider shot." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Shade pairs", "blocks": [{ "type": "pair" }] }]
+}
+{% endschema %}

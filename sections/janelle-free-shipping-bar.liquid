@@ -1,0 +1,21 @@
+{% comment %}
+  Cart-page wrapper for the free-shipping progress bar. The amount, messages and colours
+  are in Theme settings → Free shipping bar (shared with the side cart).
+{% endcomment %}
+<div class="free-ship-section" style="padding-top: 2.4rem;">
+  <div class="page-width">
+    {% render 'free-shipping-progress' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Free shipping bar",
+  "tag": "div",
+  "enabled_on": { "templates": ["cart"] },
+  "settings": [
+    { "type": "paragraph", "content": "Edit the amount, messages and colours in Theme settings → Free shipping bar." }
+  ],
+  "presets": [{ "name": "Free shipping bar" }]
+}
+{% endschema %}
