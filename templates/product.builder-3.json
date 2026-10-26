@@ -105,7 +105,7 @@
             "rating": 5,
             "corner_radius": 6,
             "bg_color": "#f3e4ec",
-            "accent_color": "#d585a6",
+            "accent_color": "#b9648a",
             "text_color": "#121212"
           }
         },
@@ -118,7 +118,7 @@
             "bullet_3": "",
             "bullet_4": "",
             "icon_color": "#b9648a",
-            "text_color": "#C07496"
+            "text_color": "#b9648a"
           }
         },
         "bundle_builder": {

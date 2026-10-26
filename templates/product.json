@@ -100,7 +100,7 @@
             "rating": 5,
             "corner_radius": 6,
             "bg_color": "#FFFFFF",
-            "accent_color": "#d585a6",
+            "accent_color": "#b9648a",
             "text_color": "#121212"
           }
         },
@@ -126,7 +126,7 @@
             "bullet_3": "",
             "bullet_4": "",
             "icon_color": "#b9648a",
-            "text_color": "#c07496"
+            "text_color": "#b9648a"
           }
         },
         "benefit_bullets_kUFkxA": {
@@ -189,7 +189,7 @@
           "type": "shade_finder",
           "settings": {
             "swatch_size": 52,
-            "name_color": "#c07496",
+            "name_color": "#b9648a",
             "accent_color": "#b9648a",
             "chip_color": "#f5d5e6",
             "family_all": "All shades",
