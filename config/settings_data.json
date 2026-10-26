@@ -304,7 +304,9 @@
           "shadow": "#b9648a"
         }
       }
-    }
+    },
+    "free_ship_text": "#b9648a",
+    "free_ship_accent": "#b9648a"
   },
   "presets": {
     "Dawn": {

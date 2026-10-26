@@ -875,7 +875,9 @@
       "settings": {
         "more_link": "shopify://collections/bundles",
         "bg": "#ffffff",
-        "hide_soldout": true
+        "hide_soldout": true,
+        "text_color": "#b9648a",
+        "accent_color": "#b9648a"
       }
     }
   },
