@@ -82,7 +82,10 @@
         },
         "contact_form_simple_main": {
           "type": "contact-form-simple",
-          "settings": {}
+          "settings": {
+            "heading_color": "#b9648a",
+            "required_color": "#b9648a"
+          }
         }
       },
       "block_order": [
