@@ -1,0 +1,14 @@
+{%- comment -%} Small site-wide style tweaks, rendered from layout/theme.liquid. {%- endcomment -%}
+<style>
+  /* Product names bigger than prices on collection / category cards */
+  .card__heading, .card__heading.h5 { font-size: 2.2rem; line-height: 1.15; }
+  @media screen and (min-width: 750px) {
+    .card__heading, .card__heading.h5 { font-size: 2.6rem; }
+  }
+
+  /* Phone: "LIP GLOSS (BRUSH TUBE)" shows as "lip gloss" with "(brush tube)" on the next line */
+  @media screen and (max-width: 749px) {
+    .jt--split { text-transform: lowercase; font-weight: 700; }
+    .jt--split .jt__sub { display: block; }
+  }
+</style>

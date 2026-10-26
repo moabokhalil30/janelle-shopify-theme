@@ -118,7 +118,8 @@
             "bullet_4": "",
             "icon_color": "#b9648a",
             "text_color": "#121212"
-          }
+          },
+          "disabled": true
         },
         "bundle_builder": {
           "type": "bundle_builder",

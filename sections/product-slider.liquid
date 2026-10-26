@@ -431,7 +431,7 @@
             </div>
 
             <div class="product-slider__info">
-              <a href="{{ product.url }}" class="product-slider__title">{{ product.title | escape }}</a>
+              <a href="{{ product.url }}" class="product-slider__title">{% render 'janelle-title', title: product.title %}</a>
               <div class="product-slider__price" data-card-price>
                 {{- current_variant.price | money -}}
                 {%- if current_variant.compare_at_price > current_variant.price -%}

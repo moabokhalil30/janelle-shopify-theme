@@ -83,7 +83,8 @@
             "bullet_2": "<strong>Best value</strong> — save EGP 370 vs buying separately",
             "bullet_3": "Comes in a <strong>reusable Janelle pouch</strong> — gift-ready",
             "bullet_4": ""
-          }
+          },
+          "disabled": true
         },
         "social": {
           "type": "social_proof",
@@ -255,7 +256,8 @@
       "type": "pdp-sticky-atc",
       "settings": {
         "button_label": "Add kit to cart"
-      }
+      },
+      "disabled": true
     }
   },
   "order": [

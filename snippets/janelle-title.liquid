@@ -1,0 +1,13 @@
+{%- comment -%}
+  Prints a product title. Titles with a bracket part, e.g. "LIP GLOSS (BRUSH TUBE)",
+  get the bracket part wrapped so phones can show it lowercase on its own line:
+  "lip gloss" / "(brush tube)". Desktop is unchanged.
+  Usage: {% render 'janelle-title', title: product.title %}
+{%- endcomment -%}
+{%- if title contains '(' -%}
+  {%- assign jt_main = title | split: '(' | first | strip -%}
+  {%- assign jt_sub = title | remove_first: jt_main | strip -%}
+  <span class="jt jt--split"><span class="jt__main">{{ jt_main | escape }}</span> <span class="jt__sub">{{ jt_sub | escape }}</span></span>
+{%- else -%}
+  {{- title | escape -}}
+{%- endif -%}

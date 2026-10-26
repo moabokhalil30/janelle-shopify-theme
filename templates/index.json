@@ -188,7 +188,7 @@
         "link": "",
         "image_ratio": "square",
         "image_radius": 16,
-        "title_size": 16,
+        "title_size": 20,
         "show_badges": true,
         "show_quick_add": true,
         "show_wishlist": true,
