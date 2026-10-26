@@ -877,7 +877,8 @@
         "bg": "#ffffff",
         "hide_soldout": true,
         "text_color": "#b9648a",
-        "accent_color": "#b9648a"
+        "accent_color": "#b9648a",
+        "button_color": "#b9648a"
       }
     }
   },
