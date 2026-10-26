@@ -10,5 +10,8 @@
   @media screen and (max-width: 749px) {
     .jt--split { font-family: var(--font-body-family); text-transform: uppercase; font-weight: 700; letter-spacing: 0; }
     .jt--split .jt__sub { display: block; }
+    /* On the narrow product cards keep "(BRUSH TUBE)" / "(SQUEEZE TUBE)" on one line */
+    .card__heading .jt--split, .product-slider__title .jt--split { font-size: 1.25rem; }
+    .card__heading .jt__sub, .product-slider__title .jt__sub { white-space: nowrap; }
   }
 </style>
