@@ -879,7 +879,12 @@
         "text_color": "#b9648a",
         "accent_color": "#b9648a",
         "button_color": "#b9648a"
-      }
+      },
+      "custom_css": [
+        ".sp-eyebrow {color: #c07496;}",
+        ".sp-h2 {color: #e4b6d5;}",
+        ".sp-h2 em {color: #c07496;}"
+      ]
     }
   },
   "order": [
