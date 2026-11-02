@@ -466,6 +466,17 @@
   </script>
 {%- endif -%}
 
+{% style %}
+  .header__inline-menu .header__menu-item,
+  .menu-drawer__menu-item,
+  .menu-drawer__close-button {
+    text-transform: uppercase;
+  }
+  .header__inline-menu .list-menu--inline { justify-content: center; }
+  .header__inline-menu .header__menu-item { font-size: 1.2rem; }
+  .menu-drawer__menu-item, .menu-drawer__close-button { font-size: 1.5rem; }
+{% endstyle %}
+
 {% schema %}
 {
   "name": "t:sections.header.name",
@@ -518,6 +529,22 @@
       "id": "menu",
       "default": "main-menu",
       "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "text",
+      "id": "nav_flatten_item",
+      "label": "Hide this menu item and show what is inside it on the menu bar",
+      "info": "Type the item name, e.g. Categories. Leave empty to show the menu as it is."
+    },
+    {
+      "type": "text",
+      "id": "nav_extra_label",
+      "label": "Extra menu link text"
+    },
+    {
+      "type": "url",
+      "id": "nav_extra_link",
+      "label": "Extra menu link"
     },
     {
       "type": "select",

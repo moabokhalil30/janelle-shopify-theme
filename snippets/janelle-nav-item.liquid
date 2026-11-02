@@ -1,0 +1,143 @@
+{% comment %}
+  One top-level menu item for the header bar (mode: 'bar') or the phone drawer (mode: 'drawer').
+  An item with sub-items opens a dropdown whose first line is "Shop all <item>".
+  An item without sub-items is a plain link.
+
+  Usage:
+  {% render 'janelle-nav-item', link: link, mode: 'bar', scheme: section.settings.menu_color_scheme %}
+  {% render 'janelle-nav-item', title: 'Our story', url: section.settings.nav_extra_link, mode: 'drawer' %}
+{% endcomment %}
+{%- liquid
+  assign item_title = title
+  assign item_url = url
+  assign item_handle = title | handle
+  assign item_current = false
+  assign item_active = false
+  if link
+    assign item_title = link.title
+    assign item_url = link.url
+    assign item_handle = link.handle
+    assign item_current = link.current
+    assign item_active = link.child_active
+  endif
+  comment
+    Topics open their page of shades. In the shared menu these items link to # or to a single product.
+  endcomment
+  case item_handle
+    when 'lip-bundles'
+      assign item_url = routes.collections_url | append: '/bundles'
+    when 'lip-gloss'
+      assign item_url = routes.collections_url | append: '/lip-glosses'
+    when 'lip-liners'
+      assign item_url = routes.collections_url | append: '/lip-liners'
+    when 'beauty-bag'
+      assign item_url = routes.collections_url | append: '/bags'
+    when 'accessories'
+      assign item_url = routes.collections_url | append: '/accessories'
+  endcase
+  assign item_prefix = item_title | downcase | append: ' ('
+-%}
+{%- capture sub_items -%}
+  {%- for child in link.links -%}
+    {%- liquid
+      assign child_label = child.title
+      assign child_lower = child.title | downcase
+      assign child_start = child_lower | slice: 0, item_prefix.size
+      if child_start == item_prefix
+        assign child_label = child_lower | remove_first: item_prefix | split: ')' | first
+      endif
+    -%}
+    <li>
+      <a
+        href="{{ child.url }}"
+        class="{% if mode == 'bar' %}header__menu-item list-menu__item link link--text focus-inset caption-large{% if child.current %} list-menu__item--active{% endif %}{% else %}menu-drawer__menu-item link link--text list-menu__item focus-inset{% if child.current %} menu-drawer__menu-item--active{% endif %}{% endif %}"
+        {% if child.current %}
+          aria-current="page"
+        {% endif %}
+      >
+        {{ child_label | escape }}
+      </a>
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+{%- capture shop_all -%}
+  <li>
+    <a
+      href="{{ item_url }}"
+      class="{% if mode == 'bar' %}header__menu-item list-menu__item link link--text focus-inset caption-large{% else %}menu-drawer__menu-item link link--text list-menu__item focus-inset{% endif %}"
+    >
+      Shop all {{ item_title | escape }}
+    </a>
+  </li>
+{%- endcapture -%}
+
+<li>
+  {%- if mode == 'bar' -%}
+    {%- if link.links != blank -%}
+      <header-menu>
+        <details id="Details-HeaderMenu-{{ item_handle }}">
+          <summary id="HeaderMenu-{{ item_handle }}" class="header__menu-item list-menu__item link focus-inset">
+            <span{% if item_active %} class="header__active-menu-item"{% endif %}>{{ item_title | escape }}</span>
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </summary>
+          <ul
+            id="HeaderMenu-MenuList-{{ item_handle }}"
+            class="header__submenu list-menu list-menu--disclosure color-{{ scheme }} gradient caption-large motion-reduce global-settings-popup"
+            role="list"
+            tabindex="-1"
+          >
+            {{ shop_all }}
+            {{ sub_items }}
+          </ul>
+        </details>
+      </header-menu>
+    {%- else -%}
+      <a
+        id="HeaderMenu-{{ item_handle }}"
+        href="{{ item_url }}"
+        class="header__menu-item list-menu__item link link--text focus-inset"
+        {% if item_current %}
+          aria-current="page"
+        {% endif %}
+      >
+        <span{% if item_current %} class="header__active-menu-item"{% endif %}>{{ item_title | escape }}</span>
+      </a>
+    {%- endif -%}
+  {%- else -%}
+    {%- if link.links != blank -%}
+      <details id="Details-menu-drawer-menu-item-{{ item_handle }}">
+        <summary
+          id="HeaderDrawer-{{ item_handle }}"
+          class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if item_active %} menu-drawer__menu-item--active{% endif %}"
+        >
+          {{ item_title | escape }}
+          <span class="svg-wrapper">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+          <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+        </summary>
+        <div id="link-{{ item_handle }}" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+          <div class="menu-drawer__inner-submenu">
+            <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+              <span class="svg-wrapper">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+              {{ item_title | escape }}
+            </button>
+            <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+              {{ shop_all }}
+              {{ sub_items }}
+            </ul>
+          </div>
+        </div>
+      </details>
+    {%- else -%}
+      <a
+        id="HeaderDrawer-{{ item_handle }}"
+        href="{{ item_url }}"
+        class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if item_current %} menu-drawer__menu-item--active{% endif %}"
+        {% if item_current %}
+          aria-current="page"
+        {% endif %}
+      >
+        {{ item_title | escape }}
+      </a>
+    {%- endif -%}
+  {%- endif -%}
+</li>

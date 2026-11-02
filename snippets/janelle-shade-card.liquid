@@ -1,0 +1,76 @@
+{% comment %}
+  One card per shade (variant) on collection pages, in the theme's normal card style.
+  - Products with several shades: small product name, big shade name, Add to cart for that shade.
+  - Single products: product name + Add to cart.
+  - Bundle-builder products (template contains "builder"): "Choose your shades" button to the product page.
+
+  Usage:
+  {% render 'janelle-shade-card', product: product, variant: variant, section_id: section.id, lazy_load: lazy_load %}
+{% endcomment %}
+{%- liquid
+  assign has_shades = false
+  if product.has_only_default_variant == false
+    assign has_shades = true
+  endif
+  assign is_bundle = false
+  if product.template_suffix contains 'builder'
+    assign is_bundle = true
+  endif
+  assign image = variant.featured_image | default: product.featured_image
+  assign form_id = 'ShadeForm-' | append: section_id | append: '-' | append: variant.id
+-%}
+<div class="card-wrapper product-card-wrapper jsc">
+  <a href="{{ variant.url }}" class="jsc__media" tabindex="-1" aria-hidden="true">
+    {%- if image -%}
+      {{ image | image_url: width: 700 | image_tag:
+        loading: lazy_load,
+        sizes: '(min-width: 990px) 25vw, 50vw',
+        widths: '300, 450, 600, 700',
+        alt: variant.title
+      }}
+    {%- endif -%}
+    {%- unless variant.available -%}<span class="badge jsc__badge color-{{ settings.sold_out_badge_color_scheme }}">{{ 'products.product.sold_out' | t }}</span>{%- endunless -%}
+  </a>
+  <div class="jsc__info">
+    {%- if has_shades -%}
+      <p class="jsc__product">{{ product.title | escape }}</p>
+      <h3 class="card__heading h5 jsc__name"><a href="{{ variant.url }}" class="full-unstyled-link">{{ variant.title | escape }}</a></h3>
+    {%- else -%}
+      <h3 class="card__heading h5 jsc__name"><a href="{{ variant.url }}" class="full-unstyled-link">{{ product.title | escape }}</a></h3>
+    {%- endif -%}
+    <div class="price">
+      <div class="price__container">
+        <span class="price-item price-item--regular">
+          {%- if variant.compare_at_price > variant.price -%}<s class="jsc__was">{{ variant.compare_at_price | money }}</s> {% endif -%}
+          {{ variant.price | money }}
+        </span>
+      </div>
+    </div>
+
+    {%- if is_bundle -%}
+      <a href="{{ product.url }}" class="button button--full-width jsc__button">Choose your shades</a>
+    {%- else -%}
+      <product-form class="product-form jsc__form" data-section-id="{{ section_id }}" data-hide-errors="false">
+        <div class="product-form__error-message-wrapper" role="alert" hidden>
+          <span class="product-form__error-message"></span>
+        </div>
+        {%- form 'product', product, id: form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+          <input type="hidden" name="id" value="{{ variant.id }}" disabled>
+          <button
+            type="submit"
+            name="add"
+            class="button button--full-width jsc__button"
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            <span>
+              {%- if variant.available -%}{{ 'products.product.add_to_cart' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+            </span>
+            <div class="loading__spinner hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="spinner" viewBox="0 0 66 66"><circle stroke-width="6" cx="33" cy="33" r="30" fill="none" class="path"></circle></svg>
+            </div>
+          </button>
+        {%- endform -%}
+      </product-form>
+    {%- endif -%}
+  </div>
+</div>
