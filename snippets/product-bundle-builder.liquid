@@ -49,13 +49,51 @@
   data-bundle-variant-id="{{ bundle_variant.id }}"
   {{ block.shopify_attributes }}
 >
-  <div class="janelle-bundle-picker__head">
-    <div>
-      <p>{{ block.settings.eyebrow }}</p>
-      <h2>{{ block.settings.heading }}</h2>
+  {%- capture included_html -%}
+  {%- comment -%}
+    Optional item that always comes with the bundle (e.g. The Beauty Bag in the Black Friday bundle).
+    Its variant is added to "_Component variant IDs" so the stock automation and the stock check count it too.
+  {%- endcomment -%}
+  {%- assign included_product = block.settings.included_product -%}
+  {%- if included_product != blank -%}
+    {%- assign included_variant = included_product.selected_or_first_available_variant -%}
+    <div
+      class="janelle-bundle-picker__included{% unless included_variant.available %} is-soldout{% endunless %}"
+      data-included-variant-id="{{ included_variant.id }}"
+      data-included-title="{{ included_product.title | escape }}"
+      data-included-available="{{ included_variant.available }}"
+    >
+      {%- if included_product.featured_image -%}
+        {{ included_product.featured_image | image_url: width: 160 | image_tag: alt: included_product.title, loading: 'lazy' }}
+      {%- endif -%}
+      <div>
+        <span>{{ block.settings.included_label | default: 'Included' }}</span>
+        <strong>{{ included_product.title }}</strong>
+      </div>
+      <span class="janelle-bundle-picker__included-check" aria-hidden="true">{% if included_variant.available %}✓{% else %}✕{% endif %}</span>
     </div>
-    <span data-bundle-progress>0/3</span>
-  </div>
+  {%- endif -%}
+  {%- endcapture -%}
+
+  {%- if included_html != blank -%}
+    {%- comment -%} Order: eyebrow, then the included item, then the shade heading {%- endcomment -%}
+    <p class="janelle-bundle-picker__eyebrow">{{ block.settings.eyebrow }}</p>
+    {{ included_html }}
+    <div class="janelle-bundle-picker__head">
+      <div>
+        <h2>{{ block.settings.heading }}</h2>
+      </div>
+      <span data-bundle-progress>0/3</span>
+    </div>
+  {%- else -%}
+    <div class="janelle-bundle-picker__head">
+      <div>
+        <p>{{ block.settings.eyebrow }}</p>
+        <h2>{{ block.settings.heading }}</h2>
+      </div>
+      <span data-bundle-progress>0/3</span>
+    </div>
+  {%- endif -%}
 
   <div class="janelle-bundle-picker__selected" aria-live="polite">
     {%- for index in (1..3) -%}
@@ -264,6 +302,15 @@
     text-transform: uppercase;
   }
 
+  .janelle-bundle-picker__eyebrow {
+    margin: 0 0 0.8rem;
+    color: var(--jb-accent);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.12rem;
+    text-transform: uppercase;
+  }
+
   .janelle-bundle-picker__head h2 {
     margin: 0;
     color: var(--jb-ink);
@@ -291,6 +338,30 @@
     gap: 0.8rem;
     margin-bottom: 1.4rem;
   }
+
+  .janelle-bundle-picker__included {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin: 0 0 1.4rem;
+    padding: 0.8rem 1.2rem 0.8rem 0.8rem;
+    border: 0.1rem solid var(--jb-line);
+    border-radius: 0.8rem;
+    background: #fdeef5;
+  }
+  .janelle-bundle-picker__included img {
+    width: 5.2rem;
+    height: 5.2rem;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    background: #fff;
+    flex: 0 0 auto;
+  }
+  .janelle-bundle-picker__included div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+  .janelle-bundle-picker__included span { font-size: 1.1rem; letter-spacing: 0.1rem; text-transform: uppercase; opacity: 0.75; }
+  .janelle-bundle-picker__included strong { font-size: 1.4rem; }
+  .janelle-bundle-picker__included .janelle-bundle-picker__included-check { opacity: 1; font-size: 1.4rem; font-weight: 700; }
+  .janelle-bundle-picker__included.is-soldout { opacity: 0.6; }
 
   .janelle-bundle-picker__slot {
     position: relative;
@@ -584,6 +655,10 @@
   .janelle-bundle-picker [data-add-bundle] {
     margin-top: 1.4rem;
     min-height: 5rem;
+    /* Same dark pink as the normal Add to cart button */
+    --color-button: 185, 100, 138;
+    --color-button-text: 255, 255, 255;
+    --border-opacity: 0;
   }
 
   .janelle-bundle-picker [data-add-bundle][disabled] {
@@ -714,6 +789,10 @@
     const errorText = {{ block.settings.error_text | json }};
     const cartMode = root.dataset.cartMode || 'bundle_product';
     const bundleVariantId = Number(root.dataset.bundleVariantId || 0);
+    const includedEl = root.querySelector('[data-included-variant-id]');
+    const includedId = includedEl ? Number(includedEl.dataset.includedVariantId || 0) : 0;
+    const includedTitle = includedEl ? includedEl.dataset.includedTitle : '';
+    const includedAvailable = !includedEl || includedEl.dataset.includedAvailable === 'true';
     const useNativeGallerySync = {{ use_native_gallery_sync | json }};
     const nativeGalleryMediaFit = {{ section.settings.media_fit | json }};
     const nativeGalleryConstrainToViewport = {{ section.settings.constrain_to_viewport | json }};
@@ -972,8 +1051,8 @@
       const count = selected.size;
       const complete = count === requiredCount && requiredCount > 0;
       progress.textContent = `${count}/${requiredCount}`;
-      addButton.disabled = !complete;
-      status.textContent = complete ? completeText : incompleteText;
+      addButton.disabled = !complete || !includedAvailable;
+      status.textContent = !includedAvailable ? `${includedTitle} is sold out.` : (complete ? completeText : incompleteText);
     }
 
     // Show the desktop arrows only when a rail actually overflows, and disable
@@ -1071,6 +1150,9 @@
             _BundleID: bundleId
           }
         }));
+        if (includedId) {
+          items.push({ id: includedId, quantity: 1, properties: { _Bundle: bundleName, _BundleID: bundleId } });
+        }
       } else {
         if (!bundleVariantId) {
           status.textContent = errorText;
@@ -1083,12 +1165,15 @@
         const properties = {
           _Bundle: bundleName,
           _BundleID: bundleId,
-          '_Component variant IDs': selections.map((item) => item.id).join(', ')
+          '_Component variant IDs': selections.map((item) => item.id).concat(includedId ? [includedId] : []).join(', ')
         };
 
         sortedEntries.forEach(([slot, item]) => {
           properties[slotName(slot)] = item.variantTitle;
         });
+        if (includedId && includedTitle) {
+          properties[includedTitle] = 'Included';
+        }
 
         items = [
           {
