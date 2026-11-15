@@ -17,7 +17,7 @@
         "announcement-bar-0": {
           "type": "announcement",
           "settings": {
-            "text": "Free Shipping on orders above 999 LE",
+            "text": "Free Shipping on orders above 1200 LE",
             "link": ""
           }
         }
@@ -26,7 +26,7 @@
         "announcement-bar-0"
       ],
       "custom_css": [
-        ".announcement-bar__message {display: flex; align-items: center; justify-content: center; }"
+        ".announcement-bar__message {display: flex; align-items: center; justify-content: center;}"
       ],
       "settings": {
         "auto_rotate": false,
@@ -44,6 +44,9 @@
         "logo_position": "top-center",
         "mobile_logo_position": "center",
         "menu": "main-menu",
+        "nav_flatten_item": "Categories",
+        "nav_extra_label": "Our story",
+        "nav_extra_link": "shopify://pages/about",
         "menu_type_desktop": "dropdown",
         "sticky_header_type": "on-scroll-up",
         "show_line_separator": true,
@@ -54,10 +57,7 @@
         "enable_customer_avatar": true,
         "margin_bottom": 0,
         "padding_top": 20,
-        "padding_bottom": 20,
-        "nav_flatten_item": "Categories",
-        "nav_extra_label": "Our story",
-        "nav_extra_link": "shopify://pages/about"
+        "padding_bottom": 20
       }
     },
     "pdp_trust_bar_r8mhYp": {
@@ -75,7 +75,7 @@
           "type": "item",
           "settings": {
             "icon": "🚚",
-            "label": "Free shipping over 999LE"
+            "label": "Free shipping over 1200LE"
           }
         },
         "item_TtVp6f": {
