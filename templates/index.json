@@ -15,7 +15,7 @@
         "heading_hero01": {
           "type": "heading",
           "settings": {
-            "heading": "Your every day essential beauty bag",
+            "heading": "&nbsp;BLACK FRIDAY BUNDLE",
             "heading_size": "h1",
             "subheading": ""
           }
@@ -32,8 +32,8 @@
         "cta_hero01": {
           "type": "cta_button",
           "settings": {
-            "label": "Shop the Beauty Bag",
-            "link": "shopify://products/the-beauty-bag",
+            "label": "Shop the bundle",
+            "link": "shopify://products/black-friday-bundle",
             "style_secondary": true
           }
         },
@@ -61,7 +61,7 @@
       ],
       "name": "Hero (social proof)",
       "settings": {
-        "image": "shopify://shop_images/1.jpg",
+        "image": "shopify://shop_images/black-friday-bundle-1.jpg",
         "image_ratio_mobile": "portrait",
         "desktop_layout": "side_by_side",
         "image_ratio_desktop": "wide",
