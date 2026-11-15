@@ -41,6 +41,9 @@
       .free-ship-progress[hidden] { display: none; }
       .free-ship-progress--plain { padding: .9rem 1.2rem; border: 1px solid #efcbdb; border-radius: .8rem; background: #fff; }
       .free-ship-progress--plain .free-ship-progress__msg { margin: 0; font-size: 1.3rem; }
+      /* Product page box: always one line - the text shrinks on narrow phones instead of wrapping */
+      .free-ship-progress--plain { padding-left: .8rem; padding-right: .8rem; }
+      .free-ship-progress.free-ship-progress--plain .free-ship-progress__msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: min(1.35rem, 3.8vw); letter-spacing: 0; }
       .free-ship-progress--plain .free-ship-progress__track { display: none; }
       .free-ship-progress[data-empty] .free-ship-progress__track { display: none; }
       .free-ship-progress[data-empty] .free-ship-progress__msg { margin: 0; }

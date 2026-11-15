@@ -305,6 +305,7 @@
         }
       }
     },
+    "free_ship_threshold": 1200,
     "free_ship_text": "#b9648a",
     "free_ship_accent": "#b9648a"
   },
