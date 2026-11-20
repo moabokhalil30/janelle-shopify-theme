@@ -30,6 +30,7 @@
     },
     "welcome_popup": {
       "type": "janelle-welcome-popup",
+      "disabled": true,
       "settings": {
         "enabled": true,
         "discount_code": "WELCOME5",
